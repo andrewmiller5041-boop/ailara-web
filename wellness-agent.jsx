@@ -12928,3 +12928,35 @@ export default function AilaraApp() {
     </div>
   );
 }
+
+// ── Self-mount for web deployment ────────────────────────────────────────────
+// This runs after Babel finishes transpiling so AilaraApp is always defined.
+// In Claude.ai artifact mode this is ignored (ReactDOM.createRoot is called externally).
+if (typeof window !== "undefined" && typeof ReactDOM !== "undefined") {
+  const _mountAilara = () => {
+    const rootEl = document.getElementById("root");
+    if (rootEl && typeof AilaraApp !== "undefined") {
+      try {
+        const root = ReactDOM.createRoot(rootEl);
+        root.render(React.createElement(AilaraApp));
+        // Hide the loading screen
+        const loading = document.getElementById("loading");
+        if (loading) {
+          loading.style.transition = "opacity 0.4s ease";
+          loading.style.opacity = "0";
+          setTimeout(() => loading.remove(), 500);
+        }
+      } catch(e) {
+        console.error("[AILARA] Mount error:", e);
+        const loading = document.getElementById("loading");
+        if (loading) loading.innerHTML = '<div style="color:#EF4444;padding:20px;text-align:center">Failed to load AILARA.<br/>Please refresh the page.</div>';
+      }
+    }
+  };
+  // Wait for DOM to be ready
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", _mountAilara);
+  } else {
+    _mountAilara();
+  }
+}
