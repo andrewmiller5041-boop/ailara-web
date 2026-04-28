@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#070D07" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="AILARA" />
+  <meta name="description" content="Your AI-powered personal health coach. Personalized workouts, nutrition plans, and supplement guidance backed by science." />
+
+  <!-- PWA manifest -->
+  <link rel="manifest" href="/manifest.json" />
+
+  <!-- Apple touch icons (required for "Add to Home Screen") -->
+  <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+  <link rel="apple-touch-icon" sizes="152x152" href="/icons/icon-152.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/icons/icon-180.png" />
+  <link rel="apple-touch-icon" sizes="167x167" href="/icons/icon-167.png" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32.png" />
+
+  <!-- Open Graph (for social sharing) -->
+  <meta property="og:title" content="AILARA — AI Health Coach" />
+  <meta property="og:description" content="Science-backed AI coaching for workouts, nutrition, and wellness." />
+  <meta property="og:image" content="/icons/og-image.png" />
+  <meta property="og:type" content="website" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <title>AILARA — AI Health Coach</title>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body, #root {
+      height: 100%;
+      height: -webkit-fill-available;
+      background: #070D07;
+      color: #ECFDF5;
+      font-family: 'Inter', sans-serif;
+      overflow: hidden;
+    }
+    /* iOS safe area support */
+    #root {
+      padding-top: env(safe-area-inset-top);
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+    /* Prevent iOS rubber-band scroll on the body */
+    body { overscroll-behavior: none; position: fixed; width: 100%; }
+    /* Loading screen */
+    #loading {
+      position: fixed; inset: 0; background: #070D07;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 16px;
+      z-index: 9999; transition: opacity 0.4s ease;
+    }
+    #loading.hidden { opacity: 0; pointer-events: none; }
+    .loading-logo {
+      width: 64px; height: 64px; border-radius: 18px;
+      background: linear-gradient(135deg, #064E3B, #10B981);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Playfair Display', serif; font-size: 28px;
+      font-weight: 800; color: white;
+      box-shadow: 0 0 40px rgba(16,185,129,0.4);
+    }
+    .loading-name {
+      font-family: 'Playfair Display', serif; font-size: 1.6rem;
+      font-weight: 800; color: #ECFDF5; letter-spacing: -0.02em;
+    }
+    .loading-sub { font-size: 0.8rem; color: #5A8A68; }
+    .loading-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: #10B981; display: inline-block;
+      animation: ldot 1.2s ease-in-out infinite;
+    }
+    .loading-dot:nth-child(2) { animation-delay: 0.2s; }
+    .loading-dot:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes ldot { 0%,80%,100%{transform:scale(0);opacity:0.3} 40%{transform:scale(1);opacity:1} }
+  </style>
+</head>
+<body>
+  <!-- Loading screen shown while React boots -->
+  <div id="loading">
+    <div class="loading-logo">A</div>
+    <div class="loading-name">AILARA</div>
+    <div class="loading-sub">Your AI Health Coach</div>
+    <div style="display:flex;gap:6px;margin-top:8px">
+      <div class="loading-dot"></div>
+      <div class="loading-dot"></div>
+      <div class="loading-dot"></div>
+    </div>
+  </div>
+
+  <div id="root"></div>
+
+  <!-- Service worker registration for PWA -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then(reg => console.log('[AILARA] SW registered:', reg.scope))
+          .catch(err => console.warn('[AILARA] SW failed:', err));
+      });
+    }
+    // Hide loading screen when React mounts
+    window.__ailaraReady = () => {
+      const el = document.getElementById('loading');
+      if (el) { el.classList.add('hidden'); setTimeout(() => el.remove(), 500); }
+    };
+  </script>
+
+  <!-- React 18 + Babel for JSX (production: replace with Vite build) -->
+  <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+  <script type="text/babel" src="/wellness-agent.jsx" data-presets="react"></script>
+  <script>
+    // Mount the app and hide loading screen
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(React.createElement(AilaraApp));
+    window.__ailaraReady && window.__ailaraReady();
+  </script>
+</body>
+</html>
