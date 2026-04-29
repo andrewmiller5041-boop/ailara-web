@@ -5473,7 +5473,7 @@ const GOAL_PROMPTS_DEFAULT = { color:"#10B981", chips:["🔥 Build me a fat loss
 //
 // Example proxy URL: "https://your-app.vercel.app/api/chat"
 // Leave as null for Claude.ai artifact development.
-const PROXY_URL = null;
+const PROXY_URL = "https://ailara-web.vercel.app/api/chat";;
 
 const ANTHROPIC_DIRECT = "https://api.anthropic.com/v1/messages";
 
