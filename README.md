@@ -4,8 +4,7 @@
 
 A production-grade AI health coaching web app built solo from concept to deployed product. AILARA provides personalized, evidence-based guidance across fitness, nutrition, supplementation, and wellness — powered by Claude Sonnet and Haiku with intelligent cost routing.
 
-![AILARA Screenshot](.https://github.com/andrewmiller5041-boop/ailara-web/blob/main/icons/Screenshots_hero_2.png)(https://github.com/andrewmiller5041-boop/ailara-web/blob/main/icons/screenshots_Hero_1.png)(https://github.com/andrewmiller5041-boop/ailara-web/blob/main/icons/Screenshots_hero_4.png)(https://github.com/andrewmiller5041-boop/ailara-web/blob/main/icons/screenshots_hero_3.png)
-
+![AILARA Screenshot](./screenshots/hero.png)
 ---
 
 ## What It Does
