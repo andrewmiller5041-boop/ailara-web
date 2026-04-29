@@ -7,102 +7,22 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="AILARA" />
-  <meta name="description" content="Your AI-powered personal health coach. Personalized workouts, nutrition plans, and supplement guidance backed by science." />
-
+  <meta name="description" content="Your AI-powered personal health coach." />
   <link rel="manifest" href="/manifest.json" />
   <link rel="apple-touch-icon" href="/icons/icon-192.png" />
-  <link rel="apple-touch-icon" sizes="152x152" href="/icons/icon-152.png" />
   <link rel="apple-touch-icon" sizes="180x180" href="/icons/icon-180.png" />
-  <link rel="apple-touch-icon" sizes="167x167" href="/icons/icon-167.png" />
-  <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32.png" />
-
-  <meta property="og:title" content="AILARA — AI Health Coach" />
-  <meta property="og:description" content="Science-backed AI coaching for workouts, nutrition, and wellness." />
-  <meta property="og:type" content="website" />
-
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-
   <title>AILARA — AI Health Coach</title>
-
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { height: 100%; background: #070D07; }
-    body {
-      height: 100%;
-      background: #070D07;
-      color: #ECFDF5;
-      font-family: 'Inter', sans-serif;
-      overscroll-behavior: none;
-    }
-    #root {
-      height: 100%;
-      height: 100dvh;
-    }
-    #loading {
-      position: fixed; inset: 0; background: #070D07;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center; gap: 16px;
-      z-index: 9999;
-    }
-    .loading-logo {
-      width: 72px; height: 72px; border-radius: 20px;
-      background: linear-gradient(135deg, #064E3B, #10B981);
-      display: flex; align-items: center; justify-content: center;
-      font-family: 'Playfair Display', serif; font-size: 32px;
-      font-weight: 800; color: white;
-      box-shadow: 0 0 48px rgba(16,185,129,0.35);
-    }
-    .loading-name {
-      font-family: 'Playfair Display', serif; font-size: 1.7rem;
-      font-weight: 800; color: #ECFDF5; letter-spacing: -0.02em;
-    }
-    .loading-sub { font-size: 0.82rem; color: #5A8A68; }
-    .loading-dots { display: flex; gap: 6px; margin-top: 4px; }
-    .loading-dot {
-      width: 7px; height: 7px; border-radius: 50%;
-      background: #10B981;
-      animation: ldot 1.3s ease-in-out infinite;
-    }
-    .loading-dot:nth-child(2) { animation-delay: 0.18s; }
-    .loading-dot:nth-child(3) { animation-delay: 0.36s; }
-    @keyframes ldot {
-      0%, 80%, 100% { transform: scale(0.4); opacity: 0.3; }
-      40% { transform: scale(1); opacity: 1; }
-    }
+    html, body, #root { height: 100%; height: 100dvh; background: #070D07; }
+    body { font-family: 'Inter', sans-serif; color: #ECFDF5; overscroll-behavior: none; }
   </style>
+  <script type="module" crossorigin src="/assets/index-QSr-uMG_.js"></script>
 </head>
 <body>
-  <div id="loading">
-    <div class="loading-logo">A</div>
-    <div class="loading-name">AILARA</div>
-    <div class="loading-sub">Your AI Health Coach</div>
-    <div class="loading-dots">
-      <div class="loading-dot"></div>
-      <div class="loading-dot"></div>
-      <div class="loading-dot"></div>
-    </div>
-  </div>
-
   <div id="root"></div>
-
-  <!-- Service worker for PWA install -->
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', function() {
-        navigator.serviceWorker.register('/sw.js').catch(function(){});
-      });
-    }
-  </script>
-
-  <!-- React 18 -->
-  <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
-  <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
-
-  <!-- Babel standalone — transpiles JSX in the browser -->
-  <!-- The wellness-agent.jsx file mounts itself after Babel finishes -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
-  <script type="text/babel" src="/wellness-agent.jsx" data-presets="react" data-type="module"></script>
 </body>
 </html>
