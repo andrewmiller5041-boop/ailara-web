@@ -13,7 +13,7 @@ const ALLOWED_MODELS = new Set([
 
 // Your deployed Vercel domains — update after deployment
 const ALLOWED_ORIGINS = [
-  'https://ailara.vercel.app',        // ← update to your actual domain
+  'https://https://ailara-web.vercel.app/',        // ← update to your actual domain
   'https://ailara.app',               // ← your custom domain if you have one
   'http://localhost:3000',            // local dev
   'http://localhost:5173',            // Vite dev
