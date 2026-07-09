@@ -2,9 +2,9 @@
 const ANTHROPIC_URL = 'https://api.anthropic.com/v1/messages';
 
 const ALLOWED_MODELS = new Set([
-  'claude-sonnet-4-20250514',
+  'claude-sonnet-5',
   'claude-haiku-4-5-20251001',
-  'claude-opus-4-20250514',
+  'claude-opus-4-8',
 ]);
 
 const ALLOWED_ORIGINS = [
