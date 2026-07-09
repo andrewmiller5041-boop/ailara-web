@@ -4629,7 +4629,7 @@ Additional Notes: ${profile.notes || "None"}`;
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          model: "claude-sonnet-4-20250514",
+          model: "claude-sonnet-5",
           max_tokens: 3000,
           system: PLAN_SYSTEM,
           messages: [{ role: "user", content: `Generate my personalized plan based on this profile:\n${profileStr}\n\nReturn ONLY valid JSON.` }],
@@ -5267,7 +5267,7 @@ function MealPlanner({ profile, isPro, onUpgrade, plansUsed: plansUsedProp, setP
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
+        model: "claude-sonnet-5",
         max_tokens: 1000,
         system: sys,
         messages: [{ role: "user", content: `Generate meals for ${dayName}. ${avoid} Return JSON only.` }],
@@ -6947,7 +6947,7 @@ function Chat({ profile, isPro, tier, plansUsed, aiQuestionsToday, setAiQuestion
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          model: "claude-sonnet-4-20250514",
+          model: "claude-sonnet-5",
           max_tokens: 2000,
           system: CHAT_SYSTEM
             .replace("{PROFILE}", profileStr)
@@ -6984,7 +6984,7 @@ function Chat({ profile, isPro, tier, plansUsed, aiQuestionsToday, setAiQuestion
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            model: "claude-sonnet-4-20250514",
+            model: "claude-sonnet-5",
             max_tokens: 2000,
             system: CHAT_SYSTEM
               .replace("{PROFILE}", profileStr)
@@ -10113,7 +10113,7 @@ function Workouts({ profile, isPro, onUpgrade }) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          model: "claude-sonnet-4-20250514", max_tokens: 1000,
+          model: "claude-sonnet-5", max_tokens: 1000,
           system: `You are an expert personal trainer. Create a personalised weekly workout program as JSON only — no preamble, no backticks.
 Return: {"programName":"...","split":"...","days":[{"day":"Monday","focus":"...","exercises":[{"name":"...","sets":3,"reps":"8-12","rest":"90s","notes":"..."}]}],"tips":"..."}`          ,
           messages:[{ role:"user", content:`Build a weekly workout program for: ${profileStr} Return JSON only.` }],
