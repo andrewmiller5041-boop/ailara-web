@@ -7005,7 +7005,7 @@ function Chat({ profile, isPro, tier, plansUsed, aiQuestionsToday, setAiQuestion
         }).join(" · ");
 
         const { text: parsedTool, citations: toolCits } = parseCitations(finalText);
-        assistantMsg = {
+        const assistantMsg = {
           role: "assistant",
           content: parsedTool,
           citations: toolCits,
