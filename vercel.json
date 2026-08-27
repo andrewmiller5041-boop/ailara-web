@@ -1,5 +1,7 @@
 {
   "buildCommand": "npm run build",
+  "devCommand": "npm run dev -- --port $PORT",
+  "framework": "vite",
   "outputDirectory": "dist",
   "version": 2,
   "routes": [
