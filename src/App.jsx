@@ -10,6 +10,73 @@ const BG = "#F7F8F6";
 const SURFACE = "#FFFFFF";
 const BORDER = "rgba(16,185,129,0.25)";
 
+// ─── WARM HOME PALETTE ────────────────────────────────────────────────────────
+// Scoped to the Coach home screen, the app header, and the bottom nav
+// (redesign: "One calm thing at a time" — Headspace/Oak-leaning: calm,
+// encouraging, rounded, spacious). The global ACCENT / BG / SURFACE / BORDER
+// tokens above are intentionally left untouched so every other tab is unchanged.
+const W = {
+  sand:      "#FCF7F0",  // page ground
+  cream:     "#FFFBF4",  // card surface
+  peach:     "#FFE7D2",  // hero gradient top
+  blush:     "#FFF1E6",  // hero gradient bottom
+  marigold:  "#EE9C5B",  // signature accent — orb, send button
+  coral:     "#E8836B",  // warm secondary accent
+  eucalyptus:"#7FA891",  // calm green — positive momentum
+  pine:      "#3C5A4A",  // headings, wordmark, deepest text
+  cocoa:     "#3A352E",  // body text (warm charcoal)
+  taupe:     "#94897A",  // secondary text
+  haze:      "#EFE5D6",  // the rare hairline
+  tilePeach: "#FFEEDD",
+  tileSage:  "#E7F0EA",
+  tileSky:   "#E6EEF2",
+  shadowRest:"0 4px 16px rgba(120,90,55,0.08)",
+  shadowLift:"0 10px 30px rgba(120,90,55,0.12)",
+};
+const DISPLAY_FONT = "'Bricolage Grotesque','Inter','Segoe UI',sans-serif";
+
+// ─── COACH'S-BRIEF PALETTE ───────────────────────────────────────────────────
+// Scoped to the Coach home screen, app header, and bottom nav (visual pivot:
+// F45 / Scott Laidler / Livestrong — heavy grotesque, one confident accent,
+// high-contrast base, flat color-blocks, near-zero radius, no shadow).
+// The W (warm) tokens above stay in place for every tab not yet converted.
+const LS = {
+  paper:  "#FFFFFF",   // primary surface
+  cream:  "#FBF7EF",   // occasional section banding
+  ink:    "#141414",   // headlines, body, borders
+  slate:  "#5B6572",   // decks, meta, inactive nav
+  line:   "#E6E4DF",   // quiet 1px dividers
+  navy:   "#0B1B2B",   // dark color-blocks
+  accent: "#F4B400",   // the one color — fills / bars / numerals / blocks only
+};
+const HEAVY_FONT = "'Archivo','Inter','Segoe UI',sans-serif";
+
+// ─── BRAND MARKS ─────────────────────────────────────────────────────────────
+// A small botanical sprig used beside the "Ailara" wordmark (onboarding hero +
+// header) — no letter-in-a-box. And a sage/gold Rod of Asclepius for the
+// consent screen, replacing the raw ⚕️ emoji. Inline SVG, currentColor-free so
+// the tint is fixed to the sage/gold palette.
+function SprigMark({ size = 34 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 32 32" fill="none" aria-hidden="true">
+      <path d="M16 30 V17" stroke="#047857" strokeWidth="2" strokeLinecap="round" />
+      <path d="M16 17 C15 12 15.5 8 16 5" stroke="#047857" strokeWidth="2" strokeLinecap="round" />
+      <path d="M16 18 C10.5 17 7 13.5 6 8.5 C11.5 9 15 12.5 16 17" stroke="#047857" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M16 18 C21.5 17 25 13.5 26 8.5 C20.5 9 17 12.5 16 17" stroke="#047857" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx="16" cy="4" r="2.2" fill="#C79245" />
+    </svg>
+  );
+}
+function AsclepiusMark({ size = 46 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 40 40" fill="none" aria-hidden="true">
+      <line x1="20" y1="7" x2="20" y2="35" stroke="#141414" strokeWidth="2.25" strokeLinecap="round" />
+      <path d="M20 10 C13 13 27 17.5 20 20 C13 22.5 27 27 20 30" stroke="#141414" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx="20" cy="6.5" r="3" fill="#F4B400" />
+    </svg>
+  );
+}
+
 const PROGRAMS = [
   { name: "Starting Strength", url: "https://startingstrength.com/get-started", tag: "Beginner Strength" },
   { name: "ACE Exercise Library", url: "https://www.acefitness.org/resources/everyone/exercise-library/", tag: "Low-Impact" },
@@ -4485,19 +4552,18 @@ function parseInline(text) {
   while ((match = regex.exec(text)) !== null) {
     if (match.index > last) parts.push(<span key={k++}>{text.slice(last, match.index)}</span>);
     if (match[0].startsWith("[")) {
-      const isNIH = match[3].includes("pubmed") || match[3].includes("nih.gov");
+      const isCite = match[3].includes("pubmed") || match[3].includes("nih.gov");
       parts.push(
         <a key={k++} href={match[3]} target="_blank" rel="noopener noreferrer" style={{
-          color: isNIH ? ACCENT2_TEXT : ACCENT_TEXT, textDecoration: "none",
-          background: isNIH ? "rgba(16,185,129,0.1)" : "transparent",
-          padding: isNIH ? "1px 6px 2px" : "0",
-          borderRadius: isNIH ? "4px" : "0",
-          border: isNIH ? `1px solid rgba(16,185,129,0.25)` : "none",
-          fontSize: isNIH ? "0.77rem" : "inherit", fontWeight: isNIH ? 500 : "inherit",
+          color: "#141414", textDecoration: isCite ? "none" : "underline",
+          background: "transparent",
+          padding: isCite ? "1px 6px 2px" : "0",
+          border: isCite ? "1px solid #141414" : "none",
+          fontSize: isCite ? "0.77rem" : "inherit", fontWeight: isCite ? 600 : "inherit",
         }}>{match[2]}</a>
       );
     } else {
-      parts.push(<strong key={k++} style={{ color: "#1A1D1B", fontWeight: 700 }}>{match[4]}</strong>);
+      parts.push(<strong key={k++} style={{ color: "#141414", fontWeight: 800 }}>{match[4]}</strong>);
     }
     last = match.index + match[0].length;
   }
@@ -4507,42 +4573,42 @@ function parseInline(text) {
 
 function renderContent(text) {
   return text.split("\n").map((line, i) => {
-    if (line.startsWith("## ")) return <div key={i} style={{ fontSize: "0.73rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: ACCENT_TEXT, marginTop: 18, marginBottom: 7, borderBottom: `1px solid ${BORDER}`, paddingBottom: 5 }}>{line.slice(3)}</div>;
-    if (line.startsWith("### ")) return <div key={i} style={{ fontSize: "0.87rem", fontWeight: 600, color: ACCENT2_TEXT, marginTop: 12, marginBottom: 4 }}>{line.slice(4)}</div>;
+    if (line.startsWith("## ")) return <div key={i} style={{ fontFamily: HEAVY_FONT, fontSize: "0.74rem", fontWeight: 800, letterSpacing: "0.08em", textTransform: "uppercase", color: "#141414", marginTop: 18, marginBottom: 7, borderBottom: "1px solid #141414", paddingBottom: 5 }}>{line.slice(3)}</div>;
+    if (line.startsWith("### ")) return <div key={i} style={{ fontFamily: HEAVY_FONT, fontSize: "0.88rem", fontWeight: 700, color: "#141414", marginTop: 12, marginBottom: 4 }}>{line.slice(4)}</div>;
     if (line.startsWith("- ") || line.startsWith("• ")) return (
       <div key={i} style={{ display: "flex", gap: 9, marginBottom: 5, alignItems: "flex-start" }}>
-        <span style={{ color: ACCENT_TEXT, flexShrink: 0, fontSize: "0.72rem", marginTop: 6 }}>◆</span>
-        <span style={{ color: "#047857", fontSize: "0.85rem", lineHeight: 1.65 }}>{parseInline(line.slice(2))}</span>
+        <span style={{ color: "#F4B400", flexShrink: 0, fontSize: "0.72rem", marginTop: 6 }}>◆</span>
+        <span style={{ color: "#141414", fontSize: "0.85rem", lineHeight: 1.65 }}>{parseInline(line.slice(2))}</span>
       </div>
     );
     if (line.trim() === "") return <div key={i} style={{ height: 7 }} />;
-    return <div key={i} style={{ color: "#047857", fontSize: "0.85rem", lineHeight: 1.65, marginBottom: 3 }}>{parseInline(line)}</div>;
+    return <div key={i} style={{ color: "#141414", fontSize: "0.85rem", lineHeight: 1.65, marginBottom: 3 }}>{parseInline(line)}</div>;
   });
 }
 
 function TypingDots() {
   return (
     <div style={{ display: "flex", gap: 5, padding: "8px 0" }}>
-      {[0,1,2].map(i => <div key={i} style={{ width: 8, height: 8, borderRadius: "50%", background: ACCENT, animation: `dotPulse 1.3s ease-in-out ${i*0.15}s infinite` }}/>)}
+      {[0,1,2].map(i => <div key={i} style={{ width: 8, height: 8, background: "#141414", animation: `dotPulse 1.3s ease-in-out ${i*0.15}s infinite` }}/>)}
     </div>
   );
 }
 
 function Label({ children }) {
-  return <div style={{ fontSize: "0.75rem", fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "#6B7280", marginBottom: 7 }}>{children}</div>;
+  return <div style={{ fontFamily: HEAVY_FONT, fontSize: "0.7rem", fontWeight: 800, letterSpacing: "0.08em", textTransform: "uppercase", color: "#141414", marginBottom: 7 }}>{children}</div>;
 }
 
 function Select({ value, onChange, options }) {
   return (
-    <select value={value} onChange={e => onChange(e.target.value)} style={{ width: "100%", background: "#F2F3F1", border: `1px solid ${BORDER}`, borderRadius: 8, padding: "9px 12px", color: "#1A1D1B", fontSize: "0.85rem", fontFamily: "'Inter',sans-serif", cursor: "pointer", outline: "none" }}>
-      {options.map(o => <option key={o} value={o} style={{ background: "#EEF0ED" }}>{o}</option>)}
+    <select value={value} onChange={e => onChange(e.target.value)} style={{ width: "100%", background: "#FFFFFF", border: "1px solid #141414", borderRadius: 4, padding: "10px 12px", color: "#141414", fontSize: "0.85rem", fontFamily: "'Inter',sans-serif", cursor: "pointer", outline: "none" }}>
+      {options.map(o => <option key={o} value={o} style={{ background: "#FFFFFF" }}>{o}</option>)}
     </select>
   );
 }
 
 function CheckPill({ checked, onClick, children }) {
   return (
-    <button onClick={onClick} style={{ background: checked ? "rgba(16,185,129,0.25)" : "rgba(16,185,129,0.04)", border: `1px solid ${checked ? "rgba(16,185,129,0.5)" : BORDER}`, borderRadius: 20, padding: "6px 13px", fontSize: "0.78rem", color: checked ? ACCENT2_TEXT : "#4B5563", cursor: "pointer", fontFamily: "'Inter',sans-serif", fontWeight: 500, transition: "all 0.15s" }}>
+    <button onClick={onClick} style={{ background: checked ? "#F4B400" : "#FFFFFF", border: "1px solid #141414", borderRadius: 4, padding: "7px 13px", fontSize: "0.78rem", color: "#141414", cursor: "pointer", fontFamily: "'Inter',sans-serif", fontWeight: checked ? 700 : 500, transition: "background 0.12s" }}>
       {checked ? "✓ " : ""}{children}
     </button>
   );
@@ -4592,6 +4658,8 @@ function Onboarding({ onComplete, quickMode = false }) {
   // quickMode = true means we're showing the "complete profile" flow from inside the app
   const [step, setStep]           = useState(quickMode ? 1 : 0);
   const [tosAccepted, setTosAccepted] = useState(false);
+  const [tosChecked, setTosChecked]   = useState(false);  // consent checkbox
+  const [showTerms, setShowTerms]     = useState(false);   // "read the full terms" accordion
   const [profile, setProfile] = useState({
     name: "", age: "30–39", sex: "Prefer not to say",
     weight: "", height: "", activityLevel: "Sedentary",
@@ -4609,7 +4677,7 @@ function Onboarding({ onComplete, quickMode = false }) {
     ...p, [field]: p[field].includes(val) ? p[field].filter(x => x !== val) : [...p[field], val]
   }));
 
-  const inputStyle = { width: "100%", background: "#F2F3F1", border: `1px solid ${BORDER}`, borderRadius: 8, padding: "9px 12px", color: "#1A1D1B", fontSize: "0.85rem", fontFamily: "'Inter',sans-serif", outline: "none" };
+  const inputStyle = { width: "100%", background: "#FFFFFF", border: "1px solid #141414", borderRadius: 4, padding: "10px 12px", color: "#141414", fontSize: "0.85rem", fontFamily: "'Inter',sans-serif", outline: "none" };
 
   const generatePlan = async () => {
     setPlanLoading(true); setPlanError(""); setStep(7);
@@ -4649,16 +4717,9 @@ Additional Notes: ${profile.notes || "None"}`;
 
   const DAYS_OF_WEEK = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
   const dayColor = (focus) => {
-    if (!focus) return "#4B5563";
-    const f = focus.toLowerCase();
-    if (f.includes("rest") || f.includes("recovery")) return "#6B7280";
-    if (f.includes("upper") || f.includes("push") || f.includes("chest") || f.includes("shoulder")) return "#1D4ED8";
-    if (f.includes("lower") || f.includes("leg") || f.includes("glute")) return "#7C3AED";
-    if (f.includes("pull") || f.includes("back") || f.includes("bicep")) return "#D97706";
-    if (f.includes("hiit") || f.includes("cardio") || f.includes("run")) return "#DC2626";
-    if (f.includes("full") || f.includes("total")) return "#10B981";
-    if (f.includes("core") || f.includes("ab")) return "#BE185D";
-    return ACCENT;
+    const f = (focus || "").toLowerCase();
+    if (f.includes("rest") || f.includes("recovery")) return "#5B6572";
+    return "#141414";
   };
 
   const GOAL_OPTIONS = [
@@ -4675,85 +4736,116 @@ Additional Notes: ${profile.notes || "None"}`;
   const renderStep = () => {
 
     // ── STEP 0: QUICK START — name + goal ──────────────────────────────────────
-    if (step === -1 || !tosAccepted) return (
-      <div style={{ animation:"fadeUp 0.35s ease", padding:"0 4px" }}>
-        <div style={{ textAlign:"center", marginBottom:24 }}>
-          <div style={{ fontSize:"2.8rem", marginBottom:10 }}>⚕️</div>
-          <div style={{ fontFamily:"'Playfair Display',serif", fontSize:"1.3rem", fontWeight:800, color:"#1A1D1B", lineHeight:1.3, marginBottom:8 }}>
-            Before We Build Your Plan
+    if (step === -1 || !tosAccepted) {
+      const TERMS_SECTIONS = [
+        { icon:"📄", title:"Scientific Accuracy", body:"Coach AI provides fitness and nutritional information based on a vectored database of peer-reviewed literature, including the Journal of the International Society of Sports Nutrition (JISSN) and the NIH Office of Dietary Supplements. This information is for educational purposes only. It is not a substitute for professional medical advice, diagnosis, or treatment." },
+        { icon:"🏥", title:"Coaching vs. Clinical Care", body:"Ailara provides General Non-Medical Nutritional Information as defined by the ACE Nutrition Scope of Practice. It does not provide Medical Nutrition Therapy. Recommendations for botanicals or Traditional Chinese Medicine (TCM) are based on historical texts and available modern research and are not intended to treat or cure any disease." },
+        { icon:"💪", title:"Assumption of Risk", body:"By using the workout resources provided, the User assumes all risk of physical injury. Ailara is not liable for injuries resulting from the use or misuse of information provided. Always consult your physician before beginning a new exercise program." },
+        { icon:"🔬", title:"AI Limitations", body:"The App utilizes an AI integrated with a research database. While Ailara strives for accuracy by citing primary sources, AI-generated content can occasionally contain errors. You agree to verify critical health data (such as supplement dosages) with the provided source URLs before implementation." },
+      ];
+      return (
+      <div style={{ animation:"fadeUp 0.35s ease" }}>
+        <div style={{ marginBottom:20 }}>
+          <div style={{ width:52, height:52, border:"1px solid #141414", display:"flex", alignItems:"center", justifyContent:"center", marginBottom:14 }}>
+            <AsclepiusMark size={38} />
           </div>
-          <div style={{ color:"#4B5563", fontSize:"0.78rem", lineHeight:1.6 }}>
-            Ailara uses peer-reviewed research from JISSN, NIH ODS, ACSM, and Cochrane Reviews to personalize your coaching. Please read and accept before continuing.
+          <div style={{ fontFamily:HEAVY_FONT, fontSize:"1.7rem", fontWeight:900, color:"#141414", lineHeight:1.02, letterSpacing:"-0.02em", textTransform:"uppercase", marginBottom:8 }}>
+            Before we build your plan
           </div>
-        </div>
-
-        {[
-          { icon:"📄", title:"Scientific Accuracy", body:"Coach AI provides fitness and nutritional information based on a vectored database of peer-reviewed literature, including the Journal of the International Society of Sports Nutrition (JISSN) and the NIH Office of Dietary Supplements. This information is for educational purposes only. It is not a substitute for professional medical advice, diagnosis, or treatment." },
-          { icon:"🏥", title:"Coaching vs. Clinical Care", body:"Ailara provides General Non-Medical Nutritional Information as defined by the ACE Nutrition Scope of Practice. It does not provide Medical Nutrition Therapy. Recommendations for botanicals or Traditional Chinese Medicine (TCM) are based on historical texts and available modern research and are not intended to treat or cure any disease." },
-          { icon:"💪", title:"Assumption of Risk", body:"By using the workout resources provided, the User assumes all risk of physical injury. Ailara is not liable for injuries resulting from the use or misuse of information provided. Always consult your physician before beginning a new exercise program." },
-          { icon:"🔬", title:"AI Limitations", body:"The App utilizes an AI integrated with a research database. While Ailara strives for accuracy by citing primary sources, AI-generated content can occasionally contain errors. You agree to verify critical health data (such as supplement dosages) with the provided source URLs before implementation." },
-        ].map((s, i) => (
-          <div key={i} style={{ background:"rgba(0,0,0,0.02)", border:"1px solid rgba(16,185,129,0.12)", borderRadius:12, padding:"12px 14px", marginBottom:10 }}>
-            <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:6 }}>
-              <span style={{ fontSize:16 }}>{s.icon}</span>
-              <span style={{ fontWeight:700, color:"#1A1D1B", fontSize:"0.8rem" }}>{s.title}</span>
-            </div>
-            <p style={{ color:"#4B5563", fontSize:"0.78rem", lineHeight:1.65, margin:0 }}>{s.body}</p>
-          </div>
-        ))}
-
-        <div style={{ background:"rgba(16,185,129,0.06)", border:"1px solid rgba(16,185,129,0.2)", borderRadius:12, padding:"12px 14px", marginBottom:20, marginTop:4 }}>
-          <div style={{ fontSize:"0.75rem", color:"#0F766E", lineHeight:1.6 }}>
-            <strong>Evidence Rating System:</strong> Ailara displays a ★ star rating on every cited source.<br/>
-            ★★★★★ = Systematic Review / JISSN Position Stand<br/>
-            ★★★★☆ = NIH Clinical Review / Multiple RCTs<br/>
-            ★★☆☆☆ = Emerging or Traditional Evidence (TCM)
+          <div style={{ fontFamily:HEAVY_FONT, fontStyle:"italic", fontWeight:400, color:"#5B6572", fontSize:"0.9rem", lineHeight:1.5 }}>
+            Ailara uses peer-reviewed research from JISSN, NIH ODS, ACSM, and Cochrane Reviews to personalize your coaching.
           </div>
         </div>
 
-        <button onClick={() => setTosAccepted(true)}
-          style={{ width:"100%", background:"linear-gradient(135deg,#10B981,#059669)", border:"none", borderRadius:13, padding:"15px", color:"white", cursor:"pointer", fontSize:"1rem", fontFamily:"'Playfair Display',serif", fontWeight:800, boxShadow:"0 4px 20px rgba(16,185,129,0.35)", marginBottom:10 }}>
-          I Understand — Build My Plan →
+        {/* Plain-language summary */}
+        <div style={{ border:"1px solid #141414", padding:"14px 16px", marginBottom:14 }}>
+          <p style={{ color:"#141414", fontSize:"0.84rem", lineHeight:1.6, margin:0 }}>
+            Ailara is an evidence-based coaching tool, not a medical service. Its suggestions — workouts, nutrition, supplements, botanicals, and TCM — are for education only, not a diagnosis or treatment. Talk to your doctor before changing how you train, eat, or supplement, and check any specific doses against the sources we cite. Using the workouts means accepting the normal risks of exercise.
+          </p>
+        </div>
+
+        {/* Full terms — accordion */}
+        <button onClick={() => setShowTerms(v => !v)}
+          style={{ display:"flex", alignItems:"center", gap:8, background:"none", border:"none", cursor:"pointer", color:"#141414", fontSize:"0.72rem", fontFamily:HEAVY_FONT, fontWeight:800, letterSpacing:"0.06em", textTransform:"uppercase", padding:"4px 2px", marginBottom: showTerms ? 12 : 18 }}>
+          <span style={{ display:"inline-block", transform: showTerms ? "rotate(90deg)" : "none", transition:"transform 0.18s", fontSize:"0.6rem" }}>▶</span>
+          {showTerms ? "Hide the full terms" : "Read the full terms"}
         </button>
-        <div style={{ textAlign:"center", fontSize:"0.72rem", color:"#6B7280", lineHeight:1.5 }}>
-          By continuing you agree to the above terms. Full Terms of Service available in your Profile settings.
+
+        {showTerms && (
+          <div style={{ border:"1px solid #141414", marginBottom:18 }}>
+            {TERMS_SECTIONS.map((s, i) => (
+              <div key={i} style={{ padding:"12px 14px", borderTop: i === 0 ? "none" : "1px solid #E6E4DF" }}>
+                <div style={{ fontFamily:HEAVY_FONT, fontWeight:800, color:"#141414", fontSize:"0.76rem", letterSpacing:"0.04em", textTransform:"uppercase", marginBottom:5 }}>{s.title}</div>
+                <p style={{ color:"#5B6572", fontSize:"0.78rem", lineHeight:1.6, margin:0 }}>{s.body}</p>
+              </div>
+            ))}
+            <div style={{ padding:"12px 14px", borderTop:"1px solid #E6E4DF", background:"#FBF7EF" }}>
+              <div style={{ fontSize:"0.75rem", color:"#141414", lineHeight:1.7 }}>
+                <strong>Evidence rating:</strong> a ★ score on every cited source.<br/>
+                ★★★★★ = Systematic Review / JISSN Position Stand<br/>
+                ★★★★☆ = NIH Clinical Review / Multiple RCTs<br/>
+                ★★☆☆☆ = Emerging or Traditional Evidence (TCM)
+              </div>
+            </div>
+            <div style={{ padding:"10px 14px", borderTop:"1px solid #E6E4DF" }}>
+              <a href="/terms" target="_blank" rel="noopener noreferrer"
+                style={{ fontSize:"0.76rem", color:"#141414", fontWeight:700, textDecoration:"underline" }}>
+                View full Terms of Service ↗
+              </a>
+            </div>
+          </div>
+        )}
+
+        {/* Consent */}
+        <label style={{ display:"flex", alignItems:"flex-start", gap:10, cursor:"pointer", marginBottom:16 }}>
+          <input type="checkbox" checked={tosChecked} onChange={e => setTosChecked(e.target.checked)}
+            style={{ width:18, height:18, marginTop:1, accentColor:"#F4B400", flexShrink:0, cursor:"pointer" }} />
+          <span style={{ fontSize:"0.82rem", color:"#141414", lineHeight:1.5 }}>I've read and agree to these terms.</span>
+        </label>
+
+        <button onClick={() => { if (tosChecked) setTosAccepted(true); }} disabled={!tosChecked}
+          style={{ width:"100%", background: tosChecked ? "#F4B400" : "#E6E4DF", border:"none", borderRadius:4, padding:"15px", color:"#141414", cursor: tosChecked ? "pointer" : "not-allowed", fontSize:"0.95rem", fontFamily:HEAVY_FONT, fontWeight:800, letterSpacing:"0.03em", marginBottom:10 }}>
+          CONTINUE
+        </button>
+        <div style={{ fontSize:"0.72rem", color:"#5B6572", lineHeight:1.5 }}>
+          You can reopen the full Terms anytime from your profile.
         </div>
       </div>
-    );
+      );
+    }
 
     if (step === 0) return (
       <div style={{ animation: "fadeUp 0.35s ease" }}>
-        <div style={{ textAlign: "center", marginBottom: 28 }}>
-          <div style={{ fontFamily: "'Playfair Display',serif", fontSize: "1.5rem", fontWeight: 800, color: "#1A1D1B", lineHeight: 1.25, marginBottom: 8 }}>
-            Welcome to AILARA
+        <div style={{ marginBottom: 24 }}>
+          <div style={{ fontFamily: HEAVY_FONT, fontSize: "1.9rem", fontWeight: 900, color: "#141414", lineHeight: 1.0, letterSpacing: "-0.02em", textTransform: "uppercase", marginBottom: 8 }}>
+            Welcome to Ailara
           </div>
-          <div style={{ color: "#4B5563", fontSize: "0.84rem", lineHeight: 1.7 }}>
-            Tell us one thing — you'll be inside the app in seconds.<br/>
-            <span style={{ color: "#6B7280", fontSize: "0.76rem" }}>You can fill in the rest later for a deeper personalized plan.</span>
+          <div style={{ fontFamily: HEAVY_FONT, fontStyle: "italic", fontWeight: 400, color: "#5B6572", fontSize: "0.9rem", lineHeight: 1.5 }}>
+            Tell us one thing — you'll be inside the app in seconds. Fill in the rest later for a deeper plan.
           </div>
         </div>
 
         {/* Name — single optional field */}
         <div style={{ marginBottom: 20 }}>
-          <Label>What should Ailara call you? <span style={{ color:"#6B7280", fontWeight: 400 }}>(optional)</span></Label>
+          <Label>What should Ailara call you? <span style={{ color:"#5B6572", fontWeight: 400 }}>(optional)</span></Label>
           <input value={profile.name} onChange={e => setProfile(p => ({...p, name: e.target.value}))}
             placeholder="First name…"
-            style={{ ...inputStyle, fontSize: "1rem", padding: "11px 14px" }}/>
+            style={{ ...inputStyle, fontSize: "1rem", padding: "12px 14px" }}/>
         </div>
 
         {/* Goal pills — single selection encouraged */}
         <div style={{ marginBottom: 24 }}>
           <Label>What's your #1 goal right now?</Label>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginTop: 8 }}>
-            {GOAL_OPTIONS.map(g => {
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 0, marginTop: 8, border: "1px solid #141414" }}>
+            {GOAL_OPTIONS.map((g, gi) => {
               const sel = profile.goals.includes(g.label);
               return (
                 <button key={g.label}
                   onClick={() => setProfile(p => ({ ...p, goals: sel ? p.goals.filter(x=>x!==g.label) : [...p.goals, g.label] }))}
-                  style={{ display: "flex", alignItems: "center", gap: 10, padding: "12px 14px", borderRadius: 12, background: sel ? "rgba(16,185,129,0.25)" : "rgba(0,0,0,0.03)", border: `1.5px solid ${sel ? ACCENT : BORDER}`, cursor: "pointer", fontFamily: "'Inter',sans-serif", textAlign: "left", transition: "all 0.18s", boxShadow: sel ? "0 0 14px rgba(16,185,129,0.2)" : "none" }}>
-                  <span style={{ fontSize: 20, flexShrink: 0 }}>{g.icon}</span>
-                  <span style={{ fontSize: "0.8rem", color: sel ? "#1A1D1B" : "#4B5563", fontWeight: sel ? 600 : 400 }}>{g.label}</span>
-                  {sel && <span style={{ marginLeft: "auto", color: ACCENT_TEXT, fontSize: 12, fontWeight: 900 }}>✓</span>}
+                  style={{ display: "flex", alignItems: "center", gap: 10, padding: "12px 14px", background: sel ? "#F4B400" : "#FFFFFF", border: "none", borderTop: gi >= 2 ? "1px solid #E6E4DF" : "none", borderLeft: gi % 2 === 1 ? "1px solid #E6E4DF" : "none", cursor: "pointer", fontFamily: "'Inter',sans-serif", textAlign: "left", transition: "background 0.12s" }}>
+                  <span style={{ fontSize: 18, flexShrink: 0 }}>{g.icon}</span>
+                  <span style={{ fontSize: "0.8rem", color: "#141414", fontWeight: sel ? 700 : 400 }}>{g.label}</span>
+                  {sel && <span style={{ marginLeft: "auto", color: "#141414", fontSize: 12, fontWeight: 900 }}>✓</span>}
                 </button>
               );
             })}
@@ -4763,20 +4855,20 @@ Additional Notes: ${profile.notes || "None"}`;
         {/* Primary CTA — enter app immediately */}
         <button
           onClick={() => onComplete({ ...profile, _quickEntry: true })}
-          style={{ width: "100%", background: "linear-gradient(135deg,#10B981,#059669)", border: "none", borderRadius: 13, padding: "15px", color: "white", cursor: "pointer", fontSize: "1rem", fontFamily: "'Playfair Display',serif", fontWeight: 800, boxShadow: "0 4px 24px rgba(16,185,129,0.45)", marginBottom: 12, letterSpacing: "0.01em" }}>
-          Enter AILARA →
+          style={{ width: "100%", background: "#F4B400", border: "none", borderRadius: 4, padding: "15px", color: "#141414", cursor: "pointer", fontSize: "0.95rem", fontFamily: HEAVY_FONT, fontWeight: 800, letterSpacing: "0.03em", marginBottom: 10 }}>
+          ENTER AILARA →
         </button>
 
         {/* Secondary — full profile */}
         <button
           onClick={() => setStep(1)}
-          style={{ width: "100%", background: "transparent", border: `1px solid rgba(16,185,129,0.3)`, borderRadius: 13, padding: "13px", color: ACCENT2_TEXT, cursor: "pointer", fontSize: "0.85rem", fontFamily: "'Inter',sans-serif", fontWeight: 600 }}>
-          ✨ Build a deeper personalized plan (2 min)
+          style={{ width: "100%", background: "#FFFFFF", border: "1px solid #141414", borderRadius: 4, padding: "13px", color: "#141414", cursor: "pointer", fontSize: "0.82rem", fontFamily: HEAVY_FONT, fontWeight: 700, letterSpacing: "0.02em" }}>
+          BUILD A DEEPER PLAN (2 MIN)
         </button>
 
         {/* Trust signal */}
-        <div style={{ textAlign: "center", marginTop: 16, fontSize: "0.78rem", color: "#6B7280", lineHeight: 1.6 }}>
-          🔒 No account needed · No email · Free to use · <span style={{ color:"#92400E",fontWeight:700 }}>Pro from $4.99/mo</span>
+        <div style={{ marginTop: 16, fontSize: "0.75rem", color: "#5B6572", lineHeight: 1.6 }}>
+          No account · No email · Free to use · <span style={{ color:"#141414", fontWeight:700 }}>Pro from $4.99/mo</span>
         </div>
       </div>
     );
@@ -4784,7 +4876,7 @@ Additional Notes: ${profile.notes || "None"}`;
     // ── STEP 1: Health Conditions ──────────────────────────────────────────────
     if (step === 1) return (
       <div>
-        <div style={{ fontSize: "1.2rem", fontFamily: "'Playfair Display',serif", fontWeight: 800, color: "#1A1D1B", marginBottom: 6 }}>Any health conditions?</div>
+        <div style={{ fontFamily: HEAVY_FONT, fontSize: "1.35rem", fontWeight: 900, color: "#141414", letterSpacing: "-0.01em", textTransform: "uppercase", lineHeight: 1.05, marginBottom: 6 }}>Any health conditions?</div>
         <div style={{ color: "#4B5563", fontSize: "0.85rem", marginBottom: 20 }}>Select all that apply — shapes your workouts, supplements, and meal plan.</div>
         <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
           {CONDITIONS_LIST.map(c => (
@@ -4797,7 +4889,7 @@ Additional Notes: ${profile.notes || "None"}`;
     // ── STEP 2: Basic Body Info ────────────────────────────────────────────────
     if (step === 2) return (
       <div>
-        <div style={{ fontSize: "1.2rem", fontFamily: "'Playfair Display',serif", fontWeight: 800, color: "#1A1D1B", marginBottom: 6 }}>About you</div>
+        <div style={{ fontFamily: HEAVY_FONT, fontSize: "1.35rem", fontWeight: 900, color: "#141414", letterSpacing: "-0.01em", textTransform: "uppercase", lineHeight: 1.05, marginBottom: 6 }}>About you</div>
         <div style={{ color: "#4B5563", fontSize: "0.85rem", marginBottom: 24 }}>Used to calculate your calorie targets and personalize recommendations.</div>
         <div style={{ display: "grid", gap: 16 }}>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
@@ -4816,7 +4908,7 @@ Additional Notes: ${profile.notes || "None"}`;
     // ── STEP 3: Diet & Allergies ───────────────────────────────────────────────
     if (step === 3) return (
       <div>
-        <div style={{ fontSize: "1.2rem", fontFamily: "'Playfair Display',serif", fontWeight: 800, color: "#1A1D1B", marginBottom: 6 }}>Food allergies & restrictions?</div>
+        <div style={{ fontFamily: HEAVY_FONT, fontSize: "1.35rem", fontWeight: 900, color: "#141414", letterSpacing: "-0.01em", textTransform: "uppercase", lineHeight: 1.05, marginBottom: 6 }}>Food allergies & restrictions?</div>
         <div style={{ color: "#4B5563", fontSize: "0.85rem", marginBottom: 20 }}>Your meal plan will avoid these completely.</div>
         <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
           {ALLERGY_LIST.map(a => (
@@ -4836,7 +4928,7 @@ Additional Notes: ${profile.notes || "None"}`;
     // ── STEP 4: Workout Setup ──────────────────────────────────────────────────
     if (step === 4) return (
       <div>
-        <div style={{ fontSize: "1.2rem", fontFamily: "'Playfair Display',serif", fontWeight: 800, color: "#1A1D1B", marginBottom: 6 }}>Your workout setup</div>
+        <div style={{ fontFamily: HEAVY_FONT, fontSize: "1.35rem", fontWeight: 900, color: "#141414", letterSpacing: "-0.01em", textTransform: "uppercase", lineHeight: 1.05, marginBottom: 6 }}>Your workout setup</div>
         <div style={{ color: "#4B5563", fontSize: "0.85rem", marginBottom: 24 }}>Ailara will build a realistic schedule around your life.</div>
         <div style={{ display: "grid", gap: 16 }}>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
@@ -4852,7 +4944,7 @@ Additional Notes: ${profile.notes || "None"}`;
     // ── STEP 5: Goals (expanded) ───────────────────────────────────────────────
     if (step === 5) return (
       <div>
-        <div style={{ fontSize: "1.2rem", fontFamily: "'Playfair Display',serif", fontWeight: 800, color: "#1A1D1B", marginBottom: 6 }}>What are your goals?</div>
+        <div style={{ fontFamily: HEAVY_FONT, fontSize: "1.35rem", fontWeight: 900, color: "#141414", letterSpacing: "-0.01em", textTransform: "uppercase", lineHeight: 1.05, marginBottom: 6 }}>What are your goals?</div>
         <div style={{ color: "#4B5563", fontSize: "0.85rem", marginBottom: 20 }}>Pick everything that matters to you.</div>
         <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 24 }}>
           {GOALS_LIST.map(g => (
@@ -4865,7 +4957,7 @@ Additional Notes: ${profile.notes || "None"}`;
     // ── STEP 6: Lifestyle ──────────────────────────────────────────────────────
     if (step === 6) return (
       <div>
-        <div style={{ fontSize: "1.2rem", fontFamily: "'Playfair Display',serif", fontWeight: 800, color: "#1A1D1B", marginBottom: 6 }}>Lifestyle & anything else</div>
+        <div style={{ fontFamily: HEAVY_FONT, fontSize: "1.35rem", fontWeight: 900, color: "#141414", letterSpacing: "-0.01em", textTransform: "uppercase", lineHeight: 1.05, marginBottom: 6 }}>Lifestyle & anything else</div>
         <div style={{ color: "#4B5563", fontSize: "0.85rem", marginBottom: 24 }}>Sleep and stress have a huge impact on results. Be honest — Ailara will adapt.</div>
         <div style={{ display: "grid", gap: 16 }}>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
@@ -4877,21 +4969,21 @@ Additional Notes: ${profile.notes || "None"}`;
             <textarea value={profile.notes} onChange={e => setProfile(p => ({...p, notes: e.target.value}))} placeholder="e.g. Bad left knee, on levothyroxine, prefer mornings…" rows={3} style={{ ...inputStyle, resize: "none", lineHeight: 1.6 }}/>
           </div>
         </div>
-        {planError && <div style={{ color: "#DC2626", fontSize: "0.8rem", marginTop: 12, textAlign: "center" }}>{planError}</div>}
+        {planError && <div style={{ color: "#141414", fontSize: "0.8rem", fontWeight: 700, marginTop: 12, border: "1px solid #141414", padding: "8px 12px" }}>{planError}</div>}
       </div>
     );
 
     // ── STEP 7: Loading ────────────────────────────────────────────────────────
     if (step === 7) return (
-      <div style={{ textAlign: "center", padding: "40px 20px" }}>
-        <div style={{ display: "inline-flex", gap: 8, marginBottom: 20 }}>
-          {[0,1,2].map(i => <div key={i} style={{ width: 12, height: 12, borderRadius: "50%", background: ACCENT, animation: `dotPulse 1.3s ease-in-out ${i*0.15}s infinite` }}/>)}
+      <div style={{ padding: "40px 4px" }}>
+        <div style={{ display: "flex", gap: 6, marginBottom: 20 }}>
+          {[0,1,2].map(i => <div key={i} style={{ width: 12, height: 12, background: "#141414", animation: `dotPulse 1.3s ease-in-out ${i*0.15}s infinite` }}/>)}
         </div>
-        <div style={{ fontFamily: "'Playfair Display',serif", fontSize: "1.1rem", fontWeight: 700, color: "#1A1D1B", marginBottom: 8 }}>
-          Building your personalized plan{profile.name ? `, ${profile.name}` : ""}…
+        <div style={{ fontFamily: HEAVY_FONT, fontSize: "1.35rem", fontWeight: 900, color: "#141414", letterSpacing: "-0.01em", textTransform: "uppercase", lineHeight: 1.05, marginBottom: 8 }}>
+          Building your plan{profile.name ? `, ${profile.name}` : ""}…
         </div>
-        <div style={{ color: "#4B5563", fontSize: "0.82rem", lineHeight: 1.7 }}>
-          Analyzing your goals, health conditions,<br/>workout availability, and lifestyle…
+        <div style={{ fontFamily: HEAVY_FONT, fontStyle: "italic", fontWeight: 400, color: "#5B6572", fontSize: "0.9rem", lineHeight: 1.6 }}>
+          Analyzing your goals, health conditions, workout availability, and lifestyle.
         </div>
       </div>
     );
@@ -4902,114 +4994,117 @@ Additional Notes: ${profile.notes || "None"}`;
       return (
         <div style={{ animation: "fadeUp 0.4s ease" }}>
           {greeting && (
-            <div style={{ background: "rgba(16,185,129,0.08)", border: `1px solid rgba(16,185,129,0.25)`, borderRadius: 12, padding: "14px 16px", marginBottom: 16 }}>
-              <div style={{ fontSize: "0.75rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: ACCENT_TEXT, marginBottom: 6 }}>✨ Your Plan is Ready</div>
-              <div style={{ color: ACCENT2_TEXT, fontSize: "0.84rem", lineHeight: 1.6 }}>{greeting}</div>
-              {summary && <div style={{ color: "#4B5563", fontSize: "0.78rem", lineHeight: 1.6, marginTop: 6 }}>{summary}</div>}
+            <div style={{ position: "relative", border: "1px solid #141414", padding: "14px 16px 14px 20px", marginBottom: 16, overflow: "hidden" }}>
+              <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: 4, background: "#F4B400" }} />
+              <div style={{ fontFamily: HEAVY_FONT, fontSize: "0.7rem", fontWeight: 800, letterSpacing: "0.1em", textTransform: "uppercase", color: "#141414", marginBottom: 6 }}>Your plan is ready</div>
+              <div style={{ color: "#141414", fontSize: "0.84rem", lineHeight: 1.6 }}>{greeting}</div>
+              {summary && <div style={{ color: "#5B6572", fontSize: "0.78rem", lineHeight: 1.6, marginTop: 6 }}>{summary}</div>}
             </div>
           )}
           {warning && (
-            <div style={{ background: "rgba(239,68,68,0.07)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: 10, padding: "10px 14px", marginBottom: 14 }}>
-              <div style={{ fontSize: "0.74rem", color: "#DC2626", lineHeight: 1.6 }}>⚠️ {warning}</div>
+            <div style={{ border: "1px solid #141414", padding: "10px 14px", marginBottom: 14 }}>
+              <div style={{ fontSize: "0.74rem", color: "#141414", lineHeight: 1.6 }}>⚠️ {warning}</div>
             </div>
           )}
           {dietPlan && (
-            <div style={{ background: "rgba(16,185,129,0.05)", border: "1px solid rgba(16,185,129,0.2)", borderRadius: 12, padding: "16px", marginBottom: 14 }}>
+            <div style={{ border: "1px solid #141414", padding: "16px", marginBottom: 14 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
                 <span style={{ fontSize: 18 }}>🥗</span>
                 <div>
-                  <div style={{ fontFamily: "'Playfair Display',serif", fontWeight: 800, color: "#1A1D1B", fontSize: "0.95rem" }}>{dietPlan.name}</div>
-                  <div style={{ fontSize: "0.75rem", color: ACCENT_TEXT, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em" }}>Nutrition Plan</div>
+                  <div style={{ fontFamily: HEAVY_FONT, fontWeight: 900, color: "#141414", fontSize: "1rem", letterSpacing: "-0.01em", textTransform: "uppercase", lineHeight: 1.1 }}>{dietPlan.name}</div>
+                  <div style={{ fontFamily: HEAVY_FONT, fontSize: "0.68rem", color: "#5B6572", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.08em" }}>Nutrition Plan</div>
                 </div>
               </div>
-              <div style={{ color: "#4B5563", fontSize: "0.78rem", lineHeight: 1.6, marginBottom: 10 }}>{dietPlan.rationale}</div>
+              <div style={{ color: "#5B6572", fontSize: "0.78rem", lineHeight: 1.6, marginBottom: 10 }}>{dietPlan.rationale}</div>
               {dietPlan.macroTarget && (
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 6, marginBottom: 10 }}>
-                  {[{label:"Cal",val:dietPlan.macroTarget.calories,color:"#92400E"},{label:"Protein",val:dietPlan.macroTarget.protein,color:"#047857"},{label:"Carbs",val:dietPlan.macroTarget.carbs,color:"#1D4ED8"},{label:"Fat",val:dietPlan.macroTarget.fat,color:"#BE185D"}].map(({label,val,color})=>(
-                    <div key={label} style={{background:`${color}12`,border:`1px solid ${color}30`,borderRadius:8,padding:"6px 4px",textAlign:"center"}}>
-                      <div style={{color,fontWeight:800,fontSize:"0.78rem"}}>{val}</div>
-                      <div style={{color:"#6B7280",fontSize:"0.72rem",textTransform:"uppercase",letterSpacing:"0.06em"}}>{label}</div>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 0, marginBottom: 10, border: "1px solid #141414" }}>
+                  {[{label:"Cal",val:dietPlan.macroTarget.calories},{label:"Protein",val:dietPlan.macroTarget.protein},{label:"Carbs",val:dietPlan.macroTarget.carbs},{label:"Fat",val:dietPlan.macroTarget.fat}].map(({label,val},mi)=>(
+                    <div key={label} style={{padding:"8px 4px",textAlign:"center",borderLeft: mi === 0 ? "none" : "1px solid #E6E4DF"}}>
+                      <div style={{fontFamily:HEAVY_FONT,color:"#141414",fontWeight:900,fontSize:"0.85rem"}}>{val}</div>
+                      <div style={{color:"#5B6572",fontSize:"0.68rem",textTransform:"uppercase",letterSpacing:"0.06em"}}>{label}</div>
                     </div>
                   ))}
                 </div>
               )}
               {dietPlan.focusFoods?.length > 0 && (
                 <div style={{ marginBottom: 8 }}>
-                  <div style={{ fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "#6B7280", marginBottom: 5 }}>Focus Foods</div>
+                  <div style={{ fontFamily: HEAVY_FONT, fontSize: "0.68rem", fontWeight: 800, letterSpacing: "0.08em", textTransform: "uppercase", color: "#141414", marginBottom: 5 }}>Focus Foods</div>
                   <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
-                    {dietPlan.focusFoods.map((f, i) => <span key={i} style={{ fontSize: "0.78rem", color: ACCENT2_TEXT, background: "rgba(16,185,129,0.08)", border: `1px solid rgba(16,185,129,0.2)`, padding: "2px 8px", borderRadius: 20 }}>{f}</span>)}
+                    {dietPlan.focusFoods.map((f, i) => <span key={i} style={{ fontSize: "0.78rem", color: "#141414", border: "1px solid #141414", padding: "2px 8px", borderRadius: 4 }}>{f}</span>)}
                   </div>
                 </div>
               )}
               {dietPlan.avoidFoods?.length > 0 && (
                 <div>
-                  <div style={{ fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "#6B7280", marginBottom: 5 }}>Limit / Avoid</div>
+                  <div style={{ fontFamily: HEAVY_FONT, fontSize: "0.68rem", fontWeight: 800, letterSpacing: "0.08em", textTransform: "uppercase", color: "#141414", marginBottom: 5 }}>Limit / Avoid</div>
                   <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
-                    {dietPlan.avoidFoods.map((f, i) => <span key={i} style={{ fontSize: "0.78rem", color: "#4B5563", background: "rgba(239,68,68,0.07)", border: `1px solid rgba(239,68,68,0.2)`, padding: "2px 8px", borderRadius: 20 }}>{f}</span>)}
+                    {dietPlan.avoidFoods.map((f, i) => <span key={i} style={{ fontSize: "0.78rem", color: "#5B6572", border: "1px solid #E6E4DF", padding: "2px 8px", borderRadius: 4 }}>{f}</span>)}
                   </div>
                 </div>
               )}
               {dietPlan.tips?.length > 0 && (
                 <div style={{ display: "grid", gap: 4, marginTop: 8 }}>
-                  {dietPlan.tips.map((t, i) => <div key={i} style={{ fontSize: "0.74rem", color: "#4B5563", display: "flex", gap: 6, alignItems: "flex-start" }}><span style={{ color: ACCENT_TEXT, flexShrink: 0 }}>◆</span>{t}</div>)}
+                  {dietPlan.tips.map((t, i) => <div key={i} style={{ fontSize: "0.74rem", color: "#5B6572", display: "flex", gap: 6, alignItems: "flex-start" }}><span style={{ color: "#F4B400", flexShrink: 0 }}>◆</span>{t}</div>)}
                 </div>
               )}
             </div>
           )}
           {exercisePlan && (
-            <div style={{ background: "rgba(59,130,246,0.05)", border: "1px solid rgba(59,130,246,0.2)", borderRadius: 12, padding: "16px", marginBottom: 14 }}>
+            <div style={{ border: "1px solid #141414", padding: "16px", marginBottom: 14 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
                 <span style={{ fontSize: 18 }}>🏋️</span>
                 <div>
-                  <div style={{ fontFamily: "'Playfair Display',serif", fontWeight: 800, color: "#1A1D1B", fontSize: "0.95rem" }}>{exercisePlan.name}</div>
-                  <div style={{ fontSize: "0.75rem", color: "#1D4ED8", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em" }}>Exercise Plan</div>
+                  <div style={{ fontFamily: HEAVY_FONT, fontWeight: 900, color: "#141414", fontSize: "1rem", letterSpacing: "-0.01em", textTransform: "uppercase", lineHeight: 1.1 }}>{exercisePlan.name}</div>
+                  <div style={{ fontFamily: HEAVY_FONT, fontSize: "0.68rem", color: "#5B6572", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.08em" }}>Exercise Plan</div>
                 </div>
                 <div style={{ marginLeft: "auto" }}>
-                  <span style={{ fontSize: "0.72rem", fontWeight: 700, color: "#1D4ED8", background: "rgba(59,130,246,0.1)", border: "1px solid rgba(59,130,246,0.25)", padding: "2px 8px", borderRadius: 8 }}>{exercisePlan.intensityLevel}</span>
+                  <span style={{ fontFamily: HEAVY_FONT, fontSize: "0.68rem", fontWeight: 800, color: "#141414", background: "#F4B400", padding: "3px 8px", borderRadius: 4, textTransform: "uppercase", letterSpacing: "0.04em" }}>{exercisePlan.intensityLevel}</span>
                 </div>
               </div>
-              <div style={{ color: "#4B5563", fontSize: "0.78rem", lineHeight: 1.6, marginBottom: 12 }}>{exercisePlan.rationale}</div>
+              <div style={{ color: "#5B6572", fontSize: "0.78rem", lineHeight: 1.6, marginBottom: 12 }}>{exercisePlan.rationale}</div>
               {exercisePlan.weeklySchedule?.length > 0 && (
-                <div style={{ display: "grid", gap: 6, marginBottom: 12 }}>
-                  <div style={{ fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "#6B7280", marginBottom: 2 }}>📅 Weekly Schedule</div>
-                  {exercisePlan.weeklySchedule.map((d, i) => (
-                    <div key={i} style={{ display: "flex", gap: 10, alignItems: "flex-start", background: "rgba(0,0,0,0.02)", border: `1px solid ${BORDER}`, borderRadius: 8, padding: "8px 12px" }}>
-                      <div style={{ width: 32, flexShrink: 0, textAlign: "center" }}>
-                        <div style={{ fontSize: "0.72rem", fontWeight: 800, color: dayColor(d.focus), textTransform: "uppercase", letterSpacing: "0.06em" }}>{(d.day || "").slice(0,3)}</div>
-                      </div>
-                      <div style={{ flex: 1 }}>
-                        <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 2 }}>
-                          <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#1A1D1B" }}>{d.focus}</span>
-                          {d.duration && <span style={{ fontSize: "0.72rem", color: "#6B7280", background: "rgba(0,0,0,0.04)", border: `1px solid ${BORDER}`, padding: "1px 6px", borderRadius: 6 }}>⏱ {d.duration}</span>}
+                <div style={{ marginBottom: 12 }}>
+                  <div style={{ fontFamily: HEAVY_FONT, fontSize: "0.68rem", fontWeight: 800, letterSpacing: "0.08em", textTransform: "uppercase", color: "#141414", marginBottom: 6 }}>Weekly Schedule</div>
+                  <div style={{ border: "1px solid #141414" }}>
+                    {exercisePlan.weeklySchedule.map((d, i) => (
+                      <div key={i} style={{ display: "flex", gap: 10, alignItems: "flex-start", borderTop: i === 0 ? "none" : "1px solid #E6E4DF", padding: "8px 12px" }}>
+                        <div style={{ width: 30, flexShrink: 0 }}>
+                          <div style={{ fontFamily: HEAVY_FONT, fontSize: "0.72rem", fontWeight: 900, color: dayColor(d.focus), textTransform: "uppercase", letterSpacing: "0.04em" }}>{(d.day || "").slice(0,3)}</div>
                         </div>
-                        {d.description && <div style={{ fontSize: "0.72rem", color: "#4B5563", lineHeight: 1.5 }}>{d.description}</div>}
+                        <div style={{ flex: 1 }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 2 }}>
+                            <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#141414" }}>{d.focus}</span>
+                            {d.duration && <span style={{ fontSize: "0.72rem", color: "#5B6572", border: "1px solid #E6E4DF", padding: "1px 6px", borderRadius: 4 }}>⏱ {d.duration}</span>}
+                          </div>
+                          {d.description && <div style={{ fontSize: "0.72rem", color: "#5B6572", lineHeight: 1.5 }}>{d.description}</div>}
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
               )}
               {exercisePlan.tips?.length > 0 && (
                 <div style={{ display: "grid", gap: 4 }}>
-                  {exercisePlan.tips.map((t, i) => <div key={i} style={{ fontSize: "0.74rem", color: "#4B5563", display: "flex", gap: 6, alignItems: "flex-start" }}><span style={{ color: "#1D4ED8", flexShrink: 0 }}>◆</span>{t}</div>)}
+                  {exercisePlan.tips.map((t, i) => <div key={i} style={{ fontSize: "0.74rem", color: "#5B6572", display: "flex", gap: 6, alignItems: "flex-start" }}><span style={{ color: "#F4B400", flexShrink: 0 }}>◆</span>{t}</div>)}
                 </div>
               )}
             </div>
           )}
           {topSupplements?.length > 0 && (
-            <div style={{ background: "rgba(245,158,11,0.05)", border: "1px solid rgba(245,158,11,0.2)", borderRadius: 12, padding: "14px 16px", marginBottom: 14 }}>
-              <div style={{ fontSize: "0.75rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "#92400E", marginBottom: 10 }}>💊 Top Supplement Recommendations</div>
+            <div style={{ border: "1px solid #141414", padding: "14px 16px", marginBottom: 14 }}>
+              <div style={{ fontFamily: HEAVY_FONT, fontSize: "0.7rem", fontWeight: 800, letterSpacing: "0.1em", textTransform: "uppercase", color: "#141414", marginBottom: 10 }}>Top Supplements</div>
               <div style={{ display: "grid", gap: 6 }}>
                 {topSupplements.map((s, i) => (
-                  <div key={i} style={{ fontSize: "0.78rem", color: "#4B5563", display: "flex", gap: 8, alignItems: "flex-start" }}>
-                    <span style={{ color: "#92400E", fontWeight: 700, flexShrink: 0 }}>{i+1}.</span>
+                  <div key={i} style={{ fontSize: "0.78rem", color: "#5B6572", display: "flex", gap: 8, alignItems: "flex-start" }}>
+                    <span style={{ fontFamily: HEAVY_FONT, color: "#141414", fontWeight: 900, flexShrink: 0 }}>{String(i+1).padStart(2,"0")}</span>
                     <span>{s}</span>
                   </div>
                 ))}
               </div>
             </div>
           )}
-          <div style={{ background: "rgba(16,185,129,0.06)", border: `1px solid rgba(16,185,129,0.2)`, borderRadius: 10, padding: "12px 14px", fontSize: "0.76rem", color: "#4B5563", lineHeight: 1.6, textAlign: "center" }}>
-            Your plan is ready 🎉 Explore the full app — workouts, meal planner, supplements, AI coach!
+          <div style={{ background: "#F4B400", padding: "12px 14px", fontFamily: HEAVY_FONT, fontSize: "0.78rem", fontWeight: 800, color: "#141414", lineHeight: 1.5, textTransform: "uppercase", letterSpacing: "0.02em" }}>
+            Plan ready. Explore workouts, meals, supplements, and your AI coach.
           </div>
         </div>
       );
@@ -5021,23 +5116,25 @@ Additional Notes: ${profile.notes || "None"}`;
   const DEEP_STEPS = 6;
   const deepStep = step - 1; // 0-indexed within deep flow
 
+  const CTA = { background: "#F4B400", border: "none", color: "#141414", padding: "11px 24px", borderRadius: 4, cursor: "pointer", fontSize: "0.85rem", fontFamily: HEAVY_FONT, fontWeight: 800, letterSpacing: "0.03em" };
+
   return (
     <div style={{ maxWidth: 520, margin: "0 auto", padding: "20px" }}>
 
       {/* Progress bar — only for deep profile steps 1–6 */}
       {step >= 1 && step <= DEEP_STEPS && (
         <div style={{ marginBottom: 20 }}>
-          <div style={{ display: "flex", gap: 5, marginBottom: 8 }}>
+          <div style={{ display: "flex", gap: 4, marginBottom: 8 }}>
             {Array.from({ length: DEEP_STEPS }).map((_, i) => (
-              <div key={i} style={{ flex: 1, height: 3, borderRadius: 2, background: i <= deepStep ? ACCENT : "rgba(16,185,129,0.25)", transition: "background 0.3s" }}/>
+              <div key={i} style={{ flex: 1, height: 4, background: i <= deepStep ? "#F4B400" : "#E6E4DF", transition: "background 0.3s" }}/>
             ))}
           </div>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-            <div style={{ fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "#6B7280" }}>
-              Step {deepStep + 1} of {DEEP_STEPS}
+            <div style={{ fontFamily: HEAVY_FONT, fontSize: "0.7rem", fontWeight: 800, letterSpacing: "0.08em", textTransform: "uppercase", color: "#141414" }}>
+              Step {deepStep + 1} / {DEEP_STEPS}
             </div>
             <button onClick={() => onComplete({ ...profile, _quickEntry: true })}
-              style={{ background: "none", border: "none", color: "#6B7280", fontSize: "0.78rem", cursor: "pointer", fontFamily: "'Inter',sans-serif", textDecoration: "underline", textDecorationStyle: "dotted" }}>
+              style={{ background: "none", border: "none", color: "#5B6572", fontSize: "0.76rem", cursor: "pointer", fontFamily: "'Inter',sans-serif", textDecoration: "underline" }}>
               Skip — enter app now →
             </button>
           </div>
@@ -5052,15 +5149,15 @@ Additional Notes: ${profile.notes || "None"}`;
       {step !== 0 && step !== 7 && (
         <div style={{ display: "flex", justifyContent: "space-between", marginTop: 24 }}>
           {step > 1 && step !== 8
-            ? <button onClick={() => setStep(s => s - 1)} style={{ background: "transparent", border: `1px solid ${BORDER}`, color: "#4B5563", padding: "10px 20px", borderRadius: 10, cursor: "pointer", fontSize: "0.85rem", fontFamily: "'Inter',sans-serif" }}>← Back</button>
+            ? <button onClick={() => setStep(s => s - 1)} style={{ background: "#FFFFFF", border: "1px solid #141414", color: "#141414", padding: "11px 20px", borderRadius: 4, cursor: "pointer", fontSize: "0.82rem", fontFamily: HEAVY_FONT, fontWeight: 700 }}>← BACK</button>
             : <div/>
           }
           {step >= 1 && step < DEEP_STEPS
-            ? <button onClick={() => setStep(s => s + 1)} style={{ background: ACCENT, border: "none", color: "white", padding: "10px 24px", borderRadius: 10, cursor: "pointer", fontSize: "0.85rem", fontFamily: "'Inter',sans-serif", fontWeight: 600, boxShadow: "0 0 16px rgba(16,185,129,0.3)" }}>Continue →</button>
+            ? <button onClick={() => setStep(s => s + 1)} style={CTA}>CONTINUE →</button>
             : step === DEEP_STEPS
-              ? <button onClick={generatePlan} style={{ background: ACCENT, border: "none", color: "white", padding: "10px 28px", borderRadius: 10, cursor: "pointer", fontSize: "0.9rem", fontFamily: "'Inter',sans-serif", fontWeight: 700, boxShadow: "0 0 20px rgba(16,185,129,0.4)" }}>✨ Build My Plan</button>
+              ? <button onClick={generatePlan} style={CTA}>BUILD MY PLAN</button>
               : step === 8
-                ? <button onClick={() => onComplete({ ...profile, generatedPlan })} style={{ background: ACCENT, border: "none", color: "white", padding: "10px 28px", borderRadius: 10, cursor: "pointer", fontSize: "0.9rem", fontFamily: "'Inter',sans-serif", fontWeight: 700, boxShadow: "0 0 20px rgba(16,185,129,0.4)" }}>Enter AILARA →</button>
+                ? <button onClick={() => onComplete({ ...profile, generatedPlan })} style={CTA}>ENTER AILARA →</button>
                 : null
           }
         </div>
@@ -5201,9 +5298,9 @@ function MealPlanner({ profile, isPro, onUpgrade, plansUsed: plansUsedProp, setP
       icon: "🔥",
       name: "Fat Shred",
       tagline: "High protein · Low carb · Cut body fat",
-      color: "#DC2626",
-      bg: "rgba(239,68,68,0.08)",
-      border: "rgba(239,68,68,0.3)",
+      color: "#E8836B",
+      bg: "#FFFBF4",
+      border: "#EFE5D6",
       split: "~50% protein · 30% carbs · 20% fat",
       desc: "Built for cutting, contest prep, or serious fat loss. High protein preserves muscle while a calorie deficit melts fat. Calories calculated from your personal TDEE — not a generic number.",
       good: ["Fat loss", "Contest prep", "Body recomposition"],
@@ -5213,9 +5310,9 @@ function MealPlanner({ profile, isPro, onUpgrade, plansUsed: plansUsedProp, setP
       icon: "⚖️",
       name: "Balance Booster",
       tagline: "Balanced macros · Sustainable · Whole foods",
-      color: "#047857",
-      bg: "rgba(16,185,129,0.08)",
-      border: "rgba(16,185,129,0.3)",
+      color: "#7FA891",
+      bg: "#FFFBF4",
+      border: "#EFE5D6",
       split: "~40% carbs · 30% protein · 30% fat",
       desc: "Flexible, sustainable eating for long-term body recomposition. Based on AthleanX X-Factor plate method — maintenance calories personalised to your height, weight, and activity level.",
       good: ["General fitness", "Body recomposition", "Long-term health"],
@@ -5225,9 +5322,9 @@ function MealPlanner({ profile, isPro, onUpgrade, plansUsed: plansUsedProp, setP
       icon: "⚡",
       name: "Endurance Plan",
       tagline: "Higher carbs · Performance fuel · Athlete nutrition",
-      color: "#1D4ED8",
-      bg: "rgba(59,130,246,0.08)",
-      border: "rgba(59,130,246,0.3)",
+      color: "#EE9C5B",
+      bg: "#FFFBF4",
+      border: "#EFE5D6",
       split: "~55% carbs · 25% protein · 20% fat",
       desc: "Designed for endurance athletes and high-volume training. Strategic carb timing before and after workouts fuels performance and recovery. Calories set ~300 above your personal TDEE.",
       good: ["Running / cycling", "High-volume training", "Athletic performance"],
@@ -5237,9 +5334,9 @@ function MealPlanner({ profile, isPro, onUpgrade, plansUsed: plansUsedProp, setP
       icon: "💪",
       name: "Mass Builder",
       tagline: "High protein · High calorie · 6 meals/day",
-      color: "#7C3AED",
-      bg: "rgba(139,92,246,0.08)",
-      border: "rgba(139,92,246,0.3)",
+      color: "#3C5A4A",
+      bg: "#FFFBF4",
+      border: "#EFE5D6",
       split: "~45% carbs · 35% protein · 20% fat",
       desc: "Serious muscle-building protocol. ~700 kcal surplus above your personal TDEE, 1.2g protein per lb of bodyweight, 6 strategic meals daily to maximise anabolic windows. Same high-quality recipes as Fat Shred — just more of them.",
       good: ["Muscle gain / bulk", "Hardgainers", "Post-cut rebound"],
@@ -5376,7 +5473,10 @@ function MealPlanner({ profile, isPro, onUpgrade, plansUsed: plansUsedProp, setP
     setLoading(false);
   };
 
-  const MEAL_COLORS = { Breakfast: "#D97706", Lunch: "#10B981", Dinner: "#4338CA", Snack: "#BE185D", "Pre-Workout": "#1D4ED8", "Post-Workout": "#7C3AED" };
+  // Meal-type accent — the shared 6-tone palette set (badge tint only).
+  const MEAL_COLORS = { Breakfast: "#C79245", Lunch: "#7FA891", Dinner: "#3C5A4A", Snack: "#E8836B", "Pre-Workout": "#EE9C5B", "Post-Workout": "#7FA891" };
+  // Macro identity — 4 distinct palette tones, used consistently everywhere macros appear.
+  const MACRO = { cal: "#C79245", protein: "#3C5A4A", carbs: "#7FA891", fat: "#E8836B" };
 
   // Keyword-matched food icon for meal cards. This is a deliberate stand-in
   // for real food photography: a hotlinkable image API without an API key
@@ -5497,10 +5597,10 @@ function MealPlanner({ profile, isPro, onUpgrade, plansUsed: plansUsedProp, setP
 
         {/* Free tier usage banner */}
         {!isPro && (
-          <div style={{ background: atLimit ? "rgba(239,68,68,0.08)" : "rgba(245,158,11,0.08)", border: `1px solid ${atLimit ? "rgba(239,68,68,0.3)" : "rgba(245,158,11,0.3)"}`, borderRadius: 12, padding: "12px 16px", marginBottom: 16, display: "flex", alignItems: "center", gap: 12 }}>
+          <div style={{ background: W.blush, border: `1px solid ${W.haze}`, borderRadius: 16, padding: "12px 16px", marginBottom: 16, display: "flex", alignItems: "center", gap: 12, boxShadow: W.shadowRest }}>
             <span style={{ fontSize: 22, flexShrink: 0 }}>{atLimit ? "🔒" : "💡"}</span>
             <div style={{ flex: 1 }}>
-              <div style={{ fontWeight: 700, color: atLimit ? "#DC2626" : "#92400E", fontSize: "0.8rem", marginBottom: 2 }}>
+              <div style={{ fontWeight: 700, color: atLimit ? "#E8836B" : "#3C5A4A", fontSize: "0.8rem", marginBottom: 2 }}>
                 {atLimit ? "Free plan limit reached" : `Free plan: ${FREE_PLAN_LIMIT - plansUsed} remaining`}
               </div>
               <div style={{ color: "#6B7280", fontSize: "0.8rem" }}>
@@ -5508,14 +5608,14 @@ function MealPlanner({ profile, isPro, onUpgrade, plansUsed: plansUsedProp, setP
               </div>
             </div>
             <button onClick={() => onUpgrade("Upgrade for unlimited meal plans")}
-              style={{ flexShrink: 0, background: atLimit ? "#DC2626" : "#D97706", border: "none", borderRadius: 9, padding: "7px 13px", color: "white", cursor: "pointer", fontSize: "0.8rem", fontFamily: "'Inter',sans-serif", fontWeight: 700 }}>
+              style={{ flexShrink: 0, background: atLimit ? "#E8836B" : "#EE9C5B", border: "none", borderRadius: 999, padding: "7px 14px", color: "white", cursor: "pointer", fontSize: "0.8rem", fontFamily: "'Inter',sans-serif", fontWeight: 700 }}>
               {atLimit ? "Upgrade" : "Go Pro"}
             </button>
           </div>
         )}
 
         {isPro && (
-          <div style={{ background: "rgba(245,158,11,0.06)", border: "1px solid rgba(245,158,11,0.2)", borderRadius: 12, padding: "9px 14px", marginBottom: 16, display: "flex", alignItems: "center", gap: 8 }}>
+          <div style={{ background: W.cream, border: `1px solid ${W.haze}`, borderRadius: 14, padding: "9px 14px", marginBottom: 16, display: "flex", alignItems: "center", gap: 8, boxShadow: W.shadowRest }}>
             <span style={{ fontSize: 16 }}>👑</span>
             <span style={{ fontSize: "0.72rem", color: "#92400E", fontWeight: 700 }}>Pro: Unlimited meal plan generations</span>
           </div>
@@ -5526,18 +5626,18 @@ function MealPlanner({ profile, isPro, onUpgrade, plansUsed: plansUsedProp, setP
             const isRecommended = recommendedPlanId === opt.id;
             const isPopular = !isRecommended && opt.id === "BALANCE BOOSTER";
             return (
-            <div key={opt.id} style={{ position: "relative", background: opt.bg, border: `${isRecommended ? 2 : 1}px solid ${isRecommended ? opt.color : opt.border}`, borderRadius: 14, padding: "20px", cursor: "pointer", transition: "transform 0.15s", boxShadow: isRecommended ? `0 0 0 4px ${opt.color}12` : "none" }}
-              onMouseEnter={e => e.currentTarget.style.transform = "translateY(-2px)"}
-              onMouseLeave={e => e.currentTarget.style.transform = "translateY(0)"}>
+            <div key={opt.id} style={{ position: "relative", background: "#FFFBF4", border: `${isRecommended ? 2 : 1}px solid ${isRecommended ? opt.color : "#EFE5D6"}`, borderRadius: 18, padding: "20px", cursor: "pointer", transition: "transform 0.15s, box-shadow 0.15s", boxShadow: "0 4px 16px rgba(120,90,55,0.08)" }}
+              onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 10px 30px rgba(120,90,55,0.12)"; }}
+              onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 4px 16px rgba(120,90,55,0.08)"; }}>
               {(isRecommended || isPopular) && (
-                <div style={{ position: "absolute", top: -11, left: 16, background: opt.color, color: "white", fontSize: "0.68rem", fontWeight: 800, padding: "3px 10px", borderRadius: 20, letterSpacing: "0.03em", boxShadow: `0 2px 8px ${opt.color}50` }}>
+                <div style={{ position: "absolute", top: -11, left: 16, background: opt.color, color: "white", fontSize: "0.68rem", fontWeight: 800, padding: "3px 10px", borderRadius: 999, letterSpacing: "0.03em" }}>
                   {isRecommended ? "✨ Recommended for you" : "🔥 Most popular"}
                 </div>
               )}
               <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12 }}>
                 <div style={{ flex: 1 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
-                    <div style={{ width: 46, height: 46, borderRadius: 13, flexShrink: 0, background: `linear-gradient(135deg,${opt.color}28,${opt.color}0D)`, border: `1px solid ${opt.color}35`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24 }}>{opt.icon}</div>
+                    <div style={{ width: 46, height: 46, borderRadius: 999, flexShrink: 0, background: "#E7F0EA", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24 }}>{opt.icon}</div>
                     <div>
                       <div style={{ fontFamily: "'Playfair Display',serif", fontWeight: 800, fontSize: "1.05rem", color: "#1A1D1B" }}>{opt.name}</div>
                       <div style={{ fontSize: "0.72rem", color: opt.color, fontWeight: 600 }}>{opt.tagline}</div>
@@ -5545,12 +5645,12 @@ function MealPlanner({ profile, isPro, onUpgrade, plansUsed: plansUsedProp, setP
                   </div>
                   <div style={{ fontSize: "0.78rem", color: "#4B5563", lineHeight: 1.6, marginBottom: 10 }}>{opt.desc}</div>
                   <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 12 }}>
-                    <span style={{ fontSize: "0.75rem", color: opt.color, background: `${opt.color}18`, border: `1px solid ${opt.color}40`, padding: "2px 10px", borderRadius: 8, fontWeight: 700 }}>📊 {opt.split}</span>
-                    {opt.good.map(g => <span key={g} style={{ fontSize: "0.75rem", color: "#4B5563", background: "rgba(0,0,0,0.04)", border: `1px solid ${BORDER}`, padding: "2px 9px", borderRadius: 8 }}>✓ {g}</span>)}
+                    <span style={{ fontSize: "0.75rem", color: opt.color, background: `${opt.color}1A`, border: `1px solid ${opt.color}33`, padding: "2px 10px", borderRadius: 999, fontWeight: 700 }}>📊 {opt.split}</span>
+                    {opt.good.map(g => <span key={g} style={{ fontSize: "0.75rem", color: "#94897A", background: "#FCF7F0", border: "1px solid #EFE5D6", padding: "2px 9px", borderRadius: 999 }}>✓ {g}</span>)}
                   </div>
                 </div>
               </div>
-              <button onClick={() => generate(opt.id)} style={{ width: "100%", background: opt.color, border: "none", color: "white", padding: "11px", borderRadius: 10, cursor: "pointer", fontSize: "0.85rem", fontWeight: 700, fontFamily: "'Inter',sans-serif", boxShadow: `0 0 20px ${opt.color}40` }}>
+              <button onClick={() => generate(opt.id)} style={{ width: "100%", background: opt.color, border: "none", color: "white", padding: "11px", borderRadius: 12, cursor: "pointer", fontSize: "0.85rem", fontWeight: 700, fontFamily: "'Inter',sans-serif", boxShadow: "0 4px 16px rgba(120,90,55,0.08)" }}>
                 Generate {opt.name} Plan →
               </button>
             </div>
@@ -5588,7 +5688,7 @@ function MealPlanner({ profile, isPro, onUpgrade, plansUsed: plansUsedProp, setP
   return (
     <div style={{ maxWidth: 700, margin: "0 auto", padding: "16px 16px 80px", animation: "fadeUp 0.3s ease" }}>
       {/* Plan header */}
-      <div style={{ background: planOpt.bg, border: `1px solid ${planOpt.border}`, borderRadius: 12, padding: "14px 16px", marginBottom: 16 }}>
+      <div style={{ background: W.cream, border: `1px solid ${W.haze}`, borderRadius: 18, padding: "14px 16px", marginBottom: 16, boxShadow: W.shadowRest }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 10 }}>
           <div>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 3 }}>
@@ -5598,15 +5698,15 @@ function MealPlanner({ profile, isPro, onUpgrade, plansUsed: plansUsedProp, setP
             <div style={{ fontSize: "0.72rem", color: planOpt.color, fontWeight: 600 }}>{plan?.macroSplit}</div>
           </div>
           <div style={{ display:"flex", gap:8, flexWrap:"wrap", alignItems:"center" }}>
-            <button onClick={() => { setPlan(null); setPlanType(null); clearSavedPlan(); }} style={{ background: "transparent", border: `1px solid ${BORDER}`, color: "#4B5563", padding: "6px 14px", borderRadius: 8, cursor: "pointer", fontSize: "0.75rem" }}>← Change Plan</button>
+            <button onClick={() => { setPlan(null); setPlanType(null); clearSavedPlan(); }} style={{ background: W.cream, border: `1px solid ${W.haze}`, color: W.taupe, padding: "6px 14px", borderRadius: 999, cursor: "pointer", fontSize: "0.75rem" }}>← Change Plan</button>
             {plan && (
               <>
                 <button onClick={() => setShareModal({ type:"mealDay", data:{ plan, planName:plan?.planType||planOpt.name, dayIndex:activeDay, dayLabel:DAY_LABELS[activeDay]||`Day ${activeDay+1}` } })}
-                  style={{ background:"rgba(16,185,129,0.1)", border:"1px solid rgba(16,185,129,0.3)", color:"#0F766E", padding:"6px 12px", borderRadius:8, cursor:"pointer", fontSize:"0.72rem", fontFamily:"'Inter',sans-serif", fontWeight:600, display:"flex", alignItems:"center", gap:5 }}>
+                  style={{ background:W.tileSage, border:"none", color:"#3C5A4A", padding:"6px 12px", borderRadius:999, cursor:"pointer", fontSize:"0.72rem", fontFamily:"'Inter',sans-serif", fontWeight:600, display:"flex", alignItems:"center", gap:5 }}>
                   📤 Share Day
                 </button>
                 <button onClick={() => setShareModal({ type:"mealWeek", data:{ plan, planName:plan?.planType||planOpt.name } })}
-                  style={{ background:"rgba(16,185,129,0.07)", border:"1px solid rgba(16,185,129,0.2)", color:"#4B5563", padding:"6px 12px", borderRadius:8, cursor:"pointer", fontSize:"0.72rem", fontFamily:"'Inter',sans-serif", fontWeight:600, display:"flex", alignItems:"center", gap:5 }}>
+                  style={{ background:W.cream, border:`1px solid ${W.haze}`, color:W.taupe, padding:"6px 12px", borderRadius:999, cursor:"pointer", fontSize:"0.72rem", fontFamily:"'Inter',sans-serif", fontWeight:600, display:"flex", alignItems:"center", gap:5 }}>
                   📤 Full Week
                 </button>
               </>
@@ -5618,7 +5718,7 @@ function MealPlanner({ profile, isPro, onUpgrade, plansUsed: plansUsedProp, setP
         {plan?.keyPrinciples?.length > 0 && (
           <div style={{ marginTop: 10, display: "flex", gap: 6, flexWrap: "wrap" }}>
             {plan.keyPrinciples.map((p, i) => (
-              <span key={i} style={{ fontSize: "0.77rem", color: "#4B5563", background: "rgba(0,0,0,0.04)", border: `1px solid ${BORDER}`, padding: "3px 9px", borderRadius: 8 }}>◆ {p}</span>
+              <span key={i} style={{ fontSize: "0.77rem", color: W.taupe, background: W.sand, border: `1px solid ${W.haze}`, padding: "3px 9px", borderRadius: 999 }}>◆ {p}</span>
             ))}
           </div>
         )}
@@ -5626,23 +5726,23 @@ function MealPlanner({ profile, isPro, onUpgrade, plansUsed: plansUsedProp, setP
 
       {/* Daily targets */}
       {plan?.tdeeInfo?.tdee && (
-        <div style={{ background:"rgba(139,92,246,0.06)", border:"1px solid rgba(139,92,246,0.2)", borderRadius:10, padding:"10px 14px", marginBottom:12, display:"flex", gap:12, flexWrap:"wrap", alignItems:"center" }}>
+        <div style={{ background:W.cream, border:`1px solid ${W.haze}`, borderRadius:14, padding:"10px 14px", marginBottom:12, display:"flex", gap:12, flexWrap:"wrap", alignItems:"center", boxShadow:W.shadowRest }}>
           <span style={{ fontSize:13 }}>🧮</span>
-          <div style={{ fontSize:"0.75rem", color:"#7C3AED", lineHeight:1.5 }}>
-            <strong style={{ color:"#7C3AED" }}>Personalised Targets</strong> — BMR: <strong>{plan.tdeeInfo.bmr} kcal</strong> · TDEE: <strong>{plan.tdeeInfo.tdee} kcal</strong> · Meals/day: <strong>{plan.tdeeInfo.mealCount}</strong>
-            <span style={{ color:"#6D28D9", marginLeft:8 }}>Calculated via Mifflin-St Jeor from your height, weight & activity level</span>
+          <div style={{ fontSize:"0.75rem", color:"#3C5A4A", lineHeight:1.5 }}>
+            <strong style={{ color:"#3C5A4A" }}>Personalised Targets</strong> — BMR: <strong>{plan.tdeeInfo.bmr} kcal</strong> · TDEE: <strong>{plan.tdeeInfo.tdee} kcal</strong> · Meals/day: <strong>{plan.tdeeInfo.mealCount}</strong>
+            <span style={{ color:W.taupe, marginLeft:8 }}>Calculated via Mifflin-St Jeor from your height, weight & activity level</span>
           </div>
         </div>
       )}
       {plan?.dailyTarget && (
         <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 8, marginBottom: 16 }}>
           {[
-            { label: "Calories", val: plan.dailyTarget.calories, unit: "kcal", color: "#92400E" },
-            { label: "Protein", val: plan.dailyTarget.protein, unit: "g", color: "#047857" },
-            { label: "Carbs", val: plan.dailyTarget.carbs, unit: "g", color: "#1D4ED8" },
-            { label: "Fat", val: plan.dailyTarget.fat, unit: "g", color: "#BE185D" },
+            { label: "Calories", val: plan.dailyTarget.calories, unit: "kcal", color: MACRO.cal },
+            { label: "Protein", val: plan.dailyTarget.protein, unit: "g", color: MACRO.protein },
+            { label: "Carbs", val: plan.dailyTarget.carbs, unit: "g", color: MACRO.carbs },
+            { label: "Fat", val: plan.dailyTarget.fat, unit: "g", color: MACRO.fat },
           ].map(({ label, val, unit, color }) => (
-            <div key={label} style={{ background: `${color}10`, border: `1px solid ${color}30`, borderRadius: 9, padding: "10px 8px", textAlign: "center" }}>
+            <div key={label} style={{ background: `${color}14`, border: `1px solid ${color}30`, borderRadius: 12, padding: "10px 8px", textAlign: "center" }}>
               <div style={{ color, fontSize: "1rem", fontWeight: 800 }}>{val}<span style={{ fontSize: "0.72rem", color: "#4B5563", fontWeight: 400 }}>{unit}</span></div>
               <div style={{ color: "#6B7280", fontSize: "0.72rem", textTransform: "uppercase", letterSpacing: "0.08em" }}>{label}</div>
             </div>
@@ -5653,7 +5753,7 @@ function MealPlanner({ profile, isPro, onUpgrade, plansUsed: plansUsedProp, setP
       {/* Day tabs */}
       <div style={{ display: "flex", gap: 5, marginBottom: 16, overflowX: "auto", paddingBottom: 4 }}>
         {plan?.days?.map((d, i) => (
-          <button key={i} onClick={() => { setActiveDay(i); try { window.storage.set("ailara:mealPlanDay", String(i)); } catch {} }} style={{ flexShrink: 0, padding: "6px 11px", borderRadius: 8, border: `1px solid ${i === activeDay ? planOpt.color : BORDER}`, background: i === activeDay ? `${planOpt.color}20` : "transparent", color: i === activeDay ? planOpt.color : "#4B5563", cursor: "pointer", fontSize: "0.72rem", fontWeight: 700, transition: "all 0.15s" }}>
+          <button key={i} onClick={() => { setActiveDay(i); try { window.storage.set("ailara:mealPlanDay", String(i)); } catch {} }} style={{ flexShrink: 0, padding: "6px 12px", borderRadius: 999, border: `1px solid ${i === activeDay ? "rgba(127,168,145,0.5)" : W.haze}`, background: i === activeDay ? W.tileSage : W.cream, color: i === activeDay ? "#3C5A4A" : W.taupe, cursor: "pointer", fontSize: "0.72rem", fontWeight: 700, transition: "all 0.15s" }}>
             {(d.day || DAY_LABELS[i] || `Day ${i+1}`).slice(0,3).toUpperCase()}
           </button>
         ))}
@@ -5664,28 +5764,28 @@ function MealPlanner({ profile, isPro, onUpgrade, plansUsed: plansUsedProp, setP
         {plan?.days?.[activeDay]?.meals?.map((meal, i) => {
           const matched = matchRecipe(meal.name, meal.type);
           return (
-          <div key={i} style={{ background: SURFACE, border: `1px solid ${BORDER}`, borderRadius: 10, padding: "14px 16px" }}>
+          <div key={i} style={{ background: W.cream, border: `1px solid ${W.haze}`, borderRadius: 16, padding: "14px 16px", boxShadow: W.shadowRest }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 12 }}>
-              <div style={{ width: 44, height: 44, borderRadius: 12, flexShrink: 0, background: `linear-gradient(135deg,${(MEAL_COLORS[meal.type] || ACCENT)}22,${(MEAL_COLORS[meal.type] || ACCENT)}0D)`, border: `1px solid ${(MEAL_COLORS[meal.type] || ACCENT)}30`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22 }}>
+              <div style={{ width: 44, height: 44, borderRadius: 999, flexShrink: 0, background: `${MEAL_COLORS[meal.type] || "#7FA891"}18`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22 }}>
                 {mealEmoji(meal.name, meal.type)}
               </div>
               <div style={{ flex: 1 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 5, flexWrap: "wrap" }}>
-                  <span style={{ fontSize: "0.72rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: MEAL_COLORS[meal.type] || ACCENT_TEXT, background: `${MEAL_COLORS[meal.type] || ACCENT}18`, padding: "2px 8px", borderRadius: 8 }}>{meal.type}</span>
-                  {matched && <span style={{ fontSize: "0.72rem", color: "#0F766E", background: "rgba(16,185,129,0.08)", border: "1px solid rgba(16,185,129,0.2)", padding: "1px 7px", borderRadius: 8 }}>📖 Recipe match</span>}
+                  <span style={{ fontSize: "0.72rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: MEAL_COLORS[meal.type] || "#3C5A4A", background: `${MEAL_COLORS[meal.type] || "#7FA891"}1A`, padding: "2px 8px", borderRadius: 999 }}>{meal.type}</span>
+                  {matched && <span style={{ fontSize: "0.72rem", color: "#3C5A4A", background: W.tileSage, padding: "1px 7px", borderRadius: 999 }}>📖 Recipe match</span>}
                 </div>
                 <div style={{ color: "#1A1D1B", fontWeight: 600, fontSize: "0.88rem", marginBottom: 4 }}>{meal.name}</div>
                 {matched && (
                   <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 5 }}>
-                    <span style={{ fontSize: "0.78rem", color: "#92400E", background: "rgba(245,158,11,0.08)", border: "1px solid rgba(245,158,11,0.2)", padding: "2px 7px", borderRadius: 7 }}>📊 {matched.macros}</span>
-                    <span style={{ fontSize: "0.78rem", color: "#4B5563", background: "rgba(0,0,0,0.03)", border: "1px solid rgba(0,0,0,0.07)", padding: "2px 7px", borderRadius: 7 }}>⏱ {matched.time}</span>
-                    {matched.dietary?.slice(0,2).map(d => <span key={d} style={{ fontSize: "0.72rem", color: "#4D7C0F", background: "rgba(132,204,22,0.07)", border: "1px solid rgba(132,204,22,0.2)", padding: "1px 6px", borderRadius: 7 }}>{d}</span>)}
+                    <span style={{ fontSize: "0.78rem", color: "#C79245", background: "rgba(199,146,69,0.14)", border: "1px solid rgba(199,146,69,0.30)", padding: "2px 7px", borderRadius: 999 }}>📊 {matched.macros}</span>
+                    <span style={{ fontSize: "0.78rem", color: W.taupe, background: W.sand, border: `1px solid ${W.haze}`, padding: "2px 7px", borderRadius: 999 }}>⏱ {matched.time}</span>
+                    {matched.dietary?.slice(0,2).map(d => <span key={d} style={{ fontSize: "0.72rem", color: "#7FA891", background: "rgba(127,168,145,0.14)", border: "1px solid rgba(127,168,145,0.30)", padding: "1px 6px", borderRadius: 999 }}>{d}</span>)}
                   </div>
                 )}
                 {meal.ingredients?.length > 0 && (
                   <div style={{ display: "flex", flexWrap: "wrap", gap: 4, marginBottom: 5 }}>
                     {meal.ingredients.map((ing, ii) => (
-                      <span key={ii} style={{ fontSize: "0.76rem", color: "#6B7280", background: "rgba(0,0,0,0.03)", border: "1px solid rgba(16,185,129,0.1)", padding: "1px 7px", borderRadius: 10 }}>{ing}</span>
+                      <span key={ii} style={{ fontSize: "0.76rem", color: W.taupe, background: W.sand, border: `1px solid ${W.haze}`, padding: "1px 7px", borderRadius: 999 }}>{ing}</span>
                     ))}
                   </div>
                 )}
@@ -5693,10 +5793,10 @@ function MealPlanner({ profile, isPro, onUpgrade, plansUsed: plansUsedProp, setP
               </div>
               <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 8, flexShrink: 0 }}>
                 <div style={{ textAlign: "right", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "2px 12px" }}>
-                  <div style={{ color: "#92400E", fontWeight: 700, fontSize: "0.88rem" }}>{meal.calories}<span style={{ fontSize: "0.72rem", color: "#6B7280", fontWeight: 400 }}>kcal</span></div>
-                  <div style={{ color: "#047857", fontWeight: 700, fontSize: "0.88rem" }}>{meal.protein}<span style={{ fontSize: "0.72rem", color: "#6B7280", fontWeight: 400 }}>p</span></div>
-                  <div style={{ color: "#1D4ED8", fontWeight: 600, fontSize: "0.82rem" }}>{meal.carbs}<span style={{ fontSize: "0.72rem", color: "#6B7280", fontWeight: 400 }}>c</span></div>
-                  <div style={{ color: "#BE185D", fontWeight: 600, fontSize: "0.82rem" }}>{meal.fat}<span style={{ fontSize: "0.72rem", color: "#6B7280", fontWeight: 400 }}>f</span></div>
+                  <div style={{ color: MACRO.cal, fontWeight: 700, fontSize: "0.88rem" }}>{meal.calories}<span style={{ fontSize: "0.72rem", color: "#6B7280", fontWeight: 400 }}>kcal</span></div>
+                  <div style={{ color: MACRO.protein, fontWeight: 700, fontSize: "0.88rem" }}>{meal.protein}<span style={{ fontSize: "0.72rem", color: "#6B7280", fontWeight: 400 }}>p</span></div>
+                  <div style={{ color: MACRO.carbs, fontWeight: 600, fontSize: "0.82rem" }}>{meal.carbs}<span style={{ fontSize: "0.72rem", color: "#6B7280", fontWeight: 400 }}>c</span></div>
+                  <div style={{ color: MACRO.fat, fontWeight: 600, fontSize: "0.82rem" }}>{meal.fat}<span style={{ fontSize: "0.72rem", color: "#6B7280", fontWeight: 400 }}>f</span></div>
                 </div>
                 {matched && (
                   <button
@@ -5704,7 +5804,7 @@ function MealPlanner({ profile, isPro, onUpgrade, plansUsed: plansUsedProp, setP
                       if (window._ailaraSetTab) window._ailaraSetTab("nutrition");
                       if (window._ailaraGoToRecipe) window._ailaraGoToRecipe(matched.name);
                     }}
-                    style={{ background: "linear-gradient(135deg,#10B981,#059669)", border: "none", color: "white", padding: "5px 11px", borderRadius: 8, cursor: "pointer", fontSize: "0.8rem", fontFamily: "'Inter',sans-serif", fontWeight: 700, whiteSpace: "nowrap" }}>
+                    style={{ background: "#3C5A4A", border: "none", color: "white", padding: "5px 11px", borderRadius: 999, cursor: "pointer", fontSize: "0.8rem", fontFamily: "'Inter',sans-serif", fontWeight: 700, whiteSpace: "nowrap" }}>
                     📖 Full Recipe
                   </button>
                 )}
@@ -5719,12 +5819,12 @@ function MealPlanner({ profile, isPro, onUpgrade, plansUsed: plansUsedProp, setP
       {plan?.days?.[activeDay]?.totals && (
         <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 8, marginTop: 12 }}>
           {[
-            { label: "Calories", val: plan.days[activeDay].totals.calories, unit: "kcal", target: plan.dailyTarget?.calories, color: "#92400E" },
-            { label: "Protein", val: plan.days[activeDay].totals.protein, unit: "g", target: plan.dailyTarget?.protein, color: "#047857" },
-            { label: "Carbs", val: plan.days[activeDay].totals.carbs, unit: "g", target: plan.dailyTarget?.carbs, color: "#1D4ED8" },
-            { label: "Fat", val: plan.days[activeDay].totals.fat, unit: "g", target: plan.dailyTarget?.fat, color: "#BE185D" },
+            { label: "Calories", val: plan.days[activeDay].totals.calories, unit: "kcal", target: plan.dailyTarget?.calories, color: MACRO.cal },
+            { label: "Protein", val: plan.days[activeDay].totals.protein, unit: "g", target: plan.dailyTarget?.protein, color: MACRO.protein },
+            { label: "Carbs", val: plan.days[activeDay].totals.carbs, unit: "g", target: plan.dailyTarget?.carbs, color: MACRO.carbs },
+            { label: "Fat", val: plan.days[activeDay].totals.fat, unit: "g", target: plan.dailyTarget?.fat, color: MACRO.fat },
           ].map(({ label, val, unit, target, color }) => (
-            <div key={label} style={{ background: `${color}08`, border: `1px solid ${color}25`, borderRadius: 9, padding: "9px 8px", textAlign: "center" }}>
+            <div key={label} style={{ background: `${color}14`, border: `1px solid ${color}30`, borderRadius: 12, padding: "9px 8px", textAlign: "center" }}>
               <div style={{ color, fontWeight: 700, fontSize: "0.88rem" }}>{val}<span style={{ fontSize: "0.72rem", color: "#4B5563" }}>{unit}</span></div>
               <div style={{ color: "#6B7280", fontSize: "0.72rem", textTransform: "uppercase", letterSpacing: "0.07em" }}>{label}</div>
               {target && <div style={{ color: "#6B7280", fontSize: "0.72rem", marginTop: 1 }}>/ {target}</div>}
@@ -5734,7 +5834,7 @@ function MealPlanner({ profile, isPro, onUpgrade, plansUsed: plansUsedProp, setP
       )}
 
       {plan?.notes && (
-        <div style={{ marginTop: 14, background: "rgba(16,185,129,0.05)", border: `1px solid ${BORDER}`, borderRadius: 10, padding: "12px 14px", color: "#4B5563", fontSize: "0.8rem", lineHeight: 1.6 }}>
+        <div style={{ marginTop: 14, background: W.cream, border: `1px solid ${W.haze}`, borderRadius: 14, padding: "12px 14px", color: "#4B5563", fontSize: "0.8rem", lineHeight: 1.6, boxShadow: W.shadowRest }}>
           💡 {plan.notes}
         </div>
       )}
@@ -5742,28 +5842,28 @@ function MealPlanner({ profile, isPro, onUpgrade, plansUsed: plansUsedProp, setP
       {/* ── GROCERY LIST BUTTON & VIEW ── */}
       <div style={{ marginTop: 16 }}>
         <div style={{ display:"flex", gap:8, marginBottom: showGrocery ? 0 : 0 }}>
-          <button onClick={() => { setShowGrocery(!showGrocery); setCheckedItems({}); }} style={{ flex:1, background: showGrocery ? "rgba(16,185,129,0.25)" : "rgba(16,185,129,0.08)", border: `1px solid rgba(16,185,129,0.35)`, color: "#0F766E", padding: "11px", borderRadius: 10, cursor: "pointer", fontSize: "0.88rem", fontWeight: 700, fontFamily: "'Inter',sans-serif", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+          <button onClick={() => { setShowGrocery(!showGrocery); setCheckedItems({}); }} style={{ flex:1, background: showGrocery ? W.tileSage : W.cream, border: `1px solid ${showGrocery ? "rgba(127,168,145,0.5)" : W.haze}`, color: "#3C5A4A", padding: "11px", borderRadius: 12, cursor: "pointer", fontSize: "0.88rem", fontWeight: 700, fontFamily: "'Inter',sans-serif", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, boxShadow: W.shadowRest }}>
             🛒 {showGrocery ? "Hide Grocery List" : "Generate Grocery List"}
           </button>
           {showGrocery && buildGroceryList().length > 0 && (
             <button onClick={() => setShareModal({ type:"grocery", data:{ groceryList:buildGroceryList(), planName:plan?.planType||planOpt.name, scope: groceryDays==="all" ? "Full Week (Mon–Fri)" : DAY_LABELS[parseInt(groceryDays)]||`Day ${parseInt(groceryDays)+1}` } })}
-              style={{ background:"rgba(59,130,246,0.1)", border:"1px solid rgba(59,130,246,0.3)", color:"#1D4ED8", padding:"11px 14px", borderRadius:10, cursor:"pointer", fontSize:"0.82rem", fontWeight:700, fontFamily:"'Inter',sans-serif", display:"flex", alignItems:"center", gap:5, flexShrink:0 }}>
+              style={{ background:"#3C5A4A", border:"none", color:"white", padding:"11px 14px", borderRadius:12, cursor:"pointer", fontSize:"0.82rem", fontWeight:700, fontFamily:"'Inter',sans-serif", display:"flex", alignItems:"center", gap:5, flexShrink:0, boxShadow:W.shadowRest }}>
               📤 Export
             </button>
           )}
         </div>
 
         {showGrocery && (
-          <div style={{ marginTop: 14, background: "rgba(16,185,129,0.04)", border: `1px solid rgba(16,185,129,0.2)`, borderRadius: 12, padding: "16px" }}>
+          <div style={{ marginTop: 14, background: W.cream, border: `1px solid ${W.haze}`, borderRadius: 16, padding: "16px", boxShadow: W.shadowRest }}>
             {/* Day selector */}
             <div style={{ marginBottom: 14 }}>
               <div style={{ fontSize: "0.75rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "#4B5563", marginBottom: 8 }}>Generate list for:</div>
               <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-                <button onClick={() => setGroceryDays("all")} style={{ padding: "5px 12px", borderRadius: 20, border: `1px solid ${groceryDays === "all" ? ACCENT : BORDER}`, background: groceryDays === "all" ? "rgba(16,185,129,0.25)" : "transparent", color: groceryDays === "all" ? ACCENT2_TEXT : "#4B5563", cursor: "pointer", fontSize: "0.72rem", fontWeight: 600, fontFamily: "'Inter',sans-serif" }}>
+                <button onClick={() => setGroceryDays("all")} style={{ padding: "5px 12px", borderRadius: 999, border: `1px solid ${groceryDays === "all" ? "#3C5A4A" : W.haze}`, background: groceryDays === "all" ? "#3C5A4A" : W.cream, color: groceryDays === "all" ? "white" : W.taupe, cursor: "pointer", fontSize: "0.72rem", fontWeight: 600, fontFamily: "'Inter',sans-serif" }}>
                   📅 Full Plan
                 </button>
                 {plan?.days?.map((d, i) => (
-                  <button key={i} onClick={() => setGroceryDays(String(i))} style={{ padding: "5px 12px", borderRadius: 20, border: `1px solid ${groceryDays === String(i) ? ACCENT : BORDER}`, background: groceryDays === String(i) ? "rgba(16,185,129,0.25)" : "transparent", color: groceryDays === String(i) ? ACCENT2_TEXT : "#4B5563", cursor: "pointer", fontSize: "0.72rem", fontWeight: 600, fontFamily: "'Inter',sans-serif" }}>
+                  <button key={i} onClick={() => setGroceryDays(String(i))} style={{ padding: "5px 12px", borderRadius: 999, border: `1px solid ${groceryDays === String(i) ? "#3C5A4A" : W.haze}`, background: groceryDays === String(i) ? "#3C5A4A" : W.cream, color: groceryDays === String(i) ? "white" : W.taupe, cursor: "pointer", fontSize: "0.72rem", fontWeight: 600, fontFamily: "'Inter',sans-serif" }}>
                     {(d.day || ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"][i] || `Day ${i+1}`).slice(0,3)}
                   </button>
                 ))}
@@ -5773,14 +5873,14 @@ function MealPlanner({ profile, isPro, onUpgrade, plansUsed: plansUsedProp, setP
             {/* Grocery categories */}
             {buildGroceryList().map(([category, items]) => (
               <div key={category} style={{ marginBottom: 14 }}>
-                <div style={{ fontSize: "0.72rem", fontWeight: 700, color: "#0F766E", marginBottom: 6, letterSpacing: "0.04em" }}>{category}</div>
+                <div style={{ fontSize: "0.72rem", fontWeight: 700, color: "#3C5A4A", marginBottom: 6, letterSpacing: "0.04em" }}>{category}</div>
                 <div style={{ display: "grid", gap: 4 }}>
                   {items.map((item, idx) => {
                     const key = `${category}-${idx}`;
                     const checked = !!checkedItems[key];
                     return (
-                      <div key={idx} onClick={() => setCheckedItems(p => ({ ...p, [key]: !p[key] }))} style={{ display: "flex", alignItems: "center", gap: 10, padding: "7px 10px", borderRadius: 8, background: checked ? "rgba(16,185,129,0.06)" : "rgba(0,0,0,0.02)", border: `1px solid ${checked ? "rgba(16,185,129,0.2)" : BORDER}`, cursor: "pointer", transition: "all 0.15s" }}>
-                        <div style={{ width: 18, height: 18, borderRadius: 5, border: `2px solid ${checked ? ACCENT : "#6B7280"}`, background: checked ? ACCENT : "transparent", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                      <div key={idx} onClick={() => setCheckedItems(p => ({ ...p, [key]: !p[key] }))} style={{ display: "flex", alignItems: "center", gap: 10, padding: "7px 10px", borderRadius: 10, background: checked ? "rgba(127,168,145,0.14)" : W.sand, border: `1px solid ${W.haze}`, cursor: "pointer", transition: "all 0.15s" }}>
+                        <div style={{ width: 18, height: 18, borderRadius: 6, border: `2px solid ${checked ? "#7FA891" : "#94897A"}`, background: checked ? "#7FA891" : "transparent", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                           {checked && <span style={{ color: "white", fontSize: "0.75rem", fontWeight: 900 }}>✓</span>}
                         </div>
                         <div style={{ flex: 1 }}>
@@ -6435,6 +6535,60 @@ function SupplementTracker({ profile }) {
 
 // ─── CHAT ─────────────────────────────────────────────────────────────────────
 
+// ─── HOME SCREEN HELPERS ─────────────────────────────────────────────────────
+// "For today" focus tiles, mapped from the person's saved goals with calm
+// defaults when none are set. Plain lowercase substring match — no regex.
+const HOME_FOCUS_BY_GOAL = [
+  { match:["lose weight","weight loss","fat loss"], icon:"🌱", title:"Lose weight, gently", helper:"one small change this week", hue:"tilePeach",
+    prompt:"Help me lose weight gently. Based on my profile, suggest one small, sustainable change I can start this week — nothing drastic." },
+  { match:["build muscle","strength","muscle"], icon:"💪", title:"Build a little strength", helper:"a short session that fits today", hue:"tileSage",
+    prompt:"I want to build strength. Based on my profile, give me one short, doable strength session for today." },
+  { match:["energy","tired","fatigue"], icon:"☀️", title:"Get your energy back", helper:"let's find what's draining you", hue:"tilePeach",
+    prompt:"I've been low on energy. Based on my profile, help me figure out what might be draining it, and one gentle thing to try today." },
+  { match:["heart"], icon:"❤️", title:"Look after your heart", helper:"a calm cardio start", hue:"tilePeach",
+    prompt:"Based on my profile, give me one calm, heart-friendly cardio option for today." },
+  { match:["stress","anxiety","calm","relax"], icon:"🌙", title:"Ease the stress", helper:"a few minutes to reset", hue:"tileSky",
+    prompt:"Help me lower my stress today with a short, evidence-based reset I can do right now, based on my profile." },
+  { match:["run","endurance","race","marathon"], icon:"👟", title:"Build your endurance", helper:"an easy effort today", hue:"tileSage",
+    prompt:"Based on my profile, give me one easy-effort run or cardio session for today." },
+  { match:["condition","thyroid","pcos","diabet","neuropathy","blood pressure","metabolic"], icon:"🌿", title:"Care for your condition", helper:"move and eat around it, safely", hue:"tileSage",
+    prompt:"Help me train and eat around my health condition safely today, based on my profile." },
+  { match:["pain","inflammation","joint"], icon:"🧘", title:"Move without pain", helper:"gentle, low-impact ideas", hue:"tileSky",
+    prompt:"Give me gentle, low-impact movement ideas for today that are easy on my joints, based on my profile." },
+  { match:["eat healthier","eat","nutrition","diet","food"], icon:"🥗", title:"Eat something good", helper:"one easy swap for today", hue:"tilePeach",
+    prompt:"Suggest one simple, nourishing thing I could eat today based on my profile — one easy swap, nothing extreme." },
+];
+const HOME_FOCUS_DEFAULTS = [
+  { icon:"🚶", title:"Move a little", helper:"a 20-minute walk counts", hue:"tileSage",
+    prompt:"I'd like to move a bit today. Based on my profile, give me one simple, doable option." },
+  { icon:"🥗", title:"Eat something good", helper:"one easy swap for today", hue:"tilePeach",
+    prompt:"Suggest one simple, nourishing thing I could eat today based on my profile — one easy swap, nothing extreme." },
+  { icon:"🌙", title:"Wind down well", helper:"a calmer evening routine", hue:"tileSky",
+    prompt:"Help me wind down tonight. Based on my profile, give me a short, calming evening routine." },
+];
+function buildHomeFocuses(goals) {
+  const list = [];
+  const seen = new Set();
+  (goals || []).forEach(g => {
+    const key = String(g).toLowerCase();
+    const hit = HOME_FOCUS_BY_GOAL.find(f => f.match.some(m => key.includes(m)));
+    if (hit && !seen.has(hit.title)) { seen.add(hit.title); list.push(hit); }
+  });
+  for (let i = 0; i < HOME_FOCUS_DEFAULTS.length && list.length < 3; i++) {
+    const d = HOME_FOCUS_DEFAULTS[i];
+    if (!seen.has(d.title)) { seen.add(d.title); list.push(d); }
+  }
+  return list.slice(0, 3);
+}
+// Warm, specific encouragement for the weekly-momentum line under the greeting.
+function weekMomentumLine(n) {
+  if (n == null) return "";
+  if (n === 0) return "Nothing tracked yet, and that's fine. Let's start small.";
+  if (n <= 2) return `${n} day${n === 1 ? "" : "s"} in this week. Lovely start.`;
+  if (n <= 5) return `You've shown up ${n} days this week. That's the hard part.`;
+  return `${n} days this week — you're on a real run.`;
+}
+
 function Chat({ profile, isPro, tier, plansUsed, aiQuestionsToday, setAiQuestionsToday, onUpgrade }) {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
@@ -6445,6 +6599,8 @@ function Chat({ profile, isPro, tier, plansUsed, aiQuestionsToday, setAiQuestion
   const [actionToast, setActionToast] = useState(null);   // { text, type } — "doer" confirmations
   const [actionLog, setActionLog] = useState([]);          // log of all AI-triggered actions
   const [sourceDrawer, setSourceDrawer] = useState(null);  // { title, source, year, url, snippet }
+  const [weekDays, setWeekDays] = useState(null);          // days active in the last 7 (home orb), null = loading
+  const [homeReady, setHomeReady] = useState(false);       // gates the one-time home load animation
   const FREE_AI_LIMIT = 5;
   const messagesEndRef = useRef(null);
   const textareaRef = useRef(null);
@@ -6464,6 +6620,21 @@ function Chat({ profile, isPro, tier, plansUsed, aiQuestionsToday, setAiQuestion
   }, []);
 
   useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages, loading]);
+
+  // Weekly momentum for the home orb — count distinct days in the last 7 with any
+  // habit checked (same "ailara:checked" store the Progress tab writes).
+  useEffect(() => {
+    (async () => {
+      try {
+        const r = await window.storage.get("ailara:checked");
+        const obj = r?.value ? JSON.parse(r.value) : {};
+        const week = getLast7().map(d => d.key);
+        const n = week.reduce((acc, k) => acc + (obj[k] && Object.values(obj[k]).some(Boolean) ? 1 : 0), 0);
+        setWeekDays(n);
+      } catch { setWeekDays(0); }
+      requestAnimationFrame(() => setHomeReady(true));
+    })();
+  }, []);
 
   // Save chat history (keep last 40 messages to stay within storage limits)
   const persistChat = (msgs) => {
@@ -7057,140 +7228,127 @@ function Chat({ profile, isPro, tier, plansUsed, aiQuestionsToday, setAiQuestion
     <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
       {/* Messages */}
       <div style={{ flex: 1, overflowY: "auto", padding: "20px", maxWidth: 720, width: "100%", margin: "0 auto" }}>
-        {!started && (
-          <div style={{ animation: "fadeUp 0.4s ease" }}>
+        {!started && (() => {
+          const hour = new Date().getHours();
+          const partOfDay = hour < 12 ? "MORNING" : hour < 18 ? "AFTERNOON" : "EVENING";
+          const name = profile?.name || "there";
+          let deck;
+          if (weekDays == null) deck = "Let's get to work.";
+          else if (weekDays === 0) deck = "Fresh week. Put one on the board.";
+          else if (weekDays <= 2) deck = `${weekDays} day${weekDays === 1 ? "" : "s"} in. Keep it moving.`;
+          else if (weekDays <= 5) deck = `${weekDays} days this week. Stay on it.`;
+          else deck = `${weekDays} days straight. Don't break the streak.`;
+          const focuses = buildHomeFocuses(profile?.goals);
+          const gTags = {"Lose Weight":["Cardio","HIIT"],"Build Muscle":["Strength","Hypertrophy"],"More Energy":["HIIT","Cardio","Yoga"],"Heart Health":["Cardio","HIIT"],"Reduce Stress":["Yoga","Pilates"],"Run / Endurance":["Cardio","HIIT"],"Manage a Condition":["Yoga","Pilates","Strength"]};
+          const g1 = (profile?.goals || [])[0];
+          const pool = (typeof VIDEO_INDEX !== "undefined" ? VIDEO_INDEX : []);
+          const wantTags = gTags[g1] || ["Strength","HIIT","Cardio"];
+          const ytId = (u) => { const m = (u || "").match(/[?&]v=([^&]+)/); return m ? m[1] : null; };
+          const withId = pool.filter(v => ytId(v.url));
+          const featured = withId.filter(v => wantTags.includes(v.tag) || wantTags.includes(v.type))[0] || withId[0] || null;
+          const featuredId = featured ? ytId(featured.url) : null;
+          return (
+          <div style={{ maxWidth: 560, margin: "0 auto", animation: "fadeUp 0.35s ease" }}>
 
-            {/* ── GREETING ── */}
-            <div style={{ marginBottom: 20 }}>
-              <h2 style={{ fontFamily: "'Playfair Display',serif", fontSize: "1.4rem", fontWeight: 800, color: "#1A1D1B", marginBottom: 6 }}>
-                {profile?.name ? `Hey ${profile.name} 👋` : "Hey, I'm Ailara"}
-              </h2>
-              {(() => {
-                const goals = profile?.goals || [];
-                const g1 = goals[0];
-                const GM = {
-                  "Lose Weight":     {sub:"Let's build your fat loss plan — workouts, nutrition, and the science behind every recommendation.",color:"#C2410C",chips:["🔥 Design my fat loss workout split","🥗 What should I eat to lose weight?","💊 Best supplements for weight loss?","🌿 TCM for metabolism — what pattern am I?","📈 How do I track fat loss progress?"]},
-                  "Build Muscle":    {sub:"Ready to build. Hypertrophy program, dialed-in protein, all backed by research.",color:"#4338CA",chips:["💪 Build me a hypertrophy program","🥩 How much protein do I need?","💊 Creatine — dosing and timing?","📈 How do I measure muscle gain?","🏋️ Find me a strength workout"]},
-                  "More Energy":     {sub:"Chronically tired is not your baseline. Let's fix your energy through training, nutrition, and recovery.",color:"#92400E",chips:["⚡ Why am I always tired?","😴 Build me a better sleep routine","💊 Best energy supplements — evidence-based","🌿 TCM for Qi Deficiency and fatigue","🏃 What type of workout boosts energy?"]},
-                  "Heart Health":    {sub:"Heart health is trainable. Zone 2 cardio, anti-inflammatory nutrition, evidence-based protocols.",color:"#DC2626",chips:["❤️ Build me a heart health workout plan","🥗 Anti-inflammatory diet — where to start?","🏃 What is Zone 2 training?","💊 Omega-3 and heart health — the research","🌿 TCM for Heart Blood Deficiency"]},
-                  "Reduce Stress":   {sub:"Stress is a physiology problem — and it has physiology solutions. Let's fix your nervous system.",color:"#7C3AED",chips:["🧘 Build me a stress-reduction routine","🌿 TCM for Liver Qi Stagnation","😴 Optimize my sleep for recovery","💊 Ashwagandha — what does research say?","📊 How do I measure stress recovery?"]},
-                  "Run / Endurance": {sub:"Let's build your engine. Coaching, periodization, strength work, and race-day fueling — all science-backed.",color:"#047857",chips:["🏃 Build me a running training plan","💪 Strength training for runners — why and how?","🥗 How should I fuel long runs?","📈 How do I know I'm getting fitter?","🌿 TCM for endurance and Kidney Jing"]},
-                  "Manage a Condition":{sub:"I'll help you train and eat around your condition — safely, intelligently, physician-first.",color:"#0E7490",chips:["🩺 How do I exercise with my condition?","🌿 TCM pattern for my health profile","💊 Evidence-based supplements for my condition","🥗 Anti-inflammatory nutrition plan","📋 Build me a safe workout plan"]},
-                };
-                const gm = GM[g1] || {sub:profile?"Your profile is set. I'll coach you through workouts, nutrition, supplements, and TCM — everything personalized, everything backed by research.":"Your AI fitness coach, nutritionist, and wellness guide. Everything personalized, everything backed by research.",color:ACCENT_TEXT,chips:["🔥 Build me a fat loss plan","💪 Design a muscle-building program","⚡ Fix my energy levels","🧘 Reduce my stress with TCM","🏃 Train me for a race","💊 What supplements should I take?"]};
-                return (
-                  <>
-                    {goals.length > 0 && (
-                      <div style={{display:"flex",flexWrap:"wrap",gap:5,marginBottom:8}}>
-                        {goals.map(g => <span key={g} style={{fontSize:"0.75rem",fontWeight:700,color:gm.color,background:`${gm.color}15`,border:`1px solid ${gm.color}35`,borderRadius:20,padding:"2px 10px",fontFamily:"'Inter',sans-serif"}}>{g}</span>)}
-                      </div>
-                    )}
-                    <p style={{color:"#4B5563",fontSize:"0.84rem",lineHeight:1.7,margin:"0 0 10px"}}>{gm.sub}</p>
-                    <div style={{display:"flex",flexWrap:"wrap",gap:6}}>
-                      {gm.chips.map(chip => (
-                        <button key={chip} onClick={() => sendMessage(chip+" — based on my profile, give me a personalized, evidence-based answer.")}
-                          style={{background:"rgba(16,185,129,0.07)",border:`1px solid ${gm.color}35`,borderRadius:20,padding:"5px 12px",cursor:"pointer",fontSize:"0.72rem",color:ACCENT2_TEXT,fontFamily:"'Inter',sans-serif",fontWeight:500}}
-                          onMouseEnter={e=>{e.currentTarget.style.background=`${gm.color}18`;e.currentTarget.style.color="#1A1D1B";}}
-                          onMouseLeave={e=>{e.currentTarget.style.background="rgba(16,185,129,0.07)";e.currentTarget.style.color=ACCENT2;}}>
-                          {chip}
-                        </button>
-                      ))}
-                    </div>
-                  </>
-                );
-              })()}
-              {/* AI capability highlights */}
-              <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginTop: 10 }}>
-                {[
-                  { icon: "🧠", text: "NASM CPT/PES Trained" },
-                  { icon: "🏥", text: "ACSM + CDC Standards" },
-                  { icon: "📄", text: "JISSN Position Stands" },
-                  { icon: "🏛️", text: "NIH ODS Verified" },
-                  { icon: "🎓", text: "Harvard Health Research" },
-                  { icon: "🌿", text: "TCM + Western Medicine" },
-                ].map(b => (
-                  <span key={b.text} style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: "0.75rem", fontWeight: 600, color: ACCENT_TEXT, background: `${ACCENT}12`, border: `1px solid ${ACCENT}28`, borderRadius: 20, padding: "3px 9px", fontFamily: "'Inter',sans-serif" }}>
-                    {b.icon} {b.text}
-                  </span>
-                ))}
+            {/* ── GREETING BLOCK ── */}
+            <div style={{ border: `1px solid ${LS.ink}`, borderRadius: 8, background: LS.paper, padding: "26px 24px 24px", marginBottom: 28 }}>
+              <div style={{ fontFamily: HEAVY_FONT, fontSize: "0.72rem", fontWeight: 800, letterSpacing: "0.1em", color: LS.accent, marginBottom: 6 }}>
+                GOOD {partOfDay}
               </div>
+              <h2 style={{ fontFamily: HEAVY_FONT, fontSize: "2.15rem", fontWeight: 900, color: LS.ink, letterSpacing: "-0.02em", lineHeight: 1, margin: "0 0 10px" }}>
+                {name}.
+              </h2>
+              <div style={{ fontFamily: HEAVY_FONT, fontStyle: "italic", fontWeight: 400, fontSize: "0.95rem", color: LS.slate, marginBottom: 18 }}>
+                {deck}
+              </div>
+              <button onClick={() => textareaRef.current?.focus()}
+                style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, background: LS.accent, color: LS.ink, border: "none", borderRadius: 4, padding: "14px 16px", cursor: "pointer", fontFamily: HEAVY_FONT, fontWeight: 800, fontSize: "0.95rem", letterSpacing: "0.02em" }}>
+                <span>ASK YOUR COACH</span><span style={{ fontSize: "1.15rem" }}>→</span>
+              </button>
             </div>
 
-            {/* ── PROFILE NUDGE (quick-entry users only) ── */}
-            {profile?._quickEntry && (
-              <div style={{ background:"linear-gradient(135deg,rgba(245,158,11,0.1),rgba(245,158,11,0.04))", border:"1px solid rgba(245,158,11,0.3)", borderRadius:13, padding:"13px 15px", marginBottom:14, display:"flex", alignItems:"center", gap:12 }}>
-                <div style={{ fontSize:"1.6rem", flexShrink:0 }}>✨</div>
-                <div style={{ flex:1, minWidth:0 }}>
-                  <div style={{ color:"#92400E", fontWeight:700, fontSize:"0.82rem", marginBottom:3 }}>Unlock your personalized plan</div>
-                  <div style={{ color:"#4B5563", fontSize:"0.72rem", lineHeight:1.5 }}>Complete your profile (2 min) and Ailara will generate a custom diet + exercise plan built around your goals, conditions, and schedule.</div>
+            {/* ── FEATURED TODAY ── */}
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
+              <span style={{ fontFamily: HEAVY_FONT, fontSize: "0.72rem", fontWeight: 800, letterSpacing: "0.1em", color: LS.ink }}>FEATURED TODAY</span>
+              <span style={{ flex: 1, height: 1, background: LS.ink }} />
+            </div>
+            {featured ? (
+              <a href={featured.url} target="_blank" rel="noopener noreferrer"
+                style={{ display: "block", position: "relative", border: `1px solid ${LS.ink}`, marginBottom: 28, textDecoration: "none", aspectRatio: "16 / 9", overflow: "hidden", background: LS.navy }}>
+                <img src={`https://img.youtube.com/vi/${featuredId}/hqdefault.jpg`} alt={featured.title}
+                  style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+                <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(11,27,43,0.92) 0%, rgba(11,27,43,0.15) 55%, transparent 100%)" }} />
+                {/* two-tone vertical accent bar on the left edge */}
+                <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: 6, background: `linear-gradient(to bottom, ${LS.accent} 0 50%, ${LS.navy} 50% 100%)` }} />
+                <div style={{ position: "absolute", left: 0, right: 0, bottom: 0, padding: "14px 16px 14px 20px" }}>
+                  <div style={{ fontFamily: HEAVY_FONT, fontSize: "0.68rem", fontWeight: 800, letterSpacing: "0.1em", color: LS.accent, marginBottom: 4 }}>
+                    {(featured.type || "WORKOUT").toUpperCase()}{featured.dur ? ` · ${featured.dur}` : ""}
+                  </div>
+                  <div style={{ fontFamily: HEAVY_FONT, fontWeight: 900, fontSize: "1.15rem", color: "#FFFFFF", lineHeight: 1.1, letterSpacing: "-0.01em" }}>
+                    ⚡ {featured.title}
+                  </div>
                 </div>
-                <button onClick={() => { if (window._ailaraSetTab) window._ailaraSetTab("onboarding"); }}
-                  style={{ background:"rgba(245,158,11,0.18)", border:"1px solid rgba(245,158,11,0.4)", borderRadius:9, padding:"8px 13px", color:"#92400E", cursor:"pointer", fontSize:"0.72rem", fontFamily:"'Inter',sans-serif", fontWeight:700, whiteSpace:"nowrap", flexShrink:0 }}>
-                  Finish →
-                </button>
-              </div>
+                <div style={{ position: "absolute", top: 12, right: 12, width: 34, height: 34, background: LS.accent, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <span style={{ color: LS.ink, fontSize: 15, marginLeft: 2 }}>▶</span>
+                </div>
+              </a>
+            ) : (
+              <button onClick={() => { if (window._ailaraSetTab) window._ailaraSetTab("workouts"); }}
+                style={{ display: "block", width: "100%", textAlign: "left", border: `1px solid ${LS.ink}`, background: LS.navy, color: "#fff", padding: "24px 18px", marginBottom: 28, cursor: "pointer" }}>
+                <div style={{ fontFamily: HEAVY_FONT, fontSize: "0.68rem", fontWeight: 800, letterSpacing: "0.1em", color: LS.accent, marginBottom: 6 }}>TODAY'S SESSION</div>
+                <div style={{ fontFamily: HEAVY_FONT, fontWeight: 900, fontSize: "1.35rem", lineHeight: 1.05, letterSpacing: "-0.01em" }}>Browse 1,800+ guided workouts →</div>
+              </button>
             )}
 
-            {/* ── WHERE DO YOU WANT TO START ── */}
-            <div style={{ background: "linear-gradient(135deg, rgba(16,185,129,0.12), rgba(16,185,129,0.04))", border: "1px solid rgba(16,185,129,0.35)", borderRadius: 14, padding: "16px 16px 14px", marginBottom: 16 }}>
-              <div style={{ fontFamily: "'Playfair Display',serif", fontSize: "1.05rem", fontWeight: 800, color: "#1A1D1B", marginBottom: 3 }}>
-                Where do you want to start?
-              </div>
-              <div style={{ color: "#4B5563", fontSize: "0.75rem", marginBottom: 12, lineHeight: 1.5 }}>
-                Pick a topic or just type below — Ailara will build you a personalized plan.
-              </div>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: 7, marginBottom: 14 }}>
-                {[
-                  { emoji: "🔥", label: "Lose weight & burn fat" },
-                  { emoji: "💪", label: "Build muscle & strength" },
-                  { emoji: "⚡", label: "Boost energy & stamina" },
-                  { emoji: "🧘", label: "Reduce stress & sleep better" },
-                  { emoji: "🏃", label: "Train for a race or event" },
-                  { emoji: "🩺", label: "Manage a health condition" },
-                  { emoji: "🌱", label: "Eat cleaner & feel better" },
-                  { emoji: "🌿", label: "TCM & integrative health" },
-                  { emoji: "🤱", label: "Pre/postnatal fitness" },
-                  { emoji: "💊", label: "Check my supplements" },
-                  { emoji: "📊", label: "Interpret my progress" },
-                  { emoji: "📸", label: "Analyze a photo (Pro)" },
-                ].map(g => (
-                  <button key={g.label}
-                    onClick={() => sendMessage(`${g.label} — based on my profile, give me a personalized plan with workouts, nutrition, and next steps.`)}
-                    style={{ background: "rgba(16,185,129,0.08)", border: "1px solid rgba(16,185,129,0.25)", borderRadius: 20, padding: "6px 13px", cursor: "pointer", fontSize: "0.75rem", color: "#047857", fontFamily: "'Inter',sans-serif", fontWeight: 500, transition: "all 0.15s", display: "flex", alignItems: "center", gap: 5 }}
-                    onMouseEnter={e => { e.currentTarget.style.background = "rgba(16,185,129,0.2)"; e.currentTarget.style.borderColor = "rgba(16,185,129,0.6)"; e.currentTarget.style.color = "#1A1D1B"; }}
-                    onMouseLeave={e => { e.currentTarget.style.background = "rgba(16,185,129,0.08)"; e.currentTarget.style.borderColor = "rgba(16,185,129,0.25)"; e.currentTarget.style.color = "#047857"; }}>
-                    <span>{g.emoji}</span><span>{g.label}</span>
-                  </button>
-                ))}
-              </div>
-              {/* Inline freeform input — merged into same card */}
-              <div style={{ display: "flex", gap: 8 }}>
-                <input
-                  placeholder="Or type anything — goals, questions, log a workout…"
-                  style={{ flex: 1, background: "rgba(255,255,255,0.8)", border: "1px solid rgba(16,185,129,0.3)", borderRadius: 9, padding: "9px 13px", color: "#1A1D1B", fontSize: "0.8rem", fontFamily: "'Inter',sans-serif", outline: "none" }}
-                  onKeyDown={e => { if (e.key === "Enter" && e.target.value.trim()) { sendMessage(e.target.value.trim()); e.target.value = ""; }}}
-                />
-                <button
-                  onClick={e => { const inp = e.currentTarget.previousSibling; if (inp.value.trim()) { sendMessage(inp.value.trim()); inp.value = ""; }}}
-                  style={{ background: "linear-gradient(135deg,#10B981,#059669)", border: "none", borderRadius: 9, padding: "9px 16px", color: "white", cursor: "pointer", fontSize: "0.82rem", fontWeight: 700, fontFamily: "'Inter',sans-serif", whiteSpace: "nowrap" }}>
-                  Ask →
+            {/* ── FOR YOU ── */}
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
+              <span style={{ fontFamily: HEAVY_FONT, fontSize: "0.72rem", fontWeight: 800, letterSpacing: "0.1em", color: LS.ink }}>FOR YOU</span>
+              <span style={{ flex: 1, height: 1, background: LS.ink }} />
+            </div>
+            <div style={{ border: `1px solid ${LS.ink}`, marginBottom: 24 }}>
+              {focuses.map((f, i) => (
+                <button key={f.title} onClick={() => sendMessage(f.prompt)}
+                  style={{ display: "flex", alignItems: "stretch", width: "100%", textAlign: "left", background: LS.paper, border: "none", borderTop: i === 0 ? "none" : `1px solid ${LS.line}`, cursor: "pointer", padding: 0 }}>
+                  <span style={{ flexShrink: 0, width: 48, background: LS.accent, color: LS.ink, fontFamily: HEAVY_FONT, fontWeight: 900, fontSize: "1rem", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <span style={{ flex: 1, minWidth: 0, padding: "14px 14px" }}>
+                    <span style={{ display: "block", fontFamily: HEAVY_FONT, fontWeight: 900, fontSize: "0.92rem", color: LS.ink, letterSpacing: "0.01em", textTransform: "uppercase", lineHeight: 1.15 }}>{f.title}</span>
+                    <span style={{ display: "block", fontSize: "0.8rem", color: LS.slate, marginTop: 3 }}>{f.helper}</span>
+                  </span>
+                  <span style={{ flexShrink: 0, display: "flex", alignItems: "center", paddingRight: 14, color: LS.ink, fontSize: 18 }}>→</span>
                 </button>
-              </div>
+              ))}
+            </div>
+
+            {/* ── quick-entry nudge ── */}
+            {profile?._quickEntry && (
+              <button onClick={() => { if (window._ailaraSetTab) window._ailaraSetTab("onboarding"); }}
+                style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%", textAlign: "left", background: LS.paper, border: `1px solid ${LS.ink}`, padding: "13px 15px", marginBottom: 20, cursor: "pointer" }}>
+                <span style={{ fontFamily: HEAVY_FONT, fontWeight: 800, fontSize: "0.82rem", color: LS.ink, letterSpacing: "0.02em" }}>COMPLETE YOUR PROFILE</span>
+                <span style={{ color: LS.ink, fontSize: 18 }}>→</span>
+              </button>
+            )}
+
+            {/* ── trust line ── */}
+            <div style={{ fontSize: "0.72rem", color: LS.slate, lineHeight: 1.6 }}>
+              Grounded in peer-reviewed research. Not a substitute for your doctor.
             </div>
 
           </div>
-        )}
+          );
+        })()}
 
         {messages.map((msg, i) => {
           const isUser = msg.role === "user";
           return (
             <div key={i} style={{ display: "flex", justifyContent: isUser ? "flex-end" : "flex-start", marginBottom: 16, animation: "fadeUp 0.25s ease" }}>
-              {!isUser && <div style={{ width: 30, height: 30, borderRadius: 8, flexShrink: 0, background: "linear-gradient(135deg,#064E3B,#10B981)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 800, color: "white", fontFamily: "'Playfair Display',serif", marginRight: 9, marginTop: 2 }}>A</div>}
-              <div style={{ maxWidth: "80%" }}>
+              {!isUser && <div style={{ width: 28, height: 28, flexShrink: 0, background: "#141414", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 900, color: "#F4B400", fontFamily: HEAVY_FONT, marginRight: 9, marginTop: 2 }}>A</div>}
+              <div style={{ maxWidth: "82%" }}>
                 {/* Image preview for user messages */}
                 {isUser && msg._imagePreview && (
                   <div style={{ marginBottom: 6, display: "flex", justifyContent: "flex-end" }}>
-                    <img src={msg._imagePreview} alt="uploaded" style={{ maxWidth: 200, maxHeight: 160, borderRadius: 12, objectFit: "cover", border: "2px solid rgba(16,185,129,0.3)" }} />
+                    <img src={msg._imagePreview} alt="uploaded" style={{ maxWidth: 200, maxHeight: 160, objectFit: "cover", border: "1px solid #141414" }} />
                   </div>
                 )}
                 {/* Action badge for AI responses that triggered tools */}
@@ -7200,15 +7358,15 @@ function Chat({ profile, isPro, tier, plansUsed, aiQuestionsToday, setAiQuestion
                       const icons = {log_workout:"💪",log_weight:"⚖️",log_habit:"✅",check_supplement:"💊",update_profile:"👤",suggest_workout:"🏋️",analyze_image:"📸"};
                       const labels = {log_workout:`Logged ${a.input?.type||"workout"}`,log_weight:`Logged ${a.input?.weight_lbs}lbs`,log_habit:`Habits: ${(a.input?.habits||[]).join(", ")}`,check_supplement:`Checked ${a.input?.supplement_name}`,update_profile:`Updated ${a.input?.field}`,suggest_workout:`Workout: ${a.input?.focus}`,analyze_image:"Image analyzed"};
                       return (
-                        <span key={ai} style={{ fontSize: "0.72rem", fontWeight: 700, color: "#047857", background: "rgba(16,185,129,0.12)", border: "1px solid rgba(16,185,129,0.3)", borderRadius: 20, padding: "2px 8px", fontFamily: "'Inter',sans-serif" }}>
+                        <span key={ai} style={{ fontFamily: HEAVY_FONT, fontSize: "0.68rem", fontWeight: 800, letterSpacing: "0.03em", textTransform: "uppercase", color: "#141414", background: "#F4B400", padding: "2px 8px" }}>
                           {icons[a.name]||"⚡"} {labels[a.name]||a.name}
                         </span>
                       );
                     })}
                   </div>
                 )}
-                <div style={{ background: isUser ? "linear-gradient(135deg,#065F46,#047857)" : SURFACE, borderRadius: isUser ? "18px 18px 4px 18px" : "4px 18px 18px 18px", padding: "12px 15px", border: isUser ? "none" : `1px solid ${BORDER}`, boxShadow: isUser ? "0 3px 14px rgba(5,150,105,0.18)" : "0 2px 12px rgba(0,0,0,0.3)" }}>
-                  {isUser ? <div style={{ color: "#1A1D1B", fontSize: "0.86rem", lineHeight: 1.62 }}>{msg.content}</div> : <div>{renderContent(msg.content)}</div>}
+                <div style={{ background: isUser ? "#141414" : "#FFFFFF", padding: "12px 15px", border: "1px solid #141414", borderRadius: 4 }}>
+                  {isUser ? <div style={{ color: "#FFFFFF", fontSize: "0.86rem", lineHeight: 1.62 }}>{msg.content}</div> : <div>{renderContent(msg.content)}</div>}
                 </div>
               </div>
             {/* Citation [View Source] buttons — Pro/Elite only */}
@@ -7216,10 +7374,10 @@ function Chat({ profile, isPro, tier, plansUsed, aiQuestionsToday, setAiQuestion
               <div style={{ display:"flex", flexWrap:"wrap", gap:5, marginTop:8 }}>
                 {msg.citations.map((c, ci) => (
                   <button key={ci} onClick={() => setSourceDrawer(c)}
-                    style={{ display:"flex", alignItems:"center", gap:5, background:"rgba(59,130,246,0.08)", border:"1px solid rgba(59,130,246,0.3)", borderRadius:8, padding:"4px 10px", cursor:"pointer", fontFamily:"'Inter',sans-serif" }}>
+                    style={{ display:"flex", alignItems:"center", gap:5, background:"#FFFFFF", border:"1px solid #141414", padding:"4px 10px", cursor:"pointer", fontFamily:HEAVY_FONT }}>
                     <span style={{ fontSize:11 }}>📄</span>
-                    <span style={{ fontSize:"0.75rem", color:"#1D4ED8", fontWeight:600 }}>View Source</span>
-                    {c.year && <span style={{ fontSize:"0.72rem", color:"#1D4ED8" }}>{c.year}</span>}
+                    <span style={{ fontSize:"0.68rem", color:"#141414", fontWeight:800, letterSpacing:"0.04em", textTransform:"uppercase" }}>View Source</span>
+                    {c.year && <span style={{ fontSize:"0.7rem", color:"#5B6572" }}>{c.year}</span>}
                   </button>
                 ))}
               </div>
@@ -7230,77 +7388,77 @@ function Chat({ profile, isPro, tier, plansUsed, aiQuestionsToday, setAiQuestion
 
         {loading && (
           <div style={{ display: "flex", alignItems: "center", gap: 9 }}>
-            <div style={{ width: 30, height: 30, borderRadius: 8, background: "linear-gradient(135deg,#064E3B,#10B981)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 800, color: "white", fontFamily: "'Playfair Display',serif" }}>A</div>
-            <div style={{ background: SURFACE, borderRadius: "4px 18px 18px 18px", padding: "10px 15px", border: `1px solid ${BORDER}` }}><TypingDots /></div>
+            <div style={{ width: 28, height: 28, background: "#141414", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 900, color: "#F4B400", fontFamily: HEAVY_FONT }}>A</div>
+            <div style={{ background: "#FFFFFF", padding: "10px 15px", border: "1px solid #141414", borderRadius: 4 }}><TypingDots /></div>
           </div>
         )}
         <div ref={messagesEndRef} />
       </div>
 
       {/* Input */}
-      <div style={{ borderTop: `1px solid ${BORDER}`, background: "rgba(255,255,255,0.96)", backdropFilter: "blur(18px)" }}>
+      <div style={{ borderTop: `1px solid ${LS.ink}`, background: LS.paper, padding: "0 14px 10px" }}>
 
         {/* Daily limit banner for free tier */}
         {!isPro && aiQuestionsToday >= FREE_AI_LIMIT && (
-          <div style={{ background:"rgba(249,115,22,0.1)", borderBottom:"1px solid rgba(249,115,22,0.25)", padding:"8px 16px", display:"flex", alignItems:"center", justifyContent:"space-between", gap:8 }}>
+          <div style={{ background:LS.paper, border:`1px solid ${LS.ink}`, padding:"11px 15px", margin:"10px auto 6px", maxWidth:640, display:"flex", alignItems:"center", justifyContent:"space-between", gap:10 }}>
             <div>
-              <div style={{ fontSize:"0.72rem", fontWeight:700, color:"#C2410C" }}>⏸️ Daily limit reached</div>
-              <div style={{ fontSize:"0.72rem", color:"#9A6040", marginTop:1 }}>5 free questions used · Resets at midnight</div>
+              <div style={{ fontSize:"0.86rem", fontWeight:900, color:LS.ink, fontFamily:HEAVY_FONT, letterSpacing:"0.01em" }}>THAT'S YOUR FIVE FOR TODAY.</div>
+              <div style={{ fontSize:"0.78rem", color:LS.slate, marginTop:2 }}>Resets at midnight — or go unlimited with Pro.</div>
             </div>
             <button onClick={() => onUpgrade("Daily limit reached", "pro")}
-              style={{ background:"#D97706", border:"none", borderRadius:8, padding:"5px 11px", color:"white", fontSize:"0.75rem", fontWeight:800, cursor:"pointer", whiteSpace:"nowrap", fontFamily:"'Inter',sans-serif" }}>
-              Upgrade to Pro
+              style={{ background:LS.accent, border:"none", borderRadius:4, padding:"8px 14px", color:LS.ink, fontSize:"0.75rem", fontWeight:800, cursor:"pointer", whiteSpace:"nowrap", fontFamily:HEAVY_FONT, letterSpacing:"0.03em" }}>
+              MORE WITH PRO
             </button>
           </div>
         )}
         {messages.length > 0 && (
-          <div style={{ maxWidth: 720, margin: "0 auto", padding: "5px 20px 0", display: "flex", justifyContent: "flex-end" }}>
+          <div style={{ maxWidth: 640, margin: "0 auto", padding: "5px 8px 0", display: "flex", justifyContent: "flex-end" }}>
             <button onClick={clearChat}
-              style={{ background: "none", border: "none", color: "#6B7280", fontSize: "0.72rem", cursor: "pointer", fontFamily: "'Inter',sans-serif", padding: "2px 6px", borderRadius: 6, transition: "color 0.15s" }}
-              onMouseEnter={e => e.currentTarget.style.color = "#DC2626"}
-              onMouseLeave={e => e.currentTarget.style.color = "#6B7280"}>
-              🗑 Clear chat
+              style={{ background: "none", border: "none", color: "#5B6572", fontSize: "0.7rem", fontFamily: HEAVY_FONT, fontWeight: 700, letterSpacing: "0.04em", textTransform: "uppercase", cursor: "pointer", padding: "2px 6px", transition: "color 0.15s" }}
+              onMouseEnter={e => e.currentTarget.style.color = "#141414"}
+              onMouseLeave={e => e.currentTarget.style.color = "#5B6572"}>
+              Clear chat
             </button>
           </div>
         )}
         {/* Image preview strip */}
         {pendingImage && (
-          <div style={{ maxWidth: 720, margin: "0 auto", padding: "6px 20px 0", display: "flex", alignItems: "center", gap: 8 }}>
+          <div style={{ maxWidth: 640, margin: "0 auto", padding: "6px 8px 0", display: "flex", alignItems: "center", gap: 8 }}>
             <div style={{ position: "relative", display: "inline-block" }}>
-              <img src={pendingImage.previewUrl} alt="pending" style={{ height: 56, width: 56, objectFit: "cover", borderRadius: 10, border: "2px solid rgba(16,185,129,0.4)" }} />
-              <button onClick={removeImage} style={{ position: "absolute", top: -8, right: -8, width: 26, height: 26, borderRadius: "50%", background: "#DC2626", border: "none", color: "white", fontSize: 13, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800 }}>✕</button>
+              <img src={pendingImage.previewUrl} alt="pending" style={{ height: 56, width: 56, objectFit: "cover", border: "1px solid #141414" }} />
+              <button onClick={removeImage} style={{ position: "absolute", top: -7, right: -7, width: 22, height: 22, background: "#141414", border: "none", color: "#FFFFFF", fontSize: 12, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800 }}>✕</button>
             </div>
-            <div style={{ color: "#0F766E", fontSize: "0.75rem", fontFamily: "'Inter',sans-serif" }}>
+            <div style={{ color: "#141414", fontSize: "0.75rem", fontFamily: "'Inter',sans-serif" }}>
               📸 Image ready — type your question or tap send
             </div>
           </div>
         )}
-        <div style={{ maxWidth: 720, margin: "0 auto", padding: "9px 12px", display: "flex", gap: 9, alignItems: "flex-end", background: "#F2F3F1", border: `1px solid rgba(16,185,129,0.22)`, borderRadius: 12 }}>
+        <div style={{ maxWidth: 640, margin: "0 auto", padding: "8px 8px 8px 12px", display: "flex", gap: 9, alignItems: "flex-end", background: LS.paper, border: `2px solid ${LS.ink}`, borderRadius: 4 }}>
           {/* Hidden file input — Pro only */}
           <input ref={imageInputRef} type="file" accept="image/*" capture="environment" onChange={handleImageSelect} style={{ display: "none" }} />
           {/* Image/camera button — Pro feature */}
           <button
             onClick={() => { if (isPro) { imageInputRef.current?.click(); } else { onUpgrade("Unlock image analysis — snap your meal, form, or supplement label for instant AI coaching. Upgrade to Pro!"); } }}
             title={isPro ? "Upload image or take photo (Pro)" : "Pro feature — upgrade to analyze photos"}
-            style={{ width: 30, height: 30, borderRadius: 8, flexShrink: 0, background: pendingImage ? "rgba(16,185,129,0.25)" : isPro ? "rgba(16,185,129,0.08)" : "rgba(245,158,11,0.08)", border: `1px solid ${pendingImage ? ACCENT : isPro ? "rgba(16,185,129,0.22)" : "rgba(245,158,11,0.35)"}`, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", transition: "all 0.15s", fontSize: 14, position: "relative" }}>
-            {isPro ? "📷" : "📷"}
-            {!isPro && <span style={{ position:"absolute", top:-4, right:-4, width:12, height:12, background:"#D97706", borderRadius:"50%", fontSize:"0.72rem", fontWeight:900, color:"white", display:"flex", alignItems:"center", justifyContent:"center", lineHeight:1 }}>★</span>}
+            style={{ width: 34, height: 34, borderRadius: 4, flexShrink: 0, background: pendingImage ? LS.accent : LS.paper, border: `1px solid ${LS.ink}`, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, position: "relative" }}>
+            📷
+            {!isPro && <span style={{ position:"absolute", top:-5, right:-5, width:13, height:13, background:LS.accent, border:`1px solid ${LS.ink}`, fontSize:"0.6rem", fontWeight:900, color:LS.ink, display:"flex", alignItems:"center", justifyContent:"center", lineHeight:1 }}>★</span>}
           </button>
           <textarea ref={textareaRef} value={input}
             disabled={!isPro && aiQuestionsToday >= FREE_AI_LIMIT}
             onChange={e => { setInput(e.target.value); e.target.style.height = "24px"; e.target.style.height = Math.min(e.target.scrollHeight, 110) + "px"; }}
             onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); } }}
-            placeholder="Ask anything, log a workout, upload a meal photo, check a supplement…"
-            style={{ flex: 1, background: "transparent", border: "none", color: "#1A1D1B", fontSize: "0.86rem", lineHeight: 1.5, fontFamily: "'Inter',sans-serif", height: 24, maxHeight: 110, overflow: "auto", caretColor: ACCENT }} />
+            placeholder="Ask anything…"
+            style={{ flex: 1, background: "transparent", border: "none", color: LS.ink, fontSize: "0.9rem", lineHeight: 1.5, fontFamily: "'Inter',sans-serif", height: 24, maxHeight: 110, overflow: "auto", caretColor: LS.accent, paddingBottom: 4 }} />
           <button onClick={() => sendMessage()} disabled={(!input.trim() && !pendingImage) || loading}
-            style={{ width: 34, height: 34, borderRadius: 8, flexShrink: 0, background: (input.trim() || pendingImage) && !loading ? ACCENT : "rgba(16,185,129,0.12)", border: "none", cursor: (input.trim() || pendingImage) && !loading ? "pointer" : "default", display: "flex", alignItems: "center", justifyContent: "center", transition: "all 0.15s" }}>
-            {loading ? <div style={{ width: 13, height: 13, border: "2px solid rgba(255,255,255,0.25)", borderTopColor: "white", borderRadius: "50%", animation: "spin 0.7s linear infinite" }} /> : <span style={{ color: "white", fontSize: 15 }}>↑</span>}
+            style={{ width: 36, height: 36, borderRadius: 4, flexShrink: 0, background: (input.trim() || pendingImage) && !loading ? LS.accent : LS.line, border: "none", cursor: (input.trim() || pendingImage) && !loading ? "pointer" : "default", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            {loading ? <div style={{ width: 13, height: 13, border: `2px solid rgba(20,20,20,0.25)`, borderTopColor: LS.ink, borderRadius: "50%", animation: "spin 0.7s linear infinite" }} /> : <span style={{ color: LS.ink, fontSize: 16, fontWeight: 900 }}>↑</span>}
           </button>
         </div>
       </div>
       {/* Action Toast — "doer" confirmations */}
       {actionToast && (
-        <div style={{ position:"fixed", bottom:90, left:"50%", transform:"translateX(-50%)", background:"linear-gradient(135deg,#064E3B,#10B981)", color:"white", padding:"11px 20px", borderRadius:14, fontSize:"0.82rem", fontWeight:700, fontFamily:"'Inter',sans-serif", zIndex:900, boxShadow:"0 4px 24px rgba(16,185,129,0.45)", animation:"fadeUp 0.3s ease", maxWidth:320, textAlign:"center" }}>
+        <div style={{ position:"fixed", bottom:90, left:"50%", transform:"translateX(-50%)", background:"#141414", color:"#F4B400", padding:"11px 20px", borderRadius:4, fontSize:"0.78rem", fontWeight:800, fontFamily:HEAVY_FONT, letterSpacing:"0.02em", textTransform:"uppercase", zIndex:900, animation:"fadeUp 0.3s ease", maxWidth:320, textAlign:"center" }}>
           {actionToast.text}
         </div>
       )}
@@ -9634,6 +9792,20 @@ function searchVideoIndex(query = "", filters = {}) {
 const LEVEL_COLORS = { Beginner: "#10B981", "Beginner–Intermediate": "#1D4ED8", "Beginner–Advanced": "#7C3AED", Intermediate: "#D97706", "Intermediate–Advanced": "#DC2626", Advanced: "#DC2626", "All Levels": "#6EE7B7" };
 
 
+// One deliberate accent per workout category — the ONLY thing that varies
+// between cards. Never a card background: only a badge tint, one line of meta
+// text, a thin bar, or a filter-chip dot. Every tone is from the palette.
+const WORKOUT_CAT_ACCENT = {
+  Strength:"#3C5A4A", Hypertrophy:"#3C5A4A", Athletic:"#3C5A4A", BBG:"#3C5A4A",
+  Yoga:"#7FA891", Pilates:"#7FA891",
+  HIIT:"#EE9C5B", Cardio:"#EE9C5B", Interval:"#EE9C5B", "Dance/HIIT":"#EE9C5B", Spin:"#EE9C5B",
+  "Core/Abs":"#C79245", "Core/HIIT":"#C79245",
+  Prenatal:"#E8836B",
+  Foundations:"#94897A", "Group Fitness":"#94897A",
+};
+// Coach's-brief: one accent. Category shows via emoji + label, not colour.
+const catAccent = (k) => "#141414";
+
 function Workouts({ profile, isPro, onUpgrade }) {
   const [activeTag, setActiveTag] = useState("All");
   const [selectedCreator, setSelectedCreator] = useState(null);
@@ -9674,33 +9846,27 @@ function Workouts({ profile, isPro, onUpgrade }) {
 
   // Group definitions — order controls display order
   const GROUPS = [
-    { key:"Strength",      label:"💪 Strength & Muscle",  icon:"💪", desc:"Strength training, powerlifting, bodybuilding & hypertrophy programs", color:"#6D28D9", tags:["Strength","Hypertrophy","Athletic","BBG"] },
-    { key:"HIIT",          label:"⚡ HIIT & Cardio",       icon:"⚡", desc:"High-intensity intervals, dance cardio, fat-burning",    color:"#DC2626",  tags:["HIIT","Dance/HIIT","Interval"] },
-    { key:"Core/Abs",      label:"🔥 Core & Abs",          icon:"🔥", desc:"Core stability, six-pack training, obliques",           color:"#92400E",  tags:["Core/Abs","Core/HIIT"] },
-    { key:"Yoga",          label:"🧘 Yoga & Mindfulness",  icon:"🧘", desc:"Flow yoga, breathwork, flexibility, and calm",          color:"#047857",  tags:["Yoga"] },
-    { key:"Pilates",       label:"🌸 Pilates",             icon:"🌸", desc:"Low-impact, posture, core, and toning",                 color:"#7C3AED",  tags:["Pilates"] },
-    { key:"Cardio",        label:"🏃 Cardio",              icon:"🏃", desc:"Virtual running tours, treadmill, indoor cycling & spin", color:"#0F766E",  tags:["Cardio","Spin"] },
-    { key:"Prenatal",      label:"🤱 Prenatal & Postnatal", icon:"🤱", desc:"Safe pregnancy and postnatal recovery workouts",        color:"#BE185D",  tags:["Prenatal"] },
-    { key:"Group Fitness", label:"🎯 Group Fitness",        icon:"🎯", desc:"Les Mills-style class formats, structured routines",   color:"#92400E",  tags:["Group Fitness"] },
-    { key:"Foundations",   label:"📚 Foundations",          icon:"📚", desc:"Form tutorials & how-to guides — perfect for beginners",color:"#4338CA",  tags:["Foundations"] },
+    { key:"Strength",      label:"💪 Strength & Muscle",  icon:"💪", desc:"Strength training, powerlifting, bodybuilding & hypertrophy programs", color:"#3C5A4A", tags:["Strength","Hypertrophy","Athletic","BBG"] },
+    { key:"HIIT",          label:"⚡ HIIT & Cardio",       icon:"⚡", desc:"High-intensity intervals, dance cardio, fat-burning",    color:"#EE9C5B",  tags:["HIIT","Dance/HIIT","Interval"] },
+    { key:"Core/Abs",      label:"🔥 Core & Abs",          icon:"🔥", desc:"Core stability, six-pack training, obliques",           color:"#C79245",  tags:["Core/Abs","Core/HIIT"] },
+    { key:"Yoga",          label:"🧘 Yoga & Mindfulness",  icon:"🧘", desc:"Flow yoga, breathwork, flexibility, and calm",          color:"#7FA891",  tags:["Yoga"] },
+    { key:"Pilates",       label:"🌸 Pilates",             icon:"🌸", desc:"Low-impact, posture, core, and toning",                 color:"#7FA891",  tags:["Pilates"] },
+    { key:"Cardio",        label:"🏃 Cardio",              icon:"🏃", desc:"Virtual running tours, treadmill, indoor cycling & spin", color:"#EE9C5B",  tags:["Cardio","Spin"] },
+    { key:"Prenatal",      label:"🤱 Prenatal & Postnatal", icon:"🤱", desc:"Safe pregnancy and postnatal recovery workouts",        color:"#E8836B",  tags:["Prenatal"] },
+    { key:"Group Fitness", label:"🎯 Group Fitness",        icon:"🎯", desc:"Les Mills-style class formats, structured routines",   color:"#94897A",  tags:["Group Fitness"] },
+    { key:"Foundations",   label:"📚 Foundations",          icon:"📚", desc:"Form tutorials & how-to guides — perfect for beginners",color:"#94897A",  tags:["Foundations"] },
   ];
 
   const filterTags = ["All", ...GROUPS.map(g => g.key)];
 
   const tagColors = {
-    "All":"#10B981","Strength":"#6D28D9","HIIT":"#DC2626",
-    "Core/Abs":"#D97706","Yoga":"#047857","Pilates":"#7C3AED","Cardio":"#2DD4BF",
-    "Prenatal":"#BE185D","Group Fitness":"#D97706","Foundations":"#4338CA",
+    "All":"#141414","Strength":"#141414","HIIT":"#141414",
+    "Core/Abs":"#141414","Yoga":"#141414","Pilates":"#141414","Cardio":"#141414",
+    "Prenatal":"#141414","Group Fitness":"#141414","Foundations":"#141414",
   };
 
-  const levelColor = l => {
-    if (!l) return "#4B5563";
-    const lc = l.toLowerCase();
-    if (lc.includes("beginner")) return "#10B981";
-    if (lc.includes("intermediate")) return "#D97706";
-    if (lc.includes("advanced")) return "#DC2626";
-    return "#1D4ED8";
-  };
+  // Difficulty — label carries the meaning; colour stays single-accent.
+  const levelColor = l => "#141414";
 
   // Filter creators by search query
   const creatorsMatchingSearch = WORKOUT_LIBRARY.filter(c => {
@@ -9721,38 +9887,39 @@ function Workouts({ profile, isPro, onUpgrade }) {
 
   const totalVisible = visibleGroups.reduce((s, g) => s + g.creators.length, 0);
 
-  const inputStyle = { width:"100%", background:"#F2F3F1", border:`1px solid ${BORDER}`, borderRadius:10, padding:"10px 14px 10px 36px", color:"#1A1D1B", fontSize:"0.82rem", fontFamily:"'Inter',sans-serif", outline:"none" };
+  const inputStyle = { width:"100%", background:"#FFFFFF", border:"1px solid #141414", borderRadius:4, padding:"10px 14px 10px 36px", color:"#141414", fontSize:"0.82rem", fontFamily:"'Inter',sans-serif", outline:"none" };
 
   if (selectedCreator) {
     const c = selectedCreator;
+    const accent = catAccent(c.tag);
     return (
       <>
       <div style={{ flex:1, overflowY:"auto", padding:"0 0 80px" }}>
         {/* Hero header */}
-        <div style={{ background:`linear-gradient(135deg, ${c.color}18, transparent)`, borderBottom:`1px solid ${BORDER}`, padding:"20px 18px 16px" }}>
-          <button onClick={() => setSelectedCreator(null)} style={{ display:"flex", alignItems:"center", gap:6, color:"#4B5563", background:"none", border:"none", cursor:"pointer", fontSize:"0.78rem", marginBottom:14, fontFamily:"'Inter',sans-serif" }}>
+        <div style={{ background:"#FFFFFF", borderBottom:"1px solid #141414", padding:"20px 18px 16px" }}>
+          <button onClick={() => setSelectedCreator(null)} style={{ display:"flex", alignItems:"center", gap:6, color:"#141414", background:"none", border:"none", cursor:"pointer", fontFamily:HEAVY_FONT, fontWeight:700, fontSize:"0.7rem", letterSpacing:"0.04em", textTransform:"uppercase", marginBottom:14 }}>
             ← Back to All
           </button>
           <div style={{ display:"flex", alignItems:"center", gap:14 }}>
-            <div style={{ width:52, height:52, borderRadius:14, background:`${c.color}25`, border:`2px solid ${c.color}50`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:24, flexShrink:0 }}>{c.icon}</div>
+            <div style={{ width:52, height:52, border:"1px solid #141414", display:"flex", alignItems:"center", justifyContent:"center", fontSize:24, flexShrink:0 }}>{c.icon}</div>
             <div style={{ flex:1 }}>
-              <div style={{ fontFamily:"'Playfair Display',serif", fontSize:"1.2rem", fontWeight:800, color:"#1A1D1B" }}>{c.creator}</div>
-              <div style={{ display:"flex", gap:6, marginTop:4, flexWrap:"wrap" }}>
-                <span style={{ fontSize:"0.72rem", fontWeight:700, color:c.color, background:`${c.color}18`, border:`1px solid ${c.color}35`, padding:"2px 8px", borderRadius:20 }}>{c.tag}</span>
-                <span style={{ fontSize:"0.72rem", color:"#6B7280", background:"rgba(0,0,0,0.04)", border:`1px solid ${BORDER}`, padding:"2px 8px", borderRadius:20 }}>🆓 Free</span>
-                <span style={{ fontSize:"0.72rem", color:"#6B7280", background:"rgba(0,0,0,0.04)", border:`1px solid ${BORDER}`, padding:"2px 8px", borderRadius:20 }}>{c.platform}</span>
+              <div style={{ fontFamily:HEAVY_FONT, fontSize:"1.3rem", fontWeight:900, color:"#141414", letterSpacing:"-0.02em", textTransform:"uppercase", lineHeight:1.05 }}>{c.creator}</div>
+              <div style={{ display:"flex", gap:6, marginTop:5, flexWrap:"wrap" }}>
+                <span style={{ fontSize:"0.68rem", fontFamily:HEAVY_FONT, fontWeight:700, letterSpacing:"0.03em", textTransform:"uppercase", color:"#141414", border:"1px solid #141414", padding:"2px 8px" }}>{c.tag}</span>
+                <span style={{ fontSize:"0.68rem", fontFamily:HEAVY_FONT, fontWeight:800, color:"#141414", background:"#F4B400", padding:"2px 8px" }}>FREE</span>
+                <span style={{ fontSize:"0.68rem", color:"#5B6572", border:"1px solid #E6E4DF", padding:"2px 8px" }}>{c.platform}</span>
               </div>
-              {c.bio && <div style={{ color:"#4B5563", fontSize:"0.75rem", marginTop:6, lineHeight:1.5 }}>{c.bio}</div>}
+              {c.bio && <div style={{ color:"#5B6572", fontSize:"0.75rem", marginTop:6, lineHeight:1.5 }}>{c.bio}</div>}
             </div>
           </div>
-          <a href={c.url} target="_blank" rel="noopener noreferrer" style={{ display:"block", marginTop:14, background:c.color, border:"none", color:"white", padding:"10px 20px", borderRadius:10, cursor:"pointer", fontSize:"0.8rem", fontFamily:"'Inter',sans-serif", fontWeight:700, textAlign:"center", textDecoration:"none", boxShadow:`0 0 16px ${c.color}40` }}>
+          <a href={c.url} target="_blank" rel="noopener noreferrer" style={{ display:"block", marginTop:14, background:"#F4B400", border:"none", color:"#141414", padding:"12px 20px", borderRadius:4, cursor:"pointer", fontSize:"0.8rem", fontFamily:HEAVY_FONT, fontWeight:800, letterSpacing:"0.03em", textTransform:"uppercase", textAlign:"center", textDecoration:"none" }}>
             Visit {c.creator} Channel →
           </a>
         </div>
         {/* Videos — collapsible series accordions + flat list for non-series */}
         <div style={{ padding:"16px 14px", display:"flex", flexDirection:"column", gap:10 }}>
-          <div style={{ fontSize:"0.72rem", fontWeight:700, letterSpacing:"0.12em", textTransform:"uppercase", color:"#6B7280", marginBottom:4 }}>
-            {c.videos.length} Videos Available · Tap series to expand · Tap video to watch in-app
+          <div style={{ fontFamily:HEAVY_FONT, fontSize:"0.68rem", fontWeight:800, letterSpacing:"0.08em", textTransform:"uppercase", color:"#141414", marginBottom:4 }}>
+            {c.videos.length} Videos · Tap series to expand · Tap video to watch in-app
           </div>
           {(() => {
             const getYouTubeId = (url) => {
@@ -9768,37 +9935,41 @@ function Workouts({ profile, isPro, onUpgrade }) {
 
             // ── FLAT RENDERING (no series) ──
             if (!hasSeries) {
-              return c.videos.map((v,i) => (
+              return (
+                <div style={{ border:"1px solid #141414" }}>
+                {c.videos.map((v,i) => (
                 <div key={i}
-                  style={{ background:SURFACE, border:`1px solid ${BORDER}`, borderRadius:12, padding:"13px 14px", display:"grid", gridTemplateColumns:"auto 1fr auto", gap:12, alignItems:"center", transition:"all 0.15s" }}
-                  onMouseEnter={e => { e.currentTarget.style.background=`${c.color}12`; e.currentTarget.style.borderColor=`${c.color}40`; }}
-                  onMouseLeave={e => { e.currentTarget.style.background=SURFACE; e.currentTarget.style.borderColor=BORDER; }}>
+                  style={{ background:"#FFFFFF", borderTop: i === 0 ? "none" : "1px solid #E6E4DF", padding:"13px 14px", display:"grid", gridTemplateColumns:"auto 1fr auto", gap:12, alignItems:"center", transition:"background 0.12s" }}
+                  onMouseEnter={e => { e.currentTarget.style.background="#FBF7EF"; }}
+                  onMouseLeave={e => { e.currentTarget.style.background="#FFFFFF"; }}>
                   {/* Left icon — clicking opens video */}
-                  <div onClick={() => openVideo(v)} style={{ width:36, height:36, borderRadius:10, background:`${c.color}20`, display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0, cursor:"pointer" }}>
-                    <span style={{ fontSize:18 }}>▶</span>
+                  <div onClick={() => openVideo(v)} style={{ width:32, height:32, background:"#F4B400", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0, cursor:"pointer" }}>
+                    <span style={{ fontSize:13, marginLeft:2, color:"#141414" }}>▶</span>
                   </div>
                   {/* Middle text — clicking opens video */}
                   <div onClick={() => openVideo(v)} style={{ cursor:"pointer" }}>
-                    <div style={{ fontWeight:600, color:"#1A1D1B", fontSize:"0.82rem", lineHeight:1.4, marginBottom:4 }}>{v.title}</div>
-                    <div style={{ display:"flex", gap:5, flexWrap:"wrap" }}>
-                      <span style={{ fontSize:"0.72rem", color:levelColor(v.level), background:`${levelColor(v.level)}18`, border:`1px solid ${levelColor(v.level)}35`, padding:"1px 7px", borderRadius:10 }}>{v.level}</span>
-                      <span style={{ fontSize:"0.72rem", color:"#4B5563", background:"rgba(0,0,0,0.04)", border:`1px solid ${BORDER}`, padding:"1px 7px", borderRadius:10 }}>{v.type}</span>
-                      <span style={{ fontSize:"0.72rem", color:"#6B7280", padding:"1px 4px" }}>⏱ {v.dur}</span>
+                    <div style={{ fontWeight:600, color:"#141414", fontSize:"0.82rem", lineHeight:1.4, marginBottom:4 }}>{v.title}</div>
+                    <div style={{ display:"flex", gap:5, flexWrap:"wrap", alignItems:"center" }}>
+                      <span style={{ fontSize:"0.68rem", fontFamily:HEAVY_FONT, fontWeight:700, letterSpacing:"0.03em", textTransform:"uppercase", color:"#141414", border:"1px solid #141414", padding:"1px 7px" }}>{v.level}</span>
+                      <span style={{ fontSize:"0.72rem", color:"#5B6572", border:"1px solid #E6E4DF", padding:"1px 7px" }}>{v.type}</span>
+                      <span style={{ fontSize:"0.72rem", color:"#5B6572", padding:"1px 4px" }}>⏱ {v.dur}</span>
                     </div>
                   </div>
                   {/* Right actions — independent, NOT inside a parent onClick */}
                   <div style={{ display:"flex", flexDirection:"column", gap:5, alignItems:"center", flexShrink:0 }}>
                     <div onClick={() => openVideo(v)} style={{ cursor:"pointer" }}>
-                      <span style={{ color:c.color, fontSize:20 }}>▶</span>
+                      <span style={{ color:"#141414", fontSize:18 }}>▶</span>
                     </div>
                     <button
                       onClick={() => { setQuickLog(q => ({...q, type:v.type||"Strength", creator:c.creator, videoTitle:v.title, notes:""})); setShowQuickLog(true); }}
-                      style={{ background:`${c.color}18`, border:`1px solid ${c.color}35`, color:c.color, borderRadius:6, padding:"3px 8px", fontSize:"0.72rem", fontFamily:"'Inter',sans-serif", fontWeight:700, cursor:"pointer", whiteSpace:"nowrap", zIndex:10 }}>
+                      style={{ background:"#FFFFFF", border:"1px solid #141414", color:"#141414", padding:"3px 10px", fontSize:"0.64rem", fontFamily:HEAVY_FONT, fontWeight:700, letterSpacing:"0.04em", textTransform:"uppercase", cursor:"pointer", whiteSpace:"nowrap", zIndex:10 }}>
                       + Log
                     </button>
                   </div>
                 </div>
-              ));
+                ))}
+                </div>
+              );
             }
 
             // ── SERIES-GROUPED COLLAPSIBLE RENDERING ──
@@ -9811,16 +9982,8 @@ function Workouts({ profile, isPro, onUpgrade }) {
               } else noSeries.push(v);
             });
 
-            const SC = {
-              "Iron Series":"#10B981","EPIC II":"#7C3AED","EPIC Endgame":"#D97706",
-              "EPIC Beginner":"#047857","EPIC Heat":"#DC2626",
-              "Kickass Kettlebell":"#C2410C","HIIT Series":"#1D4ED8",
-              // Heather Robertson
-              "POWER (HR12WEEK 5.0)":"#C2410C","Fierce 3.0":"#DC2626","Fierce 2.0":"#DC2626",
-              "Glow Up 2.0":"#BE185D","BRK Unstoppable":"#7C3AED","The Daily10":"#D97706",
-              // Joanna Soh
-              "30-Day Fitter & Stronger":"#BE185D","8-Week Lean Up":"#DC2626","Lose Weight & Lean Up":"#C2410C",
-            };
+            // Series accordions — single ink accent.
+            const SERIES_ACCENT = "#141414";
             const SI = {
               "Iron Series":"🔩","EPIC II":"⚔️","EPIC Endgame":"🏆",
               "EPIC Beginner":"🌱","EPIC Heat":"🔥",
@@ -9866,26 +10029,26 @@ function Workouts({ profile, isPro, onUpgrade }) {
             return (
               <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
                 {Object.entries(seriesMap).map(([seriesName, vids]) => {
-                  const sc = SC[seriesName] || c.color;
+                  const sc = SERIES_ACCENT;
                   const si = SI[seriesName] || "📋";
                   const sd = SD[seriesName] || "";
                   const isOpen = !!expandedSeries[seriesName];
                   return (
-                    <div key={seriesName} style={{ border:`1px solid ${sc}35`, borderRadius:14, overflow:"hidden", transition:"all 0.2s" }}>
+                    <div key={seriesName} style={{ border:"1px solid #141414", overflow:"hidden" }}>
 
                       {/* ── ACCORDION HEADER (always visible, clickable) ── */}
                       <div onClick={() => toggleSeries(seriesName)}
-                        style={{ background: isOpen ? `${sc}20` : `${sc}0d`, padding:"13px 14px", display:"grid", gridTemplateColumns:"1fr auto auto", gap:10, alignItems:"center", cursor:"pointer", userSelect:"none", transition:"background 0.15s" }}
-                        onMouseEnter={e => e.currentTarget.style.background=`${sc}22`}
-                        onMouseLeave={e => e.currentTarget.style.background= isOpen ? `${sc}20` : `${sc}0d`}>
+                        style={{ background: isOpen ? "#F4B400" : "#FFFFFF", padding:"13px 14px", display:"grid", gridTemplateColumns:"1fr auto auto", gap:10, alignItems:"center", cursor:"pointer", userSelect:"none", transition:"background 0.15s" }}
+                        onMouseEnter={e => { if (!isOpen) e.currentTarget.style.background="#FBF7EF"; }}
+                        onMouseLeave={e => e.currentTarget.style.background= isOpen ? "#F4B400" : "#FFFFFF"}>
                         <div>
                           <div style={{ display:"flex", alignItems:"center", gap:7, marginBottom:3 }}>
                             <span style={{ fontSize:"1.05rem" }}>{si}</span>
-                            <span style={{ fontFamily:"'Playfair Display',serif", fontWeight:800, color:"#1A1D1B", fontSize:"0.95rem" }}>{seriesName}</span>
+                            <span style={{ fontFamily:HEAVY_FONT, fontWeight:900, color:"#141414", fontSize:"0.92rem", letterSpacing:"-0.01em", textTransform:"uppercase" }}>{seriesName}</span>
                           </div>
-                          <div style={{ fontSize:"0.73rem", color:sc, fontWeight:600, opacity:0.9 }}>{sd}</div>
+                          <div style={{ fontSize:"0.73rem", color:"#141414", fontWeight:600 }}>{sd}</div>
                         </div>
-                        <div style={{ fontSize:"0.72rem", color:sc, background:`${sc}22`, border:`1px solid ${sc}40`, borderRadius:10, padding:"3px 10px", fontWeight:700, flexShrink:0, whiteSpace:"nowrap" }}>
+                        <div style={{ fontSize:"0.64rem", fontFamily:HEAVY_FONT, color:"#141414", border:"1px solid #141414", padding:"3px 10px", fontWeight:800, letterSpacing:"0.04em", textTransform:"uppercase", flexShrink:0, whiteSpace:"nowrap" }}>
                           {vids.length} videos
                         </div>
                         {/* Chevron */}
@@ -9913,11 +10076,11 @@ function Workouts({ profile, isPro, onUpgrade }) {
                         <div style={{ borderTop:`1px solid ${sc}20` }}>
                           {vids.map((v,i) => (
                             <div key={i}
-                              style={{ background:"transparent", borderBottom: i < vids.length-1 ? `1px solid ${BORDER}` : "none", padding:"10px 14px", display:"grid", gridTemplateColumns:"28px 1fr auto", gap:10, alignItems:"center", transition:"background 0.12s" }}
-                              onMouseEnter={e => e.currentTarget.style.background=`${sc}12`}
-                              onMouseLeave={e => e.currentTarget.style.background="transparent"}>
+                              style={{ background:"#FFFFFF", borderTop: "1px solid #141414", padding:"10px 14px", display:"grid", gridTemplateColumns:"32px 1fr auto", gap:10, alignItems:"center", transition:"background 0.12s" }}
+                              onMouseEnter={e => e.currentTarget.style.background="#FBF7EF"}
+                              onMouseLeave={e => e.currentTarget.style.background="#FFFFFF"}>
                               {/* Day number badge — click opens video */}
-                              <div onClick={() => openVideo(v)} style={{ width:32, height:32, borderRadius:8, background:`${sc}28`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:"0.78rem", fontWeight:800, color:sc, flexShrink:0, cursor:"pointer" }}>
+                              <div onClick={() => openVideo(v)} style={{ width:32, height:32, background:"#F4B400", display:"flex", alignItems:"center", justifyContent:"center", fontFamily:HEAVY_FONT, fontSize:"0.78rem", fontWeight:900, color:"#141414", flexShrink:0, cursor:"pointer" }}>
                                 {v.seriesNum}
                               </div>
                               <div onClick={() => openVideo(v)} style={{ cursor:"pointer" }}>
@@ -9948,24 +10111,28 @@ function Workouts({ profile, isPro, onUpgrade }) {
                 })}
 
                 {/* Non-series standalone videos */}
+                {noSeries.length > 0 && (
+                <div style={{ border:"1px solid #141414" }}>
                 {noSeries.map((v,i) => (
                   <div key={i} onClick={() => openVideo(v)}
-                    style={{ background:SURFACE, border:`1px solid ${BORDER}`, borderRadius:12, padding:"13px 14px", display:"grid", gridTemplateColumns:"auto 1fr auto", gap:12, alignItems:"center", cursor:"pointer", transition:"all 0.15s" }}
-                    onMouseEnter={e => { e.currentTarget.style.background=`${c.color}12`; e.currentTarget.style.borderColor=`${c.color}40`; }}
-                    onMouseLeave={e => { e.currentTarget.style.background=SURFACE; e.currentTarget.style.borderColor=BORDER; }}>
-                    <div style={{ width:36, height:36, borderRadius:10, background:`${c.color}20`, display:"flex", alignItems:"center", justifyContent:"center" }}>
-                      <span style={{ fontSize:16 }}>▶</span>
+                    style={{ background:"#FFFFFF", borderTop: i === 0 ? "none" : "1px solid #E6E4DF", padding:"13px 14px", display:"grid", gridTemplateColumns:"auto 1fr auto", gap:12, alignItems:"center", cursor:"pointer", transition:"background 0.12s" }}
+                    onMouseEnter={e => { e.currentTarget.style.background="#FBF7EF"; }}
+                    onMouseLeave={e => { e.currentTarget.style.background="#FFFFFF"; }}>
+                    <div style={{ width:32, height:32, background:"#F4B400", display:"flex", alignItems:"center", justifyContent:"center" }}>
+                      <span style={{ fontSize:13, marginLeft:2, color:"#141414" }}>▶</span>
                     </div>
                     <div>
-                      <div style={{ fontWeight:600, color:"#1A1D1B", fontSize:"0.82rem", marginBottom:4 }}>{v.title}</div>
+                      <div style={{ fontWeight:600, color:"#141414", fontSize:"0.82rem", marginBottom:4 }}>{v.title}</div>
                       <div style={{ display:"flex", gap:5 }}>
-                        <span style={{ fontSize:"0.72rem", color:levelColor(v.level), background:`${levelColor(v.level)}18`, border:`1px solid ${levelColor(v.level)}35`, padding:"1px 7px", borderRadius:10 }}>{v.level}</span>
-                        <span style={{ fontSize:"0.72rem", color:"#4B5563", background:"rgba(0,0,0,0.04)", border:`1px solid ${BORDER}`, padding:"1px 7px", borderRadius:10 }}>{v.type}</span>
+                        <span style={{ fontSize:"0.68rem", fontFamily:HEAVY_FONT, fontWeight:700, letterSpacing:"0.03em", textTransform:"uppercase", color:"#141414", border:"1px solid #141414", padding:"1px 7px" }}>{v.level}</span>
+                        <span style={{ fontSize:"0.72rem", color:"#5B6572", border:"1px solid #E6E4DF", padding:"1px 7px" }}>{v.type}</span>
                       </div>
                     </div>
-                    <span style={{ color:c.color, fontSize:18 }}>→</span>
+                    <span style={{ color:"#141414", fontSize:18 }}>→</span>
                   </div>
                 ))}
+                </div>
+                )}
               </div>
             );
           })()}
@@ -9979,46 +10146,44 @@ function Workouts({ profile, isPro, onUpgrade }) {
         <div onClick={() => setVideoModal(null)}
           style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.4)", zIndex:9999, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", padding:16 }}>
           <div onClick={e => e.stopPropagation()}
-            style={{ width:"100%", maxWidth:560, background:"#EEF0ED", border:`1px solid ${BORDER}`, borderRadius:18, overflow:"hidden", boxShadow:"0 24px 80px rgba(0,0,0,0.7)" }}>
+            style={{ width:"100%", maxWidth:560, background:"#FFFFFF", border:"1px solid #141414", overflow:"hidden" }}>
 
             {/* Modal header */}
-            <div style={{ padding:"12px 16px", display:"flex", alignItems:"center", justifyContent:"space-between", borderBottom:`1px solid ${BORDER}` }}>
-              <div style={{ color:"#1A1D1B", fontSize:"0.82rem", fontWeight:700, fontFamily:"'Inter',sans-serif", flex:1, marginRight:12, lineHeight:1.3 }}>
+            <div style={{ padding:"12px 16px", display:"flex", alignItems:"center", justifyContent:"space-between", borderBottom:"1px solid #141414" }}>
+              <div style={{ color:"#141414", fontSize:"0.82rem", fontWeight:700, fontFamily:"'Inter',sans-serif", flex:1, marginRight:12, lineHeight:1.3 }}>
                 {videoModal.title.replace(/^[✨🔩⚔️🏆🌱🔥🫙⚡💥⏱⚖️💪🔴🌶️]\s?[A-Za-z0-9.\s]*—\s?/,"")}
               </div>
               <button onClick={() => setVideoModal(null)}
-                style={{ width:32, height:32, borderRadius:8, background:"rgba(0,0,0,0.07)", border:`1px solid ${BORDER}`, color:"#1A1D1B", cursor:"pointer", fontSize:16, display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
+                style={{ width:32, height:32, background:"#FFFFFF", border:"1px solid #141414", color:"#141414", cursor:"pointer", fontSize:16, display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
                 ✕
               </button>
             </div>
 
             {/* Thumbnail with play overlay — clicking opens YouTube */}
             <a href={videoModal.url} target="_blank" rel="noopener noreferrer" style={{ display:"block", textDecoration:"none" }}>
-              <div style={{ position:"relative", paddingBottom:"56.25%", background:"#EEF0ED", overflow:"hidden", cursor:"pointer" }}>
+              <div style={{ position:"relative", paddingBottom:"56.25%", background:"#0B1B2B", overflow:"hidden", cursor:"pointer" }}>
+                <div style={{ position:"absolute", inset:0, backgroundImage:"radial-gradient(rgba(244,180,0,0.12) 1px, transparent 1px)", backgroundSize:"14px 14px" }} />
+                <div style={{ position:"absolute", inset:0, display:"flex", alignItems:"center", justifyContent:"center", fontSize:"4.5rem", color:"#F4B400", opacity:0.16 }}>🎬</div>
                 {/* YouTube maxresdefault thumbnail */}
-                {videoModal.youtubeId ? (
+                {videoModal.youtubeId && (
                   <img
                     src={`https://img.youtube.com/vi/${videoModal.youtubeId}/maxresdefault.jpg`}
                     onError={e => { e.target.src = `https://img.youtube.com/vi/${videoModal.youtubeId}/hqdefault.jpg`; }}
                     alt={videoModal.title}
-                    style={{ position:"absolute", top:0, left:0, width:"100%", height:"100%", objectFit:"cover", opacity:0.85 }}
+                    style={{ position:"absolute", top:0, left:0, width:"100%", height:"100%", objectFit:"cover" }}
                   />
-                ) : (
-                  <div style={{ position:"absolute", inset:0, background:"linear-gradient(135deg, #1a2e1a, #EEF0ED)", display:"flex", alignItems:"center", justifyContent:"center" }}>
-                    <span style={{ fontSize:"3rem" }}>🎬</span>
-                  </div>
                 )}
-                {/* Dark gradient overlay */}
-                <div style={{ position:"absolute", inset:0, background:"linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 50%)" }} />
+                {/* Overlay for legibility */}
+                <div style={{ position:"absolute", inset:0, background:"linear-gradient(to top, rgba(11,27,43,0.75) 0%, transparent 55%)" }} />
                 {/* Big play button */}
                 <div style={{ position:"absolute", inset:0, display:"flex", alignItems:"center", justifyContent:"center" }}>
-                  <div style={{ width:72, height:72, borderRadius:"50%", background:"rgba(255,0,0,0.9)", display:"flex", alignItems:"center", justifyContent:"center", boxShadow:"0 4px 24px rgba(0,0,0,0.5)", transition:"transform 0.15s" }}>
-                    <span style={{ fontSize:28, marginLeft:4, color:"#fff" }}>▶</span>
+                  <div style={{ width:64, height:64, background:"#F4B400", display:"flex", alignItems:"center", justifyContent:"center" }}>
+                    <span style={{ fontSize:24, marginLeft:4, color:"#141414" }}>▶</span>
                   </div>
                 </div>
                 {/* "Opens in YouTube" label */}
-                <div style={{ position:"absolute", bottom:10, right:10, background:"rgba(0,0,0,0.7)", borderRadius:6, padding:"3px 8px", display:"flex", alignItems:"center", gap:5 }}>
-                  <span style={{ fontSize:"0.72rem", color:"#fff", fontWeight:600 }}>Opens in YouTube</span>
+                <div style={{ position:"absolute", bottom:10, right:10, background:"#141414", padding:"3px 8px", display:"flex", alignItems:"center", gap:5 }}>
+                  <span style={{ fontFamily:HEAVY_FONT, fontSize:"0.62rem", color:"#F4B400", fontWeight:800, letterSpacing:"0.06em", textTransform:"uppercase" }}>Opens in YouTube</span>
                 </div>
               </div>
             </a>
@@ -10026,25 +10191,25 @@ function Workouts({ profile, isPro, onUpgrade }) {
             {/* Info row */}
             <div style={{ padding:"14px 16px", display:"flex", alignItems:"center", justifyContent:"space-between", gap:10 }}>
               <div>
-                <div style={{ fontSize:"0.78rem", color:"#4B5563", marginBottom:3 }}>
+                <div style={{ fontSize:"0.78rem", color:"#141414", fontWeight:600, marginBottom:3 }}>
                   {selectedCreator?.creator || "YouTube"} · {videoModal.type || ""} · {videoModal.dur || ""}
                 </div>
-                <div style={{ fontSize:"0.73rem", color:"#6B7280" }}>
+                <div style={{ fontSize:"0.73rem", color:"#5B6572" }}>
                   Tap the thumbnail or button to watch on YouTube
                 </div>
               </div>
               <a href={videoModal.url} target="_blank" rel="noopener noreferrer"
-                style={{ display:"flex", alignItems:"center", gap:7, fontSize:"0.75rem", color:"#fff", background:"#FF0000", borderRadius:10, padding:"9px 18px", textDecoration:"none", fontWeight:700, whiteSpace:"nowrap", flexShrink:0, boxShadow:"0 2px 12px rgba(255,0,0,0.3)" }}>
+                style={{ display:"flex", alignItems:"center", gap:7, fontSize:"0.72rem", color:"#141414", background:"#F4B400", padding:"9px 18px", textDecoration:"none", fontFamily:HEAVY_FONT, fontWeight:800, letterSpacing:"0.03em", textTransform:"uppercase", whiteSpace:"nowrap", flexShrink:0 }}>
                 ▶ Watch Now
               </a>
             </div>
           </div>
-          <div style={{ marginTop:14, fontSize:"0.75rem", color:"#6B7280" }}>Tap outside to close</div>
+          <div style={{ marginTop:14, fontSize:"0.75rem", color:"rgba(255,255,255,0.85)" }}>Tap outside to close</div>
         </div>
       )}
       {/* Toast — also needed in creator detail view */}
       {quickLogToast && (
-        <div style={{position:"fixed",bottom:90,left:"50%",transform:"translateX(-50%)",background:"linear-gradient(135deg,#064E3B,#10B981)",color:"white",padding:"11px 20px",borderRadius:14,fontSize:"0.82rem",fontWeight:700,fontFamily:"'Inter',sans-serif",zIndex:900,boxShadow:"0 4px 24px rgba(16,185,129,0.45)",maxWidth:320,textAlign:"center"}}>
+        <div style={{position:"fixed",bottom:90,left:"50%",transform:"translateX(-50%)",background:"#141414",color:"#F4B400",padding:"11px 20px",borderRadius:4,fontSize:"0.78rem",fontWeight:800,fontFamily:HEAVY_FONT,letterSpacing:"0.02em",textTransform:"uppercase",zIndex:900,maxWidth:320,textAlign:"center"}}>
           {quickLogToast}
         </div>
       )}
@@ -10052,48 +10217,48 @@ function Workouts({ profile, isPro, onUpgrade }) {
       {/* Quick Log Modal — must be in BOTH return paths */}
       {showQuickLog && (
         <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.4)",backdropFilter:"blur(8px)",zIndex:700,display:"flex",alignItems:"flex-end",justifyContent:"center"}} onClick={e=>{if(e.target===e.currentTarget)setShowQuickLog(false);}}>
-          <div style={{width:"100%",maxWidth:480,background:"#EEF0ED",border:"1px solid rgba(16,185,129,0.25)",borderRadius:"20px 20px 0 0",padding:"24px 20px 32px",animation:"fadeUp 0.25s ease"}}>
-            <div style={{fontFamily:"'Playfair Display',serif",fontWeight:800,color:"#1A1D1B",fontSize:"1rem",marginBottom:4}}>Log Workout 💪</div>
+          <div style={{width:"100%",maxWidth:480,background:"#FFFFFF",border:"1px solid #141414",borderRadius:0,padding:"22px 20px 30px",animation:"fadeUp 0.25s ease"}}>
+            <div style={{fontFamily:HEAVY_FONT,fontWeight:900,color:"#141414",fontSize:"1.15rem",letterSpacing:"-0.01em",textTransform:"uppercase",marginBottom:6}}>Log Workout</div>
             {(quickLog.creator||quickLog.videoTitle) && (
-              <div style={{color:"#0F766E",fontSize:"0.72rem",fontWeight:600,marginBottom:14,padding:"6px 10px",background:"rgba(16,185,129,0.08)",borderRadius:8,border:"1px solid rgba(16,185,129,0.2)"}}>
+              <div style={{color:"#141414",fontSize:"0.72rem",fontWeight:600,marginBottom:14,padding:"6px 10px",border:"1px solid #141414"}}>
                 📹 {quickLog.creator}{quickLog.videoTitle?` — ${quickLog.videoTitle}`:""}
               </div>
             )}
             <div style={{display:"flex",flexDirection:"column",gap:12}}>
               <div>
-                <div style={{fontSize:"0.72rem",fontWeight:700,textTransform:"uppercase",letterSpacing:"0.08em",color:"#6B7280",marginBottom:6}}>Workout Type</div>
+                <div style={{fontFamily:HEAVY_FONT,fontSize:"0.68rem",fontWeight:800,textTransform:"uppercase",letterSpacing:"0.08em",color:"#141414",marginBottom:6}}>Workout Type</div>
                 <div style={{display:"flex",flexWrap:"wrap",gap:5}}>
                   {["Strength","HIIT","Cardio","Yoga","Pilates","Run","Walk","Cycling","Other"].map(t=>(
                     <button key={t} onClick={()=>setQuickLog({...quickLog,type:t})}
-                      style={{padding:"4px 10px",borderRadius:20,border:`1px solid ${quickLog.type===t?"#1D4ED8":"rgba(16,185,129,0.2)"}`,background:quickLog.type===t?"rgba(59,130,246,0.15)":"transparent",color:quickLog.type===t?"#1D4ED8":"#4B5563",cursor:"pointer",fontSize:"0.8rem",fontFamily:"'Inter',sans-serif",fontWeight:600}}>{t}</button>
+                      style={{padding:"4px 10px",borderRadius:4,border:"1px solid #141414",background:quickLog.type===t?"#141414":"#FFFFFF",color:quickLog.type===t?"#FFFFFF":"#141414",cursor:"pointer",fontSize:"0.78rem",fontFamily:"'Inter',sans-serif",fontWeight:600}}>{t}</button>
                   ))}
                 </div>
               </div>
               <div>
-                <div style={{fontSize:"0.72rem",fontWeight:700,textTransform:"uppercase",letterSpacing:"0.08em",color:"#6B7280",marginBottom:6}}>Duration (minutes)</div>
+                <div style={{fontFamily:HEAVY_FONT,fontSize:"0.68rem",fontWeight:800,textTransform:"uppercase",letterSpacing:"0.08em",color:"#141414",marginBottom:6}}>Duration (minutes)</div>
                 <input type="number" value={quickLog.duration} onChange={e=>setQuickLog({...quickLog,duration:e.target.value})} placeholder="e.g. 30"
-                  style={{width:"100%",background:"rgba(255,255,255,0.8)",border:"1px solid rgba(16,185,129,0.2)",borderRadius:9,padding:"9px 13px",color:"#1A1D1B",fontSize:"0.82rem",fontFamily:"'Inter',sans-serif",outline:"none"}}/>
+                  style={{width:"100%",background:"#FFFFFF",border:"1px solid #141414",borderRadius:4,padding:"9px 13px",color:"#141414",fontSize:"0.82rem",fontFamily:"'Inter',sans-serif",outline:"none"}}/>
               </div>
               <div>
-                <div style={{fontSize:"0.72rem",fontWeight:700,textTransform:"uppercase",letterSpacing:"0.08em",color:"#6B7280",marginBottom:6}}>How did it feel?</div>
+                <div style={{fontFamily:HEAVY_FONT,fontSize:"0.68rem",fontWeight:800,textTransform:"uppercase",letterSpacing:"0.08em",color:"#141414",marginBottom:6}}>How did it feel?</div>
                 <div style={{display:"flex",gap:6}}>
                   {["1","2","3","4","5"].map(n=>(
                     <button key={n} onClick={()=>setQuickLog({...quickLog,feel:n})}
-                      style={{flex:1,padding:"8px 4px",borderRadius:10,border:`1px solid ${quickLog.feel===n?"#D97706":"rgba(16,185,129,0.2)"}`,background:quickLog.feel===n?"rgba(245,158,11,0.16)":"transparent",cursor:"pointer",fontSize:"1rem",transform:quickLog.feel===n?"scale(1.12)":"scale(1)"}}>
+                      style={{flex:1,padding:"8px 4px",borderRadius:4,border:"1px solid #141414",background:quickLog.feel===n?"#F4B400":"#FFFFFF",cursor:"pointer",fontSize:"1rem"}}>
                       {["😩","😕","😐","😊","🔥"][parseInt(n)-1]}
                     </button>
                   ))}
                 </div>
               </div>
               <div>
-                <div style={{fontSize:"0.72rem",fontWeight:700,textTransform:"uppercase",letterSpacing:"0.08em",color:"#6B7280",marginBottom:6}}>Notes (optional)</div>
+                <div style={{fontFamily:HEAVY_FONT,fontSize:"0.68rem",fontWeight:800,textTransform:"uppercase",letterSpacing:"0.08em",color:"#141414",marginBottom:6}}>Notes (optional)</div>
                 <input value={quickLog.notes} onChange={e=>setQuickLog({...quickLog,notes:e.target.value})} placeholder="PRs, how you felt, sets & reps…"
-                  style={{width:"100%",background:"rgba(255,255,255,0.8)",border:"1px solid rgba(16,185,129,0.2)",borderRadius:9,padding:"9px 13px",color:"#1A1D1B",fontSize:"0.8rem",fontFamily:"'Inter',sans-serif",outline:"none"}}/>
+                  style={{width:"100%",background:"#FFFFFF",border:"1px solid #141414",borderRadius:4,padding:"9px 13px",color:"#141414",fontSize:"0.8rem",fontFamily:"'Inter',sans-serif",outline:"none"}}/>
               </div>
             </div>
             <div style={{display:"flex",gap:9,marginTop:16}}>
-              <button onClick={()=>setShowQuickLog(false)} style={{flex:1,background:"transparent",border:"1px solid rgba(16,185,129,0.2)",borderRadius:10,padding:"11px",color:"#4B5563",cursor:"pointer",fontSize:"0.82rem",fontFamily:"'Inter',sans-serif"}}>Cancel</button>
-              <button onClick={submitQuickLog} disabled={!quickLog.duration} style={{flex:2,background:quickLog.duration?"linear-gradient(135deg,#10B981,#059669)":"rgba(16,185,129,0.1)",border:"none",borderRadius:10,padding:"11px",color:quickLog.duration?"white":"#6B7280",cursor:quickLog.duration?"pointer":"default",fontSize:"0.88rem",fontFamily:"'Inter',sans-serif",fontWeight:700}}>Save Workout ✓</button>
+              <button onClick={()=>setShowQuickLog(false)} style={{flex:1,background:"#FFFFFF",border:"1px solid #141414",borderRadius:4,padding:"11px",color:"#141414",cursor:"pointer",fontSize:"0.78rem",fontFamily:HEAVY_FONT,fontWeight:700,letterSpacing:"0.03em",textTransform:"uppercase"}}>Cancel</button>
+              <button onClick={submitQuickLog} disabled={!quickLog.duration} style={{flex:2,background:quickLog.duration?"#F4B400":"#E6E4DF",border:"none",borderRadius:4,padding:"11px",color:"#141414",cursor:quickLog.duration?"pointer":"default",fontSize:"0.82rem",fontFamily:HEAVY_FONT,fontWeight:800,letterSpacing:"0.03em",textTransform:"uppercase"}}>Save Workout</button>
             </div>
           </div>
         </div>
@@ -10133,14 +10298,14 @@ Return: {"programName":"...","split":"...","days":[{"day":"Monday","focus":"..."
   return (
     <div style={{ flex:1, overflowY:"auto", padding:"0 0 80px" }}>
       {/* Top tabs: Browse / My Program */}
-      <div style={{ padding:"12px 14px 0", position:"sticky", top:0, background:"rgba(255,255,255,0.95)", backdropFilter:"blur(12px)", zIndex:10, borderBottom:`1px solid ${BORDER}` }}>
-        <div style={{ display:"flex", gap:8, marginBottom:10 }}>
+      <div style={{ padding:"12px 14px 0", position:"sticky", top:0, background:"#FFFFFF", zIndex:10, borderBottom:"1px solid #141414" }}>
+        <div style={{ display:"flex", gap:0, marginBottom:10, border:"1px solid #141414" }}>
           {[
-            { id:"browse", label:"🏋️ Browse Instructors" },
-            { id:"program", label: isPro ? "📋 My Program" : "📋 My Program 👑" },
-          ].map(v => (
+            { id:"browse", label:"Browse Instructors" },
+            { id:"program", label: isPro ? "My Program" : "My Program 👑" },
+          ].map((v, vi) => (
             <button key={v.id} onClick={() => setWorkoutView(v.id)}
-              style={{ flex:1, background: workoutView===v.id ? "rgba(16,185,129,0.25)" : "rgba(0,0,0,0.03)", border:`1px solid ${workoutView===v.id ? ACCENT : BORDER}`, borderRadius:10, padding:"9px 8px", color: workoutView===v.id ? ACCENT2_TEXT : "#4B5563", cursor:"pointer", fontSize:"0.74rem", fontFamily:"'Inter',sans-serif", fontWeight: workoutView===v.id ? 700 : 400, transition:"all 0.15s" }}>
+              style={{ flex:1, background: workoutView===v.id ? "#141414" : "#FFFFFF", borderLeft: vi === 0 ? "none" : "1px solid #141414", border:"none", padding:"10px 8px", color: workoutView===v.id ? "#FFFFFF" : "#141414", cursor:"pointer", fontSize:"0.7rem", fontFamily:HEAVY_FONT, fontWeight:800, letterSpacing:"0.04em", textTransform:"uppercase", transition:"all 0.12s" }}>
               {v.label}
             </button>
           ))}
@@ -10150,17 +10315,16 @@ Return: {"programName":"...","split":"...","days":[{"day":"Monday","focus":"..."
         {workoutView === "browse" && (
           <>
             <div style={{ position:"relative", marginBottom:10 }}>
-              <span style={{ position:"absolute", left:12, top:"50%", transform:"translateY(-50%)", fontSize:14, color:"#6B7280" }}>🔍</span>
+              <span style={{ position:"absolute", left:12, top:"50%", transform:"translateY(-50%)", fontSize:14, color:"#5B6572" }}>🔍</span>
               <input value={searchQ} onChange={e=>setSearchQ(e.target.value)} placeholder="Search workouts, creators, types…" style={inputStyle}/>
             </div>
             <div style={{ display:"flex", gap:6, overflowX:"auto", paddingBottom:4, scrollbarWidth:"none" }}>
               {filterTags.map(tag => {
                 const active = activeTag === tag;
-                const color = tagColors[tag] || ACCENT;
                 const group = GROUPS.find(g => g.key === tag);
-                const label = tag === "All" ? "✦ All" : (group?.label || tag);
+                const label = tag === "All" ? "All" : (group?.label || tag);
                 return (
-                  <button key={tag} onClick={() => setActiveTag(tag)} style={{ flexShrink:0, background: active ? color : "rgba(0,0,0,0.04)", border:`1px solid ${active ? color : BORDER}`, color: active ? "white" : "#4B5563", padding:"5px 13px", borderRadius:20, cursor:"pointer", fontSize:"0.8rem", fontFamily:"'Inter',sans-serif", fontWeight: active ? 700 : 400, transition:"all 0.15s", whiteSpace:"nowrap" }}>
+                  <button key={tag} onClick={() => setActiveTag(tag)} style={{ flexShrink:0, background: active ? "#141414" : "#FFFFFF", border:"1px solid #141414", color: active ? "#FFFFFF" : "#141414", padding:"5px 12px", borderRadius:4, cursor:"pointer", fontSize:"0.72rem", fontFamily:HEAVY_FONT, fontWeight:700, letterSpacing:"0.03em", textTransform:"uppercase", whiteSpace:"nowrap" }}>
                     {label}
                   </button>
                 );
@@ -10174,79 +10338,80 @@ Return: {"programName":"...","split":"...","days":[{"day":"Monday","focus":"..."
       {workoutView === "program" && (
         <div style={{ padding:"18px 14px 80px", maxWidth:600, margin:"0 auto" }}>
           {!isPro ? (
-            <div style={{ background:"rgba(245,158,11,0.06)", border:"1px solid rgba(245,158,11,0.25)", borderRadius:16, padding:"28px 20px", textAlign:"center" }}>
+            <div style={{ border:"1px solid #141414", padding:"28px 20px", textAlign:"center" }}>
               <div style={{ fontSize:40, marginBottom:12 }}>👑</div>
-              <div style={{ fontFamily:"'Playfair Display',serif", fontWeight:800, color:"#1A1D1B", fontSize:"1.1rem", marginBottom:8 }}>Custom AI Workout Programs</div>
-              <div style={{ color:"#4B5563", fontSize:"0.8rem", lineHeight:1.7, marginBottom:20 }}>
+              <div style={{ fontFamily:HEAVY_FONT, fontWeight:900, color:"#141414", fontSize:"1.2rem", letterSpacing:"-0.01em", textTransform:"uppercase", marginBottom:8 }}>Custom AI Workout Programs</div>
+              <div style={{ color:"#5B6572", fontSize:"0.8rem", lineHeight:1.7, marginBottom:20 }}>
                 Get a fully personalised weekly workout program built by AI — based on your goals, experience, equipment, and schedule. Pro exclusive.
               </div>
-              <div style={{ display:"flex", flexDirection:"column", gap:8, marginBottom:20 }}>
+              <div style={{ display:"flex", flexDirection:"column", gap:0, marginBottom:20, border:"1px solid #141414" }}>
                 {[
                   "🎯 Tailored to your specific goals",
                   "⚙️ Matches your available equipment",
                   "📆 Fits your weekly schedule exactly",
                   "💡 Includes sets, reps, rest, and coaching tips",
-                ].map(f => (
-                  <div key={f} style={{ background:"rgba(0,0,0,0.03)", border:`1px solid ${BORDER}`, borderRadius:10, padding:"9px 14px", fontSize:"0.78rem", color:"#1A1D1B", textAlign:"left" }}>{f}</div>
+                ].map((f, fi) => (
+                  <div key={f} style={{ borderTop: fi === 0 ? "none" : "1px solid #E6E4DF", padding:"9px 14px", fontSize:"0.78rem", color:"#141414", textAlign:"left" }}>{f}</div>
                 ))}
               </div>
               <button onClick={() => onUpgrade("Custom AI workout programs require Pro")}
-                style={{ background:"linear-gradient(135deg,#D97706,#D97706)", border:"none", borderRadius:13, padding:"14px 32px", color:"white", cursor:"pointer", fontSize:"0.92rem", fontFamily:"'Inter',sans-serif", fontWeight:800, boxShadow:"0 0 24px rgba(245,158,11,0.4)" }}>
-                👑 Upgrade to Pro — $4.99/mo
+                style={{ background:"#F4B400", border:"none", borderRadius:4, padding:"14px 32px", color:"#141414", cursor:"pointer", fontSize:"0.85rem", fontFamily:HEAVY_FONT, fontWeight:800, letterSpacing:"0.03em", textTransform:"uppercase" }}>
+                Upgrade to Pro — $4.99/mo
               </button>
             </div>
           ) : (
             <>
               {!program && !programLoading && (
                 <div>
-                  <div style={{ fontFamily:"'Playfair Display',serif", fontWeight:800, color:"#1A1D1B", fontSize:"1.2rem", marginBottom:4 }}>Your Custom Program</div>
-                  <div style={{ color:"#4B5563", fontSize:"0.8rem", marginBottom:18, lineHeight:1.6 }}>
-                    AI will build a full weekly program based on your profile: <span style={{ color:ACCENT_TEXT }}>{profile?.fitnessExp||"intermediate"} · {profile?.workoutDays||4} days/week · {profile?.equipment||"full gym"}</span>
+                  <div style={{ fontFamily:HEAVY_FONT, fontWeight:900, color:"#141414", fontSize:"1.35rem", letterSpacing:"-0.01em", textTransform:"uppercase", marginBottom:4 }}>Your Custom Program</div>
+                  <div style={{ color:"#5B6572", fontSize:"0.8rem", marginBottom:18, lineHeight:1.6 }}>
+                    AI will build a full weekly program based on your profile: <span style={{ color:"#141414", fontWeight:700 }}>{profile?.fitnessExp||"intermediate"} · {profile?.workoutDays||4} days/week · {profile?.equipment||"full gym"}</span>
                   </div>
                   <button onClick={generateProgram}
-                    style={{ width:"100%", background:"linear-gradient(135deg,#1D4ED8,#1D4ED8)", border:"none", borderRadius:13, padding:"15px", color:"white", cursor:"pointer", fontSize:"0.95rem", fontFamily:"'Inter',sans-serif", fontWeight:800, boxShadow:"0 0 24px rgba(59,130,246,0.4)", marginBottom:14 }}>
-                    ✨ Generate My Program
+                    style={{ width:"100%", background:"#F4B400", border:"none", borderRadius:4, padding:"15px", color:"#141414", cursor:"pointer", fontSize:"0.9rem", fontFamily:HEAVY_FONT, fontWeight:800, letterSpacing:"0.03em", textTransform:"uppercase", marginBottom:14 }}>
+                    Generate My Program
                   </button>
-                  {programError && <div style={{ background:"rgba(239,68,68,0.1)", border:"1px solid rgba(239,68,68,0.3)", borderRadius:10, padding:"12px", color:"#DC2626", fontSize:"0.75rem" }}>⚠️ {programError}</div>}
+                  {programError && <div style={{ border:"1px solid #141414", padding:"12px", color:"#141414", fontWeight:700, fontSize:"0.75rem" }}>⚠️ {programError}</div>}
                 </div>
               )}
 
               {programLoading && (
-                <div style={{ textAlign:"center", padding:"60px 20px" }}>
-                  <div style={{ display:"inline-flex", gap:6, marginBottom:14 }}>
-                    {[0,1,2].map(i => <div key={i} style={{ width:10, height:10, borderRadius:"50%", background:"#1D4ED8", animation:`dotPulse 1.3s ease-in-out ${i*0.15}s infinite` }}/>)}
+                <div style={{ padding:"60px 8px" }}>
+                  <div style={{ display:"flex", gap:6, marginBottom:14 }}>
+                    {[0,1,2].map(i => <div key={i} style={{ width:10, height:10, background:"#141414", animation:`dotPulse 1.3s ease-in-out ${i*0.15}s infinite` }}/>)}
                   </div>
-                  <div style={{ color:"#1A1D1B", fontWeight:600, marginBottom:6 }}>Building your program…</div>
-                  <div style={{ color:"#4B5563", fontSize:"0.78rem" }}>Personalised to your profile — ~10 seconds</div>
+                  <div style={{ fontFamily:HEAVY_FONT, fontWeight:900, color:"#141414", fontSize:"1.1rem", textTransform:"uppercase", marginBottom:6 }}>Building your program…</div>
+                  <div style={{ color:"#5B6572", fontSize:"0.78rem" }}>Personalised to your profile — ~10 seconds</div>
                 </div>
               )}
 
               {program && (
                 <div style={{ animation:"fadeUp 0.3s ease" }}>
-                  <div style={{ background:"rgba(59,130,246,0.08)", border:"1px solid rgba(59,130,246,0.3)", borderRadius:14, padding:"16px 18px", marginBottom:16 }}>
-                    <div style={{ fontFamily:"'Playfair Display',serif", fontWeight:800, color:"#1A1D1B", fontSize:"1.1rem", marginBottom:4 }}>{program.programName}</div>
-                    <div style={{ color:"#1D4ED8", fontSize:"0.75rem", fontWeight:600, marginBottom:6 }}>{program.split}</div>
-                    {program.tips && <div style={{ color:"#4B5563", fontSize:"0.75rem", lineHeight:1.6 }}>{program.tips}</div>}
+                  <div style={{ position:"relative", border:"1px solid #141414", padding:"16px 18px 16px 22px", marginBottom:16, overflow:"hidden" }}>
+                    <div style={{ position:"absolute", left:0, top:0, bottom:0, width:4, background:"#F4B400" }} />
+                    <div style={{ fontFamily:HEAVY_FONT, fontWeight:900, color:"#141414", fontSize:"1.1rem", letterSpacing:"-0.01em", textTransform:"uppercase", marginBottom:4 }}>{program.programName}</div>
+                    <div style={{ fontFamily:HEAVY_FONT, color:"#141414", fontSize:"0.7rem", fontWeight:800, letterSpacing:"0.04em", textTransform:"uppercase", marginBottom:6 }}>{program.split}</div>
+                    {program.tips && <div style={{ color:"#5B6572", fontSize:"0.75rem", lineHeight:1.6 }}>{program.tips}</div>}
                   </div>
 
                   {program.days?.map((day, di) => (
-                    <div key={di} style={{ background:SURFACE, border:`1px solid ${BORDER}`, borderRadius:14, padding:"14px 16px", marginBottom:10 }}>
-                      <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:10, paddingBottom:8, borderBottom:`1px solid ${BORDER}` }}>
-                        <div style={{ width:32, height:32, borderRadius:8, background:"rgba(59,130,246,0.15)", border:"1px solid rgba(59,130,246,0.3)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:14, fontWeight:800, color:"#1D4ED8", flexShrink:0 }}>{di+1}</div>
+                    <div key={di} style={{ background:"#FFFFFF", border:"1px solid #141414", padding:"14px 16px", marginBottom:10 }}>
+                      <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:10, paddingBottom:8, borderBottom:"1px solid #E6E4DF" }}>
+                        <div style={{ width:32, height:32, background:"#F4B400", display:"flex", alignItems:"center", justifyContent:"center", fontFamily:HEAVY_FONT, fontSize:14, fontWeight:900, color:"#141414", flexShrink:0 }}>{di+1}</div>
                         <div>
-                          <div style={{ fontWeight:700, color:"#1A1D1B", fontSize:"0.88rem" }}>{day.day}</div>
-                          <div style={{ color:"#1D4ED8", fontSize:"0.8rem", fontWeight:600 }}>{day.focus}</div>
+                          <div style={{ fontWeight:700, color:"#141414", fontSize:"0.88rem" }}>{day.day}</div>
+                          <div style={{ fontFamily:HEAVY_FONT, color:"#141414", fontSize:"0.72rem", fontWeight:800, letterSpacing:"0.03em", textTransform:"uppercase" }}>{day.focus}</div>
                         </div>
                       </div>
-                      <div style={{ display:"flex", flexDirection:"column", gap:7 }}>
+                      <div style={{ display:"flex", flexDirection:"column", gap:0, border:"1px solid #E6E4DF" }}>
                         {day.exercises?.map((ex, ei) => (
-                          <div key={ei} style={{ display:"grid", gridTemplateColumns:"1fr auto auto auto", gap:8, alignItems:"center", background:"rgba(0,0,0,0.025)", borderRadius:9, padding:"8px 11px" }}>
+                          <div key={ei} style={{ display:"grid", gridTemplateColumns:"1fr auto auto", gap:8, alignItems:"center", borderTop: ei === 0 ? "none" : "1px solid #E6E4DF", padding:"8px 11px" }}>
                             <div>
-                              <div style={{ color:"#1A1D1B", fontSize:"0.8rem", fontWeight:600 }}>{ex.name}</div>
-                              {ex.notes && <div style={{ color:"#4B5563", fontSize:"0.75rem", marginTop:2 }}>{ex.notes}</div>}
+                              <div style={{ color:"#141414", fontSize:"0.8rem", fontWeight:600 }}>{ex.name}</div>
+                              {ex.notes && <div style={{ color:"#5B6572", fontSize:"0.75rem", marginTop:2 }}>{ex.notes}</div>}
                             </div>
-                            <span style={{ fontSize:"0.72rem", color:"#047857", background:"rgba(16,185,129,0.1)", border:"1px solid rgba(16,185,129,0.2)", padding:"2px 7px", borderRadius:8, whiteSpace:"nowrap" }}>{ex.sets}×{ex.reps}</span>
-                            <span style={{ fontSize:"0.72rem", color:"#92400E", background:"rgba(245,158,11,0.1)", border:"1px solid rgba(245,158,11,0.2)", padding:"2px 7px", borderRadius:8, whiteSpace:"nowrap" }}>⏱ {ex.rest}</span>
+                            <span style={{ fontFamily:HEAVY_FONT, fontSize:"0.68rem", fontWeight:700, color:"#141414", border:"1px solid #141414", padding:"2px 7px", whiteSpace:"nowrap" }}>{ex.sets}×{ex.reps}</span>
+                            <span style={{ fontSize:"0.68rem", color:"#5B6572", border:"1px solid #E6E4DF", padding:"2px 7px", whiteSpace:"nowrap" }}>⏱ {ex.rest}</span>
                           </div>
                         ))}
                       </div>
@@ -10254,8 +10419,8 @@ Return: {"programName":"...","split":"...","days":[{"day":"Monday","focus":"..."
                   ))}
 
                   <button onClick={() => { setProgram(null); setProgramError(""); }}
-                    style={{ width:"100%", background:"rgba(59,130,246,0.1)", border:"1px solid rgba(59,130,246,0.3)", borderRadius:12, padding:"12px", color:"#1D4ED8", cursor:"pointer", fontSize:"0.82rem", fontFamily:"'Inter',sans-serif", fontWeight:700, marginTop:6 }}>
-                    🔄 Regenerate Program
+                    style={{ width:"100%", background:"#FFFFFF", border:"1px solid #141414", borderRadius:4, padding:"12px", color:"#141414", cursor:"pointer", fontSize:"0.72rem", fontFamily:HEAVY_FONT, fontWeight:700, letterSpacing:"0.04em", textTransform:"uppercase", marginTop:6 }}>
+                    Regenerate Program
                   </button>
                 </div>
               )}
@@ -10272,42 +10437,42 @@ Return: {"programName":"...","split":"...","days":[{"day":"Monday","focus":"..."
         const g1=(profile?.goals||[])[0];
         if(!g1)return null;
         const gTags={"Lose Weight":["Cardio","HIIT"],"Build Muscle":["Strength"],"More Energy":["HIIT","Cardio","Yoga"],"Heart Health":["Cardio","HIIT"],"Reduce Stress":["Yoga","Pilates"],"Run / Endurance":["Cardio","HIIT"],"Manage a Condition":["Yoga","Pilates","Strength"]};
-        const gColor={"Lose Weight":"#C2410C","Build Muscle":"#4338CA","More Energy":"#D97706","Heart Health":"#DC2626","Reduce Stress":"#7C3AED","Run / Endurance":"#10B981","Manage a Condition":"#0E7490"};
         const gIcon={"Lose Weight":"🔥","Build Muscle":"💪","More Energy":"⚡","Heart Health":"❤️","Reduce Stress":"🧘","Run / Endurance":"🏃","Manage a Condition":"🩺"};
-        const tags=gTags[g1]||[];const color=gColor[g1]||ACCENT;const icon=gIcon[g1]||"🎯";
+        const tags=gTags[g1]||[];const color=catAccent(tags[0]);const icon=gIcon[g1]||"🎯";
         const vids=(typeof VIDEO_INDEX!=="undefined"?VIDEO_INDEX:[]).filter(v=>tags.some(t=>v.type===t)).slice(0,8);
         if(!vids.length)return null;
         return(
           <div style={{padding:"14px 14px 0"}}>
             <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:10}}>
-              <span style={{fontSize:20}}>{icon}</span>
-              <div><div style={{fontSize:"0.75rem",fontWeight:800,color,fontFamily:"'Inter',sans-serif"}}>For You — {g1}</div>
-              <div style={{fontSize:"0.72rem",color:"#4B5563"}}>Matched to your goal</div></div>
+              <span style={{fontSize:18}}>{icon}</span>
+              <div><div style={{fontFamily:HEAVY_FONT,fontSize:"0.72rem",fontWeight:800,color:"#141414",letterSpacing:"0.08em",textTransform:"uppercase"}}>For You — {g1}</div>
+              <div style={{fontSize:"0.72rem",color:"#5B6572"}}>Matched to your goal</div></div>
             </div>
             <div style={{display:"flex",gap:10,overflowX:"auto",paddingBottom:10,scrollbarWidth:"none"}}>
               {vids.map((v,i)=>(
-                <div key={i} onClick={()=>setVideoModal(v)} style={{flexShrink:0,width:155,background:"rgba(0,0,0,0.03)",border:`1px solid ${color}28`,borderRadius:12,overflow:"hidden",cursor:"pointer"}}>
-                  <div style={{position:"relative",paddingBottom:"56.25%",background:"#EEF0ED"}}>
-                    {v.youtubeId&&<img src={`https://img.youtube.com/vi/${v.youtubeId}/hqdefault.jpg`} alt={v.title} style={{position:"absolute",top:0,left:0,width:"100%",height:"100%",objectFit:"cover",opacity:0.85}}/>}
+                <div key={i} onClick={()=>setVideoModal(v)} style={{flexShrink:0,width:155,background:"#FFFFFF",border:"1px solid #141414",overflow:"hidden",cursor:"pointer"}}>
+                  <div style={{position:"relative",paddingBottom:"56.25%",background:"#0B1B2B"}}>
+                    <div style={{position:"absolute",inset:0,backgroundImage:"radial-gradient(rgba(244,180,0,0.12) 1px, transparent 1px)",backgroundSize:"12px 12px"}}/>
+                    {v.youtubeId&&<img src={`https://img.youtube.com/vi/${v.youtubeId}/hqdefault.jpg`} alt={v.title} style={{position:"absolute",top:0,left:0,width:"100%",height:"100%",objectFit:"cover"}}/>}
                     <div style={{position:"absolute",inset:0,display:"flex",alignItems:"center",justifyContent:"center"}}>
-                      <div style={{width:34,height:34,borderRadius:"50%",background:"rgba(255,0,0,0.85)",display:"flex",alignItems:"center",justifyContent:"center"}}><span style={{fontSize:13,marginLeft:3,color:"#fff"}}>▶</span></div>
+                      <div style={{width:32,height:32,background:"#F4B400",display:"flex",alignItems:"center",justifyContent:"center"}}><span style={{fontSize:12,marginLeft:2,color:"#141414"}}>▶</span></div>
                     </div>
                   </div>
-                  <div style={{padding:"7px 9px"}}>
-                    <div style={{fontSize:"0.73rem",fontWeight:700,color:"#1A1D1B",lineHeight:1.3,overflow:"hidden",display:"-webkit-box",WebkitLineClamp:2,WebkitBoxOrient:"vertical"}}>{v.title}</div>
-                    <div style={{fontSize:"0.72rem",color:"#4B5563",marginTop:2}}>{v.creator} · {v.dur}</div>
+                  <div style={{padding:"7px 9px",borderTop:"1px solid #141414"}}>
+                    <div style={{fontSize:"0.73rem",fontWeight:700,color:"#141414",lineHeight:1.3,overflow:"hidden",display:"-webkit-box",WebkitLineClamp:2,WebkitBoxOrient:"vertical"}}>{v.title}</div>
+                    <div style={{fontSize:"0.72rem",color:"#5B6572",marginTop:2}}>{v.creator} · {v.dur}</div>
                   </div>
                 </div>
               ))}
             </div>
-            <div style={{height:1,background:"rgba(0,0,0,0.06)",margin:"0 0 4px"}}/>
+            <div style={{height:1,background:"#141414",margin:"0 0 4px"}}/>
           </div>
         );
       })()}
       {/* Grouped creator sections */}
       <div style={{ padding:"14px 12px 80px" }}>
         {/* Summary count */}
-        <div style={{ fontSize:"0.72rem", fontWeight:700, letterSpacing:"0.12em", textTransform:"uppercase", color:"#6B7280", marginBottom:16 }}>
+        <div style={{ fontFamily:HEAVY_FONT, fontSize:"0.7rem", fontWeight:800, letterSpacing:"0.08em", textTransform:"uppercase", color:"#141414", marginBottom:16 }}>
           {totalVisible} Instructor{totalVisible !== 1 ? "s" : ""}{activeTag !== "All" ? ` · ${activeTag}` : ` · ${visibleGroups.length} categories`}
         </div>
 
@@ -10315,42 +10480,42 @@ Return: {"programName":"...","split":"...","days":[{"day":"Monday","focus":"..."
           const totalVids = group.creators.reduce((s,c)=>s+c.videos.length,0);
           return (
             <div key={group.key} style={{ marginBottom:32 }}>
-              {/* Section header — full-width colored banner */}
-              <div style={{ background:`linear-gradient(90deg, ${group.color}22, ${group.color}08)`, border:`1px solid ${group.color}35`, borderRadius:12, padding:"12px 16px", marginBottom:12, display:"flex", alignItems:"center", gap:12 }}>
-                <div style={{ width:40, height:40, borderRadius:12, background:`${group.color}25`, border:`2px solid ${group.color}50`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:20, flexShrink:0 }}>
+              {/* Section header — flat, hard border, gold section bar */}
+              <div style={{ position:"relative", background:"#FFFFFF", border:"1px solid #141414", padding:"12px 16px 12px 20px", marginBottom:12, display:"flex", alignItems:"center", gap:12, overflow:"hidden" }}>
+                <div style={{ position:"absolute", left:0, top:0, bottom:0, width:4, background:"#F4B400" }} />
+                <div style={{ width:38, height:38, border:"1px solid #141414", display:"flex", alignItems:"center", justifyContent:"center", fontSize:19, flexShrink:0 }}>
                   {group.icon}
                 </div>
                 <div style={{ flex:1 }}>
-                  <div style={{ fontFamily:"'Playfair Display',serif", fontWeight:800, color:"#1A1D1B", fontSize:"1.05rem", lineHeight:1.2 }}>
+                  <div style={{ fontFamily:HEAVY_FONT, fontWeight:900, color:"#141414", fontSize:"1.05rem", letterSpacing:"-0.01em", textTransform:"uppercase", lineHeight:1.1 }}>
                     {group.label}
                   </div>
-                  <div style={{ fontSize:"0.8rem", color:group.color, marginTop:3, fontWeight:600 }}>
+                  <div style={{ fontFamily:HEAVY_FONT, fontSize:"0.68rem", color:"#141414", marginTop:3, fontWeight:800, letterSpacing:"0.04em", textTransform:"uppercase" }}>
                     {group.creators.length} instructor{group.creators.length!==1?"s":""} · {totalVids} videos
                   </div>
-                  <div style={{ fontSize:"0.75rem", color:"#4B5563", marginTop:2 }}>{group.desc}</div>
+                  <div style={{ fontSize:"0.75rem", color:"#5B6572", marginTop:2 }}>{group.desc}</div>
                 </div>
                 {activeTag !== group.key && (
-                  <button onClick={()=>setActiveTag(group.key)} style={{ flexShrink:0, background:`${group.color}20`, border:`1px solid ${group.color}40`, color:group.color, padding:"5px 11px", borderRadius:10, cursor:"pointer", fontSize:"0.75rem", fontFamily:"'Inter',sans-serif", fontWeight:700 }}>
+                  <button onClick={()=>setActiveTag(group.key)} style={{ flexShrink:0, background:"#FFFFFF", border:"1px solid #141414", color:"#141414", padding:"5px 12px", borderRadius:4, cursor:"pointer", fontSize:"0.68rem", fontFamily:HEAVY_FONT, fontWeight:700, letterSpacing:"0.04em", textTransform:"uppercase" }}>
                     Filter
                   </button>
                 )}
               </div>
 
-              {/* Creator cards — 2-col grid */}
-              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10 }}>
+              {/* Creator cards — 2-col grid, one identical treatment */}
+              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:0, border:"1px solid #141414" }}>
                 {group.creators.map((c, ci) => (
                   <div key={ci} onClick={() => setSelectedCreator(c)}
-                    style={{ background:`linear-gradient(135deg, ${c.color}14, #FFFFFF)`, border:`1px solid ${c.color}30`, borderRadius:14, padding:"14px 12px", cursor:"pointer", transition:"all 0.2s", position:"relative", overflow:"hidden" }}
-                    onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = `0 8px 24px ${c.color}30`; e.currentTarget.style.borderColor = `${c.color}65`; }}
-                    onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none"; e.currentTarget.style.borderColor = `${c.color}30`; }}>
-                    <div style={{ position:"absolute", top:0, left:0, right:0, height:3, background:`linear-gradient(90deg, ${c.color}, transparent)`, borderRadius:"14px 14px 0 0" }} />
-                    <div style={{ fontSize:28, marginBottom:8, textAlign:"center" }}>{c.icon}</div>
-                    <div style={{ fontFamily:"'Playfair Display',serif", fontWeight:800, color:"#1A1D1B", fontSize:"0.82rem", lineHeight:1.3, textAlign:"center", marginBottom:6 }}>{c.creator}</div>
+                    style={{ background:"#FFFFFF", borderTop: ci >= 2 ? "1px solid #E6E4DF" : "none", borderLeft: ci % 2 === 1 ? "1px solid #E6E4DF" : "none", padding:"14px 12px", cursor:"pointer", transition:"background 0.12s" }}
+                    onMouseEnter={e => { e.currentTarget.style.background = "#FBF7EF"; }}
+                    onMouseLeave={e => { e.currentTarget.style.background = "#FFFFFF"; }}>
+                    <div style={{ width:44, height:44, border:"1px solid #141414", display:"flex", alignItems:"center", justifyContent:"center", fontSize:22, margin:"0 auto 8px" }}>{c.icon}</div>
+                    <div style={{ fontFamily:HEAVY_FONT, fontWeight:900, color:"#141414", fontSize:"0.82rem", letterSpacing:"-0.01em", textTransform:"uppercase", lineHeight:1.15, textAlign:"center", marginBottom:6 }}>{c.creator}</div>
                     <div style={{ display:"flex", justifyContent:"center", gap:4, flexWrap:"wrap", marginBottom:8 }}>
-                      <span style={{ fontSize:"0.72rem", fontWeight:700, color:c.color, background:`${c.color}18`, border:`1px solid ${c.color}35`, padding:"2px 7px", borderRadius:12 }}>{c.tag}</span>
-                      <span style={{ fontSize:"0.72rem", color:"#6B7280", background:"rgba(0,0,0,0.04)", border:`1px solid ${BORDER}`, padding:"2px 7px", borderRadius:12 }}>🆓</span>
+                      <span style={{ fontSize:"0.68rem", fontFamily:HEAVY_FONT, fontWeight:700, letterSpacing:"0.03em", textTransform:"uppercase", color:"#141414", border:"1px solid #141414", padding:"2px 7px" }}>{c.tag}</span>
+                      <span style={{ fontSize:"0.68rem", fontFamily:HEAVY_FONT, fontWeight:800, color:"#141414", background:"#F4B400", padding:"2px 7px" }}>FREE</span>
                     </div>
-                    <div style={{ textAlign:"center", fontSize:"0.75rem", color:c.color, fontWeight:600 }}>
+                    <div style={{ textAlign:"center", fontSize:"0.72rem", color:"#5B6572", fontWeight:600 }}>
                       {c.videos.length} videos →
                     </div>
                   </div>
@@ -10361,7 +10526,7 @@ Return: {"programName":"...","split":"...","days":[{"day":"Monday","focus":"..."
         })}
 
         {totalVisible === 0 && (
-          <div style={{ textAlign:"center", padding:"40px 20px", color:"#6B7280", fontSize:"0.85rem" }}>
+          <div style={{ textAlign:"center", padding:"40px 20px", color:"#5B6572", fontSize:"0.85rem" }}>
             {searchQ ? `No results for "${searchQ}"` : `No instructors in this category yet`}
           </div>
         )}
@@ -10370,7 +10535,7 @@ Return: {"programName":"...","split":"...","days":[{"day":"Monday","focus":"..."
       )}
     {/* Toast notification */}
       {quickLogToast && (
-        <div style={{position:"fixed",bottom:90,left:"50%",transform:"translateX(-50%)",background:"#10B981",color:"white",padding:"10px 20px",borderRadius:12,fontSize:"0.82rem",fontWeight:700,fontFamily:"'Inter',sans-serif",zIndex:800,boxShadow:"0 4px 20px rgba(16,185,129,0.4)"}}>
+        <div style={{position:"fixed",bottom:90,left:"50%",transform:"translateX(-50%)",background:"#141414",color:"#F4B400",padding:"10px 20px",borderRadius:4,fontSize:"0.78rem",fontWeight:800,fontFamily:HEAVY_FONT,letterSpacing:"0.02em",textTransform:"uppercase",zIndex:800}}>
           {quickLogToast}
         </div>
       )}
@@ -10378,48 +10543,48 @@ Return: {"programName":"...","split":"...","days":[{"day":"Monday","focus":"..."
       {/* Quick Log Workout Modal */}
       {showQuickLog && (
         <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.4)",backdropFilter:"blur(8px)",zIndex:700,display:"flex",alignItems:"flex-end",justifyContent:"center"}} onClick={e=>{if(e.target===e.currentTarget)setShowQuickLog(false);}}>
-          <div style={{width:"100%",maxWidth:480,background:"#EEF0ED",border:"1px solid rgba(16,185,129,0.25)",borderRadius:"20px 20px 0 0",padding:"24px 20px 32px",animation:"fadeUp 0.25s ease"}}>
-            <div style={{fontFamily:"'Playfair Display',serif",fontWeight:800,color:"#1A1D1B",fontSize:"1rem",marginBottom:4}}>Log Workout 💪</div>
+          <div style={{width:"100%",maxWidth:480,background:"#FFFFFF",border:"1px solid #141414",borderRadius:0,padding:"22px 20px 30px",animation:"fadeUp 0.25s ease"}}>
+            <div style={{fontFamily:HEAVY_FONT,fontWeight:900,color:"#141414",fontSize:"1.15rem",letterSpacing:"-0.01em",textTransform:"uppercase",marginBottom:6}}>Log Workout</div>
             {(quickLog.creator||quickLog.videoTitle) && (
-              <div style={{color:"#0F766E",fontSize:"0.72rem",fontWeight:600,marginBottom:14,padding:"6px 10px",background:"rgba(16,185,129,0.08)",borderRadius:8,border:"1px solid rgba(16,185,129,0.2)"}}>
+              <div style={{color:"#141414",fontSize:"0.72rem",fontWeight:600,marginBottom:14,padding:"6px 10px",border:"1px solid #141414"}}>
                 📹 {quickLog.creator}{quickLog.videoTitle?` — ${quickLog.videoTitle}`:""}
               </div>
             )}
             <div style={{display:"flex",flexDirection:"column",gap:12}}>
               <div>
-                <div style={{fontSize:"0.72rem",fontWeight:700,textTransform:"uppercase",letterSpacing:"0.08em",color:"#6B7280",marginBottom:6}}>Workout Type</div>
+                <div style={{fontFamily:HEAVY_FONT,fontSize:"0.68rem",fontWeight:800,textTransform:"uppercase",letterSpacing:"0.08em",color:"#141414",marginBottom:6}}>Workout Type</div>
                 <div style={{display:"flex",flexWrap:"wrap",gap:5}}>
                   {["Strength","HIIT","Cardio","Yoga","Pilates","Run","Walk","Cycling","Other"].map(t=>(
                     <button key={t} onClick={()=>setQuickLog({...quickLog,type:t})}
-                      style={{padding:"4px 10px",borderRadius:20,border:`1px solid ${quickLog.type===t?"#1D4ED8":"rgba(16,185,129,0.2)"}`,background:quickLog.type===t?"rgba(59,130,246,0.15)":"transparent",color:quickLog.type===t?"#1D4ED8":"#4B5563",cursor:"pointer",fontSize:"0.8rem",fontFamily:"'Inter',sans-serif",fontWeight:600}}>{t}</button>
+                      style={{padding:"4px 10px",borderRadius:4,border:"1px solid #141414",background:quickLog.type===t?"#141414":"#FFFFFF",color:quickLog.type===t?"#FFFFFF":"#141414",cursor:"pointer",fontSize:"0.78rem",fontFamily:"'Inter',sans-serif",fontWeight:600}}>{t}</button>
                   ))}
                 </div>
               </div>
               <div>
-                <div style={{fontSize:"0.72rem",fontWeight:700,textTransform:"uppercase",letterSpacing:"0.08em",color:"#6B7280",marginBottom:6}}>Duration (minutes)</div>
+                <div style={{fontFamily:HEAVY_FONT,fontSize:"0.68rem",fontWeight:800,textTransform:"uppercase",letterSpacing:"0.08em",color:"#141414",marginBottom:6}}>Duration (minutes)</div>
                 <input type="number" value={quickLog.duration} onChange={e=>setQuickLog({...quickLog,duration:e.target.value})} placeholder="e.g. 30"
-                  style={{width:"100%",background:"rgba(255,255,255,0.8)",border:"1px solid rgba(16,185,129,0.2)",borderRadius:9,padding:"9px 13px",color:"#1A1D1B",fontSize:"0.82rem",fontFamily:"'Inter',sans-serif",outline:"none"}}/>
+                  style={{width:"100%",background:"#FFFFFF",border:"1px solid #141414",borderRadius:4,padding:"9px 13px",color:"#141414",fontSize:"0.82rem",fontFamily:"'Inter',sans-serif",outline:"none"}}/>
               </div>
               <div>
-                <div style={{fontSize:"0.72rem",fontWeight:700,textTransform:"uppercase",letterSpacing:"0.08em",color:"#6B7280",marginBottom:6}}>How did it feel?</div>
+                <div style={{fontFamily:HEAVY_FONT,fontSize:"0.68rem",fontWeight:800,textTransform:"uppercase",letterSpacing:"0.08em",color:"#141414",marginBottom:6}}>How did it feel?</div>
                 <div style={{display:"flex",gap:6}}>
                   {["1","2","3","4","5"].map(n=>(
                     <button key={n} onClick={()=>setQuickLog({...quickLog,feel:n})}
-                      style={{flex:1,padding:"8px 4px",borderRadius:10,border:`1px solid ${quickLog.feel===n?"#D97706":"rgba(16,185,129,0.2)"}`,background:quickLog.feel===n?"rgba(245,158,11,0.16)":"transparent",cursor:"pointer",fontSize:"1rem",transform:quickLog.feel===n?"scale(1.12)":"scale(1)"}}>
+                      style={{flex:1,padding:"8px 4px",borderRadius:4,border:"1px solid #141414",background:quickLog.feel===n?"#F4B400":"#FFFFFF",cursor:"pointer",fontSize:"1rem"}}>
                       {["😩","😕","😐","😊","🔥"][parseInt(n)-1]}
                     </button>
                   ))}
                 </div>
               </div>
               <div>
-                <div style={{fontSize:"0.72rem",fontWeight:700,textTransform:"uppercase",letterSpacing:"0.08em",color:"#6B7280",marginBottom:6}}>Notes (optional)</div>
+                <div style={{fontFamily:HEAVY_FONT,fontSize:"0.68rem",fontWeight:800,textTransform:"uppercase",letterSpacing:"0.08em",color:"#141414",marginBottom:6}}>Notes (optional)</div>
                 <input value={quickLog.notes} onChange={e=>setQuickLog({...quickLog,notes:e.target.value})} placeholder="PRs, how you felt, sets & reps…"
-                  style={{width:"100%",background:"rgba(255,255,255,0.8)",border:"1px solid rgba(16,185,129,0.2)",borderRadius:9,padding:"9px 13px",color:"#1A1D1B",fontSize:"0.8rem",fontFamily:"'Inter',sans-serif",outline:"none"}}/>
+                  style={{width:"100%",background:"#FFFFFF",border:"1px solid #141414",borderRadius:4,padding:"9px 13px",color:"#141414",fontSize:"0.8rem",fontFamily:"'Inter',sans-serif",outline:"none"}}/>
               </div>
             </div>
             <div style={{display:"flex",gap:9,marginTop:16}}>
-              <button onClick={()=>setShowQuickLog(false)} style={{flex:1,background:"transparent",border:"1px solid rgba(16,185,129,0.2)",borderRadius:10,padding:"11px",color:"#4B5563",cursor:"pointer",fontSize:"0.82rem",fontFamily:"'Inter',sans-serif"}}>Cancel</button>
-              <button onClick={submitQuickLog} disabled={!quickLog.duration} style={{flex:2,background:quickLog.duration?"linear-gradient(135deg,#10B981,#059669)":"rgba(16,185,129,0.1)",border:"none",borderRadius:10,padding:"11px",color:quickLog.duration?"white":"#6B7280",cursor:quickLog.duration?"pointer":"default",fontSize:"0.88rem",fontFamily:"'Inter',sans-serif",fontWeight:700}}>Save Workout ✓</button>
+              <button onClick={()=>setShowQuickLog(false)} style={{flex:1,background:"#FFFFFF",border:"1px solid #141414",borderRadius:4,padding:"11px",color:"#141414",cursor:"pointer",fontSize:"0.78rem",fontFamily:HEAVY_FONT,fontWeight:700,letterSpacing:"0.03em",textTransform:"uppercase"}}>Cancel</button>
+              <button onClick={submitQuickLog} disabled={!quickLog.duration} style={{flex:2,background:quickLog.duration?"#F4B400":"#E6E4DF",border:"none",borderRadius:4,padding:"11px",color:"#141414",cursor:quickLog.duration?"pointer":"default",fontSize:"0.82rem",fontFamily:HEAVY_FONT,fontWeight:800,letterSpacing:"0.03em",textTransform:"uppercase"}}>Save Workout</button>
             </div>
           </div>
         </div>
@@ -10464,25 +10629,26 @@ function NutritionHub({ profile }) {
   const ACCENT = "#10B981", ACCENT2 = "#6EE7B7";
 
   // Groups matching Workouts hub style
+  // Group accent uses the shared 6-tone palette set — a badge/dot/bar cue only.
   const GROUPS = [
-    { key:"All",           label:"⚡ All Resources",      color:"#047857", cats:null },
-    { key:"Dietitians",    label:"🥗 Registered Dietitians", color:"#047857", cats:["Registered Dietitians"] },
-    { key:"Videos",        label:"🎥 Education Videos",   color:"#7C3AED", cats:["Evidence-Based Nutrition Videos","Nutrition Fundamentals Videos","Evidence-Based Nutrition Education"] },
-    { key:"Performance",   label:"🏋️ Performance Nutrition", color:"#DC2626", cats:["Bodybuilding & Performance Nutrition","CrossFit — Performance Nutrition"] },
-    { key:"Condition",     label:"🩺 Health Conditions",  color:"#92400E", cats:["Condition-Specific Nutrition"] },
-    { key:"TCM",           label:"🌿 TCM Research",        color:"#047857", cats:["TCM & Integrative Nutrition Research"] },
-    { key:"AntiFad",       label:"✅ Anti-Fad",            color:"#0F766E", cats:["Anti-Fad Diet Truth"] },
-    { key:"Tools",         label:"🛠 Free Tools",          color:"#1D4ED8", cats:["Free Nutrition Tools"] },
-    { key:"JISSN",         label:"📄 JISSN Studies",        color:"#4338CA", cats:["JISSN Position Stands"] },
-    { key:"NIHODS",        label:"🏛️ NIH Supplements",      color:"#C2410C", cats:["NIH ODS Factsheets"] },
-    { key:"ACSM",          label:"🏥 ACSM Clinical",         color:"#DC2626", cats:["ACSM Clinical Guidelines"] },
-    { key:"Harvard",       label:"🎓 Harvard Health",        color:"#A21CAF", cats:["Harvard Health Publishing"] },
-    { key:"Cochrane",      label:"📊 Cochrane Reviews",      color:"#0E7490", cats:["Cochrane Systematic Reviews"] },
-    { key:"ACE",           label:"💪 ACE Fitness",           color:"#047857", cats:["ACE — American Council on Exercise"] },
-    { key:"CDC",           label:"🏛️ CDC Guidelines",        color:"#DC2626", cats:["CDC Physical Activity Guidelines"] },
-    { key:"Nutrients",     label:"🔬 Nutrients MDPI",        color:"#0E7490", cats:["Nutrients — MDPI Open Access"] },
-    { key:"PrecNut",       label:"🥗 Precision Nutrition",   color:"#4F46E5", cats:["Precision Nutrition"] },
-    { key:"RPStrength",    label:"📐 RP / Menno",            color:"#BE185D", cats:["RP Strength & Menno Henselmans"] },
+    { key:"All",           label:"⚡ All Resources",      color:"#3C5A4A", cats:null },
+    { key:"Dietitians",    label:"🥗 Registered Dietitians", color:"#7FA891", cats:["Registered Dietitians"] },
+    { key:"Videos",        label:"🎥 Education Videos",   color:"#C79245", cats:["Evidence-Based Nutrition Videos","Nutrition Fundamentals Videos","Evidence-Based Nutrition Education"] },
+    { key:"Performance",   label:"🏋️ Performance Nutrition", color:"#3C5A4A", cats:["Bodybuilding & Performance Nutrition","CrossFit — Performance Nutrition"] },
+    { key:"Condition",     label:"🩺 Health Conditions",  color:"#E8836B", cats:["Condition-Specific Nutrition"] },
+    { key:"TCM",           label:"🌿 TCM Research",        color:"#7FA891", cats:["TCM & Integrative Nutrition Research"] },
+    { key:"AntiFad",       label:"✅ Anti-Fad",            color:"#94897A", cats:["Anti-Fad Diet Truth"] },
+    { key:"Tools",         label:"🛠 Free Tools",          color:"#94897A", cats:["Free Nutrition Tools"] },
+    { key:"JISSN",         label:"📄 JISSN Studies",        color:"#EE9C5B", cats:["JISSN Position Stands"] },
+    { key:"NIHODS",        label:"🏛️ NIH Supplements",      color:"#EE9C5B", cats:["NIH ODS Factsheets"] },
+    { key:"ACSM",          label:"🏥 ACSM Clinical",         color:"#E8836B", cats:["ACSM Clinical Guidelines"] },
+    { key:"Harvard",       label:"🎓 Harvard Health",        color:"#EE9C5B", cats:["Harvard Health Publishing"] },
+    { key:"Cochrane",      label:"📊 Cochrane Reviews",      color:"#EE9C5B", cats:["Cochrane Systematic Reviews"] },
+    { key:"ACE",           label:"💪 ACE Fitness",           color:"#7FA891", cats:["ACE — American Council on Exercise"] },
+    { key:"CDC",           label:"🏛️ CDC Guidelines",        color:"#E8836B", cats:["CDC Physical Activity Guidelines"] },
+    { key:"Nutrients",     label:"🔬 Nutrients MDPI",        color:"#EE9C5B", cats:["Nutrients — MDPI Open Access"] },
+    { key:"PrecNut",       label:"🥗 Precision Nutrition",   color:"#C79245", cats:["Precision Nutrition"] },
+    { key:"RPStrength",    label:"📐 RP / Menno",            color:"#3C5A4A", cats:["RP Strength & Menno Henselmans"] },
   ];
 
   const userAllergies = (profile?.allergies||[]).filter(a => a !== "None");
@@ -10519,55 +10685,57 @@ function NutritionHub({ profile }) {
     const cat = selectedCategory;
     return (
       <div style={{ flex:1, overflowY:"auto", padding:"0 0 80px" }}>
-        {/* Hero header — mirrors Workouts creator header */}
-        <div style={{ background:`linear-gradient(135deg, ${cat.color}18, transparent)`, borderBottom:`1px solid ${BORDER}`, padding:"20px 18px 16px" }}>
+        {/* Hero header */}
+        <div style={{ background:"#FFFFFF", borderBottom:"1px solid #141414", padding:"20px 18px 16px" }}>
           <button onClick={() => setSelectedCategory(null)}
-            style={{ display:"flex", alignItems:"center", gap:6, color:"#4B5563", background:"none", border:"none", cursor:"pointer", fontSize:"0.78rem", marginBottom:14, fontFamily:"'Inter',sans-serif" }}>
+            style={{ display:"flex", alignItems:"center", gap:6, color:"#141414", background:"none", border:"none", cursor:"pointer", fontFamily:HEAVY_FONT, fontWeight:700, fontSize:"0.7rem", letterSpacing:"0.04em", textTransform:"uppercase", marginBottom:14 }}>
             ← Back to All Resources
           </button>
           <div style={{ display:"flex", alignItems:"center", gap:14 }}>
-            <div style={{ width:52, height:52, borderRadius:14, background:`${cat.color}25`, border:`2px solid ${cat.color}50`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:24, flexShrink:0 }}>
+            <div style={{ width:52, height:52, border:"1px solid #141414", display:"flex", alignItems:"center", justifyContent:"center", fontSize:24, flexShrink:0 }}>
               {cat.icon}
             </div>
             <div style={{ flex:1 }}>
-              <div style={{ fontFamily:"'Playfair Display',serif", fontSize:"1.2rem", fontWeight:800, color:"#1A1D1B" }}>{cat.category}</div>
-              <div style={{ display:"flex", gap:6, marginTop:4, flexWrap:"wrap" }}>
-                <span style={{ fontSize:"0.72rem", fontWeight:700, color:cat.color, background:`${cat.color}18`, border:`1px solid ${cat.color}35`, padding:"2px 8px", borderRadius:20 }}>
+              <div style={{ fontFamily:HEAVY_FONT, fontSize:"1.2rem", fontWeight:900, color:"#141414", letterSpacing:"-0.01em", textTransform:"uppercase", lineHeight:1.1 }}>{cat.category}</div>
+              <div style={{ display:"flex", gap:6, marginTop:5, flexWrap:"wrap" }}>
+                <span style={{ fontSize:"0.68rem", fontFamily:HEAVY_FONT, fontWeight:700, letterSpacing:"0.03em", textTransform:"uppercase", color:"#141414", border:"1px solid #141414", padding:"2px 8px" }}>
                   {(cat.resources||[]).length} Resources
                 </span>
-                <span style={{ fontSize:"0.72rem", color:"#6B7280", background:"rgba(0,0,0,0.04)", border:`1px solid ${BORDER}`, padding:"2px 8px", borderRadius:20 }}>🆓 Free</span>
+                <span style={{ fontSize:"0.68rem", fontFamily:HEAVY_FONT, fontWeight:800, color:"#141414", background:"#F4B400", padding:"2px 8px" }}>FREE</span>
               </div>
-              {cat.desc && <div style={{ color:"#4B5563", fontSize:"0.75rem", marginTop:6, lineHeight:1.5 }}>{cat.desc}</div>}
+              {cat.desc && <div style={{ color:"#5B6572", fontSize:"0.75rem", marginTop:6, lineHeight:1.5 }}>{cat.desc}</div>}
             </div>
           </div>
         </div>
 
-        {/* Resource list — accordion grouped by type */}
-        <div style={{ padding:"16px 14px", display:"flex", flexDirection:"column", gap:8 }}>
-          <div style={{ fontSize:"0.72rem", fontWeight:700, letterSpacing:"0.12em", textTransform:"uppercase", color:"#6B7280", marginBottom:4 }}>
-            {(cat.resources||[]).length} Resources Available · Tap to open
+        {/* Resource list */}
+        <div style={{ padding:"16px 14px" }}>
+          <div style={{ fontFamily:HEAVY_FONT, fontSize:"0.68rem", fontWeight:800, letterSpacing:"0.08em", textTransform:"uppercase", color:"#141414", marginBottom:8 }}>
+            {(cat.resources||[]).length} Resources · Tap to open
           </div>
+          <div style={{ border:"1px solid #141414" }}>
           {(cat.resources||[]).map((r, i) => (
             <a key={i} href={r.url} target="_blank" rel="noopener noreferrer"
-              style={{ display:"block", background:SURFACE, border:`1px solid ${BORDER}`, borderRadius:12, padding:"13px 14px", textDecoration:"none", transition:"all 0.15s" }}
-              onMouseEnter={e => { e.currentTarget.style.background=`${cat.color}10`; e.currentTarget.style.borderColor=`${cat.color}40`; }}
-              onMouseLeave={e => { e.currentTarget.style.background=SURFACE; e.currentTarget.style.borderColor=BORDER; }}>
+              style={{ display:"block", background:"#FFFFFF", borderTop: i === 0 ? "none" : "1px solid #E6E4DF", padding:"13px 14px", textDecoration:"none", transition:"background 0.12s" }}
+              onMouseEnter={e => { e.currentTarget.style.background="#FBF7EF"; }}
+              onMouseLeave={e => { e.currentTarget.style.background="#FFFFFF"; }}>
               <div style={{ display:"flex", alignItems:"flex-start", gap:10 }}>
-                <span style={{ fontSize:16, flexShrink:0, marginTop:2 }}>▶</span>
+                <span style={{ fontSize:14, flexShrink:0, marginTop:3, color:"#141414" }}>▶</span>
                 <div style={{ flex:1 }}>
-                  <div style={{ fontWeight:600, color:"#1A1D1B", fontSize:"0.82rem", lineHeight:1.4, marginBottom:4 }}>{r.name}</div>
+                  <div style={{ fontWeight:600, color:"#141414", fontSize:"0.82rem", lineHeight:1.4, marginBottom:4 }}>{r.name}</div>
                   <div style={{ display:"flex", gap:5, flexWrap:"wrap", marginBottom:r.desc ? 5 : 0 }}>
-                    <span style={{ fontSize:"0.72rem", color:cat.color, background:`${cat.color}18`, border:`1px solid ${cat.color}35`, padding:"1px 7px", borderRadius:10 }}>{r.type}</span>
+                    <span style={{ fontSize:"0.68rem", fontFamily:HEAVY_FONT, fontWeight:700, letterSpacing:"0.03em", textTransform:"uppercase", color:"#141414", border:"1px solid #141414", padding:"1px 7px" }}>{r.type}</span>
                     {(r.tags||[]).slice(0,2).map(t => (
-                      <span key={t} style={{ fontSize:"0.72rem", color:"#4B5563", background:"rgba(0,0,0,0.04)", border:`1px solid ${BORDER}`, padding:"1px 7px", borderRadius:10 }}>{t}</span>
+                      <span key={t} style={{ fontSize:"0.72rem", color:"#5B6572", border:"1px solid #E6E4DF", padding:"1px 7px" }}>{t}</span>
                     ))}
                   </div>
-                  {r.desc && <div style={{ color:"#4B5563", fontSize:"0.72rem", lineHeight:1.5 }}>{r.desc}</div>}
+                  {r.desc && <div style={{ color:"#5B6572", fontSize:"0.72rem", lineHeight:1.5 }}>{r.desc}</div>}
                 </div>
-                <span style={{ color:cat.color, fontSize:14, flexShrink:0 }}>↗</span>
+                <span style={{ color:"#141414", fontSize:14, flexShrink:0 }}>↗</span>
               </div>
             </a>
           ))}
+          </div>
         </div>
       </div>
     );
@@ -10577,18 +10745,18 @@ function NutritionHub({ profile }) {
   if (recipeView) {
     return (
       <div style={{ flex:1, overflowY:"auto", padding:"0 0 80px" }}>
-        <div style={{ background:"linear-gradient(135deg,rgba(16,185,129,0.12),transparent)", borderBottom:`1px solid ${BORDER}`, padding:"20px 18px 16px" }}>
+        <div style={{ background:"#FFFFFF", borderBottom:"1px solid #141414", padding:"20px 18px 16px" }}>
           <button onClick={() => setRecipeView(false)}
-            style={{ display:"flex", alignItems:"center", gap:6, color:"#4B5563", background:"none", border:"none", cursor:"pointer", fontSize:"0.78rem", marginBottom:14, fontFamily:"'Inter',sans-serif" }}>
+            style={{ display:"flex", alignItems:"center", gap:6, color:"#141414", background:"none", border:"none", cursor:"pointer", fontFamily:HEAVY_FONT, fontWeight:700, fontSize:"0.7rem", letterSpacing:"0.04em", textTransform:"uppercase", marginBottom:14 }}>
             ← Back to Resources
           </button>
-          <div style={{ fontFamily:"'Playfair Display',serif", fontSize:"1.2rem", fontWeight:800, color:"#1A1D1B", marginBottom:4 }}>👨‍🍳 Recipes</div>
-          <div style={{ color:"#4B5563", fontSize:"0.78rem" }}>519 recipes across 10 categories</div>
+          <div style={{ fontFamily:HEAVY_FONT, fontSize:"1.35rem", fontWeight:900, color:"#141414", letterSpacing:"-0.02em", textTransform:"uppercase", lineHeight:1.05, marginBottom:4 }}>Recipes</div>
+          <div style={{ color:"#5B6572", fontSize:"0.78rem" }}>519 recipes across 10 categories</div>
           {/* Filters */}
           <div style={{ display:"flex", gap:6, marginTop:12, flexWrap:"wrap" }}>
             {mealTypes.map(mt => (
               <button key={mt} onClick={() => setMealTypeFilter(mt)}
-                style={{ background: mealTypeFilter===mt ? ACCENT : "rgba(16,185,129,0.08)", border:`1px solid ${mealTypeFilter===mt ? ACCENT : "rgba(16,185,129,0.2)"}`, borderRadius:20, padding:"5px 12px", color: mealTypeFilter===mt ? "white" : ACCENT2_TEXT, cursor:"pointer", fontSize:"0.72rem", fontWeight:600, fontFamily:"'Inter',sans-serif" }}>
+                style={{ background: mealTypeFilter===mt ? "#141414" : "#FFFFFF", border:"1px solid #141414", borderRadius:4, padding:"5px 12px", color: mealTypeFilter===mt ? "#FFFFFF" : "#141414", cursor:"pointer", fontSize:"0.66rem", fontWeight:700, fontFamily:HEAVY_FONT, letterSpacing:"0.03em", textTransform:"uppercase" }}>
                 {mt}
               </button>
             ))}
@@ -10596,7 +10764,7 @@ function NutritionHub({ profile }) {
           <div style={{ display:"flex", gap:6, marginTop:6, flexWrap:"wrap" }}>
             {dietaryFilters.map(df => (
               <button key={df} onClick={() => setRecipeFilter(df)}
-                style={{ background: recipeFilter===df ? "#7C3AED" : "rgba(139,92,246,0.08)", border:`1px solid ${recipeFilter===df ? "#7C3AED" : "rgba(139,92,246,0.2)"}`, borderRadius:20, padding:"5px 12px", color: recipeFilter===df ? "white" : "#7C3AED", cursor:"pointer", fontSize:"0.72rem", fontWeight:600, fontFamily:"'Inter',sans-serif" }}>
+                style={{ background: recipeFilter===df ? "#F4B400" : "#FFFFFF", border:"1px solid #141414", borderRadius:4, padding:"5px 12px", color:"#141414", cursor:"pointer", fontSize:"0.66rem", fontWeight:recipeFilter===df?800:600, fontFamily:HEAVY_FONT, letterSpacing:"0.03em", textTransform:"uppercase" }}>
                 {df}
               </button>
             ))}
@@ -10609,57 +10777,57 @@ function NutritionHub({ profile }) {
             if (!filtered.length) return null;
             const isOpen = expandedRecipeCat === ci;
             return (
-              <div key={ci} style={{ background:SURFACE, border:`1px solid ${BORDER}`, borderRadius:14, overflow:"hidden" }}>
+              <div key={ci} style={{ background:"#FFFFFF", border:"1px solid #141414", overflow:"hidden" }}>
                 <button onClick={() => setExpandedRecipeCat(isOpen ? null : ci)}
-                  style={{ width:"100%", display:"flex", alignItems:"center", gap:12, padding:"14px 16px", background:"transparent", border:"none", cursor:"pointer", textAlign:"left" }}>
+                  style={{ width:"100%", display:"flex", alignItems:"center", gap:12, padding:"14px 16px", background: isOpen ? "#F4B400" : "transparent", border:"none", cursor:"pointer", textAlign:"left" }}>
                   <span style={{ fontSize:20 }}>{cat.icon}</span>
                   <div style={{ flex:1 }}>
-                    <div style={{ fontWeight:700, color:"#1A1D1B", fontSize:"0.85rem" }}>{cat.category}</div>
-                    <div style={{ color:"#4B5563", fontSize:"0.8rem", marginTop:2 }}>{filtered.length} recipes</div>
+                    <div style={{ fontFamily:HEAVY_FONT, fontWeight:900, color:"#141414", fontSize:"0.9rem", letterSpacing:"-0.01em", textTransform:"uppercase" }}>{cat.category}</div>
+                    <div style={{ fontFamily:HEAVY_FONT, color:"#141414", fontSize:"0.66rem", fontWeight:800, letterSpacing:"0.04em", textTransform:"uppercase", marginTop:2 }}>{filtered.length} recipes</div>
                   </div>
-                  <span style={{ color:ACCENT_TEXT, fontSize:18, transform: isOpen ? "rotate(90deg)" : "none", transition:"transform 0.2s" }}>›</span>
+                  <span style={{ color:"#141414", fontSize:18, transform: isOpen ? "rotate(90deg)" : "none", transition:"transform 0.2s" }}>›</span>
                 </button>
                 {isOpen && (
-                  <div style={{ borderTop:`1px solid ${BORDER}` }}>
+                  <div style={{ borderTop:"1px solid #141414" }}>
                     {filtered.map((r, ri) => {
                       const warn = allergenWarn(r);
                       const isHighlight = highlightRecipe && r.name.toLowerCase().includes(highlightRecipe.toLowerCase());
                       const [expanded, setExpanded] = React.useState(false);
                       return (
                         <div key={ri} ref={isHighlight ? highlightRef : null}
-                          style={{ borderBottom: ri < filtered.length-1 ? `1px solid ${BORDER}` : "none", background: isHighlight ? "rgba(16,185,129,0.08)" : "transparent" }}>
+                          style={{ borderTop: ri === 0 ? "none" : "1px solid #E6E4DF", background: isHighlight ? "#FBF7EF" : "transparent" }}>
 
                           {/* Recipe header — always visible, tap to expand */}
                           <button onClick={() => setExpanded(p => !p)}
                             style={{ width:"100%", display:"flex", alignItems:"flex-start", gap:10, padding:"12px 16px", background:"transparent", border:"none", cursor:"pointer", textAlign:"left" }}>
                             <div style={{ flex:1 }}>
-                              <div style={{ fontWeight:700, color:"#1A1D1B", fontSize:"0.84rem", marginBottom:4, lineHeight:1.3 }}>
+                              <div style={{ fontWeight:700, color:"#141414", fontSize:"0.84rem", marginBottom:4, lineHeight:1.3 }}>
                                 {warn && <span title="May contain allergens">⚠️ </span>}{r.name}
                               </div>
                               <div style={{ display:"flex", gap:5, flexWrap:"wrap" }}>
-                                <span style={{ fontSize:"0.72rem", color:ACCENT_TEXT, background:`${ACCENT}18`, border:`1px solid ${ACCENT}30`, padding:"1px 7px", borderRadius:10 }}>{r.mealType}</span>
-                                <span style={{ fontSize:"0.72rem", color:"#4B5563", background:"rgba(0,0,0,0.04)", border:`1px solid ${BORDER}`, padding:"1px 7px", borderRadius:10 }}>⏱ {r.time}</span>
-                                <span style={{ fontSize:"0.72rem", color:"#0F766E", background:"rgba(110,231,183,0.08)", border:"1px solid rgba(110,231,183,0.2)", padding:"1px 7px", borderRadius:10 }}>📊 {r.macros}</span>
-                                {(r.dietary||[]).map(d => <span key={d} style={{ fontSize:"0.72rem", color:"#7C3AED", background:"rgba(139,92,246,0.08)", border:"1px solid rgba(139,92,246,0.2)", padding:"1px 7px", borderRadius:10 }}>{d}</span>)}
+                                <span style={{ fontSize:"0.68rem", fontFamily:HEAVY_FONT, fontWeight:700, letterSpacing:"0.03em", textTransform:"uppercase", color:"#141414", border:"1px solid #141414", padding:"1px 7px" }}>{r.mealType}</span>
+                                <span style={{ fontSize:"0.72rem", color:"#5B6572", border:"1px solid #E6E4DF", padding:"1px 7px" }}>⏱ {r.time}</span>
+                                <span style={{ fontSize:"0.72rem", color:"#141414", background:"#F4B400", padding:"1px 7px" }}>📊 {r.macros}</span>
+                                {(r.dietary||[]).map(d => <span key={d} style={{ fontSize:"0.72rem", color:"#5B6572", border:"1px solid #E6E4DF", padding:"1px 7px" }}>{d}</span>)}
                               </div>
                             </div>
-                            <span style={{ color:ACCENT_TEXT, fontSize:18, flexShrink:0, transition:"transform 0.2s", transform: expanded ? "rotate(90deg)" : "none", marginTop:2 }}>›</span>
+                            <span style={{ color:"#141414", fontSize:18, flexShrink:0, transition:"transform 0.2s", transform: expanded ? "rotate(90deg)" : "none", marginTop:2 }}>›</span>
                           </button>
 
                           {/* Full recipe — clean format: ingredients left, nutrition right, instructions below */}
                           {expanded && (
-                            <div style={{ borderTop:`1px solid ${BORDER}`, background:"rgba(255,255,255,0.6)" }}>
+                            <div style={{ borderTop:"1px solid #141414", background:"#FFFFFF" }}>
 
                               {/* TOP: ingredients left, nutrition right */}
-                              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:0, borderBottom:`1px solid ${BORDER}` }}>
+                              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:0, borderBottom:"1px solid #E6E4DF" }}>
 
                                 {/* Ingredients */}
-                                <div style={{ padding:"14px 16px", borderRight:`1px solid ${BORDER}` }}>
-                                  <div style={{ fontSize:"0.72rem", fontWeight:800, letterSpacing:"0.12em", textTransform:"uppercase", color:"#4B5563", marginBottom:8 }}>Ingredients</div>
-                                  {r.servings && <div style={{ fontSize:"0.77rem", color:"#6B7280", marginBottom:8, fontStyle:"italic" }}>Serves {r.servings}</div>}
+                                <div style={{ padding:"14px 16px", borderRight:"1px solid #E6E4DF" }}>
+                                  <div style={{ fontFamily:HEAVY_FONT, fontSize:"0.68rem", fontWeight:800, letterSpacing:"0.08em", textTransform:"uppercase", color:"#141414", marginBottom:8 }}>Ingredients</div>
+                                  {r.servings && <div style={{ fontSize:"0.77rem", color:"#5B6572", marginBottom:8, fontStyle:"italic" }}>Serves {r.servings}</div>}
                                   <div style={{ display:"flex", flexDirection:"column", gap:5 }}>
                                     {(r.ingredients||[]).map((ing, ii) => (
-                                      <div key={ii} style={{ fontSize:"0.76rem", color:"#047857", lineHeight:1.5, paddingLeft:8, borderLeft:"2px solid rgba(16,185,129,0.25)" }}>
+                                      <div key={ii} style={{ fontSize:"0.76rem", color:"#141414", lineHeight:1.5, paddingLeft:8, borderLeft:"2px solid #F4B400" }}>
                                         {ing}
                                       </div>
                                     ))}
@@ -10668,8 +10836,8 @@ function NutritionHub({ profile }) {
 
                                 {/* Nutrition Facts */}
                                 <div style={{ padding:"14px 16px" }}>
-                                  <div style={{ fontSize:"0.72rem", fontWeight:800, letterSpacing:"0.12em", textTransform:"uppercase", color:"#4B5563", marginBottom:8 }}>
-                                    Nutrition <span style={{ color:"#6B7280", fontWeight:400, textTransform:"none", letterSpacing:0, fontSize:"0.72rem" }}>per serving</span>
+                                  <div style={{ fontFamily:HEAVY_FONT, fontSize:"0.68rem", fontWeight:800, letterSpacing:"0.08em", textTransform:"uppercase", color:"#141414", marginBottom:8 }}>
+                                    Nutrition <span style={{ color:"#5B6572", fontWeight:400, textTransform:"none", letterSpacing:0, fontSize:"0.72rem" }}>per serving</span>
                                   </div>
                                   {[
                                     { label:"Calories",    value: r.calories    ? r.calories    + " kcal" : null, bold:true },
@@ -10680,13 +10848,13 @@ function NutritionHub({ profile }) {
                                     { label:"Sodium",      value: r.sodium      ? r.sodium      + " mg"   : null },
                                     { label:"Cholesterol", value: r.cholesterol ? r.cholesterol + " mg"   : null },
                                   ].filter(n => n.value).map((n, ni, arr) => (
-                                    <div key={ni} style={{ display:"flex", justifyContent:"space-between", padding:"4px 0", borderBottom: ni < arr.length-1 ? "1px solid rgba(16,185,129,0.1)" : "none" }}>
-                                      <span style={{ fontSize:"0.81rem", color:"#4B5563" }}>{n.label}</span>
-                                      <span style={{ fontSize:"0.81rem", color: n.bold ? "#1A1D1B" : "#047857", fontWeight: n.bold ? 700 : 400 }}>{n.value}</span>
+                                    <div key={ni} style={{ display:"flex", justifyContent:"space-between", padding:"4px 0", borderBottom: ni < arr.length-1 ? "1px solid #E6E4DF" : "none" }}>
+                                      <span style={{ fontSize:"0.81rem", color:"#5B6572" }}>{n.label}</span>
+                                      <span style={{ fontSize:"0.81rem", color:"#141414", fontWeight: n.bold ? 700 : 400 }}>{n.value}</span>
                                     </div>
                                   ))}
                                   {!r.calories && !r.protein && r.macros && (
-                                    <div style={{ fontSize:"0.72rem", color:"#0F766E", marginTop:4 }}>{r.macros}</div>
+                                    <div style={{ fontSize:"0.72rem", color:"#141414", marginTop:4 }}>{r.macros}</div>
                                   )}
                                 </div>
                               </div>
@@ -10696,8 +10864,8 @@ function NutritionHub({ profile }) {
                                 <div style={{ padding:"14px 16px" }}>
                                   {(r.instructions||[]).map((step, si) => (
                                     <div key={si} style={{ display:"flex", gap:10, alignItems:"flex-start", marginBottom:8 }}>
-                                      <span style={{ fontSize:"0.72rem", color:"#4B5563", fontWeight:700, flexShrink:0, minWidth:16 }}>{si + 1}.</span>
-                                      <span style={{ fontSize:"0.76rem", color:"#1A1D1B", lineHeight:1.65 }}>{step}</span>
+                                      <span style={{ fontFamily:HEAVY_FONT, fontSize:"0.72rem", color:"#141414", fontWeight:800, flexShrink:0, minWidth:16 }}>{si + 1}.</span>
+                                      <span style={{ fontSize:"0.76rem", color:"#141414", lineHeight:1.65 }}>{step}</span>
                                     </div>
                                   ))}
                                 </div>
@@ -10705,8 +10873,8 @@ function NutritionHub({ profile }) {
 
                               {/* Tip */}
                               {r.tip && (
-                                <div style={{ margin:"0 16px 14px", background:"rgba(245,158,11,0.07)", border:"1px solid rgba(245,158,11,0.2)", borderRadius:8, padding:"8px 12px" }}>
-                                  <span style={{ fontSize:"0.81rem", color:"#92400E", lineHeight:1.5 }}>💡 {r.tip}</span>
+                                <div style={{ margin:"0 16px 14px", background:"#FBF7EF", borderLeft:"3px solid #F4B400", border:"1px solid #E6E4DF", padding:"8px 12px" }}>
+                                  <span style={{ fontSize:"0.81rem", color:"#141414", lineHeight:1.5 }}>💡 {r.tip}</span>
                                 </div>
                               )}
                             </div>
@@ -10729,74 +10897,73 @@ function NutritionHub({ profile }) {
   if (tcmView) {
     return (
       <div style={{ flex:1, overflowY:"auto", padding:"0 0 80px" }}>
-        <div style={{ background:"linear-gradient(135deg,rgba(52,211,153,0.12),transparent)", borderBottom:`1px solid ${BORDER}`, padding:"20px 18px 16px" }}>
+        <div style={{ background:"#FFFFFF", borderBottom:"1px solid #141414", padding:"20px 18px 16px" }}>
           <button onClick={() => setTcmView(false)}
-            style={{ display:"flex", alignItems:"center", gap:6, color:"#4B5563", background:"none", border:"none", cursor:"pointer", fontSize:"0.78rem", marginBottom:14, fontFamily:"'Inter',sans-serif" }}>
+            style={{ display:"flex", alignItems:"center", gap:6, color:"#141414", background:"none", border:"none", cursor:"pointer", fontFamily:HEAVY_FONT, fontWeight:700, fontSize:"0.7rem", letterSpacing:"0.04em", textTransform:"uppercase", marginBottom:14 }}>
             ← Back to Resources
           </button>
-          <div style={{ fontFamily:"'Playfair Display',serif", fontSize:"1.2rem", fontWeight:800, color:"#1A1D1B", marginBottom:4 }}>🌿 TCM Research Library</div>
-          <div style={{ color:"#4B5563", fontSize:"0.78rem" }}>Evidence-based TCM with NCCIH, PubMed & NIH citations</div>
+          <div style={{ fontFamily:HEAVY_FONT, fontSize:"1.35rem", fontWeight:900, color:"#141414", letterSpacing:"-0.02em", textTransform:"uppercase", lineHeight:1.05, marginBottom:4 }}>TCM Research Library</div>
+          <div style={{ color:"#5B6572", fontSize:"0.78rem" }}>Evidence-based TCM with NCCIH, PubMed &amp; NIH citations</div>
         </div>
         <div style={{ padding:"12px 14px", display:"flex", flexDirection:"column", gap:8 }}>
           {/* Goal-Matched TCM Pattern */}
           {(()=>{
             const g1=(profile?.goals||[])[0];if(!g1)return null;
             const PM={
-              "Lose Weight":{pattern:"Dampness / Spleen Qi Deficiency",icon:"💧",color:"#C2410C",desc:"Weight gain in TCM often signals impaired Spleen transformation — leading to fluid retention and sluggish metabolism.",herbs:"Chen Pi (Tangerine Peel), Yi Yi Ren (Job's Tears), Fu Ling (Poria)",acupoints:"ST36, SP9, CV12",lifestyle:"Avoid cold/raw foods, eat warm cooked meals, limit dairy"},
-              "Build Muscle":{pattern:"Kidney Yang / Spleen Qi Deficiency",icon:"🔥",color:"#4338CA",desc:"Muscle growth requires robust Spleen Qi (nutrient transformation) and Kidney Yang (metabolic fire).",herbs:"Huang Qi (Astragalus), Shan Yao (Chinese Yam), Du Zhong (Eucommia)",acupoints:"ST36, KD3, CV4",lifestyle:"Warm protein-rich foods; adequate sleep for Kidney restoration"},
-              "More Energy":{pattern:"Qi Deficiency / Kidney Jing Depletion",icon:"⚡",color:"#92400E",desc:"Chronic fatigue in TCM points to depleted Qi — often Spleen Qi (energy production) or Kidney Jing (foundational vitality).",herbs:"Ren Shen (Ginseng), Huang Qi (Astragalus), Gou Qi Zi (Goji Berry)",acupoints:"ST36, CV6, KD3, BL23",lifestyle:"Regular sleep schedule, avoid overwork, warm breakfast daily"},
-              "Heart Health":{pattern:"Heart Blood Deficiency / Phlegm-Fire",icon:"❤️",color:"#DC2626",desc:"Cardiovascular stress relates to Heart Blood insufficiency or Phlegm blocking the Heart orifices.",herbs:"Dan Shen (Salvia), He Shou Wu (Fo-Ti), Shan Zha (Hawthorn)",acupoints:"HT7, PC6, CV17, ST36",lifestyle:"Reduce stimulants, practice mindfulness, avoid excessive worry"},
-              "Reduce Stress":{pattern:"Liver Qi Stagnation",icon:"🧘",color:"#7C3AED",desc:"Stress and emotional tension are the primary cause of Liver Qi Stagnation — manifesting as irritability, tight chest, and irregular sleep.",herbs:"Chai Hu (Bupleurum), Bai Shao (White Peony), He Huan Pi (Mimosa Bark)",acupoints:"LV3, PC6, HT7, GB34",lifestyle:"Regular aerobic movement, journaling, reduce alcohol and fried foods"},
-              "Run / Endurance":{pattern:"Kidney Jing / Blood Deficiency",icon:"🏃",color:"#047857",desc:"Endurance capacity depends on Kidney Jing (constitutional essence) and Blood abundance.",herbs:"Gou Qi Zi (Goji), He Shou Wu (Fo-Ti), Huang Qi (Astragalus)",acupoints:"KD3, ST36, SP6, BL23",lifestyle:"Adequate protein, iron-rich foods, sleep before midnight"},
-              "Manage a Condition":{pattern:"Pattern varies by condition",icon:"🩺",color:"#0E7490",desc:"In TCM, chronic conditions reflect disruptions in Qi, Blood, Yin, or Yang balance. A personalized assessment identifies your specific pattern.",herbs:"Consult a licensed TCM practitioner for condition-specific formulas",acupoints:"Ask Ailara: 'What is my TCM pattern?'",lifestyle:"Anti-inflammatory diet, regular movement, stress management"},
+              "Lose Weight":{pattern:"Dampness / Spleen Qi Deficiency",icon:"💧",color:"#EE9C5B",desc:"Weight gain in TCM often signals impaired Spleen transformation — leading to fluid retention and sluggish metabolism.",herbs:"Chen Pi (Tangerine Peel), Yi Yi Ren (Job's Tears), Fu Ling (Poria)",acupoints:"ST36, SP9, CV12",lifestyle:"Avoid cold/raw foods, eat warm cooked meals, limit dairy"},
+              "Build Muscle":{pattern:"Kidney Yang / Spleen Qi Deficiency",icon:"🔥",color:"#3C5A4A",desc:"Muscle growth requires robust Spleen Qi (nutrient transformation) and Kidney Yang (metabolic fire).",herbs:"Huang Qi (Astragalus), Shan Yao (Chinese Yam), Du Zhong (Eucommia)",acupoints:"ST36, KD3, CV4",lifestyle:"Warm protein-rich foods; adequate sleep for Kidney restoration"},
+              "More Energy":{pattern:"Qi Deficiency / Kidney Jing Depletion",icon:"⚡",color:"#C79245",desc:"Chronic fatigue in TCM points to depleted Qi — often Spleen Qi (energy production) or Kidney Jing (foundational vitality).",herbs:"Ren Shen (Ginseng), Huang Qi (Astragalus), Gou Qi Zi (Goji Berry)",acupoints:"ST36, CV6, KD3, BL23",lifestyle:"Regular sleep schedule, avoid overwork, warm breakfast daily"},
+              "Heart Health":{pattern:"Heart Blood Deficiency / Phlegm-Fire",icon:"❤️",color:"#E8836B",desc:"Cardiovascular stress relates to Heart Blood insufficiency or Phlegm blocking the Heart orifices.",herbs:"Dan Shen (Salvia), He Shou Wu (Fo-Ti), Shan Zha (Hawthorn)",acupoints:"HT7, PC6, CV17, ST36",lifestyle:"Reduce stimulants, practice mindfulness, avoid excessive worry"},
+              "Reduce Stress":{pattern:"Liver Qi Stagnation",icon:"🧘",color:"#7FA891",desc:"Stress and emotional tension are the primary cause of Liver Qi Stagnation — manifesting as irritability, tight chest, and irregular sleep.",herbs:"Chai Hu (Bupleurum), Bai Shao (White Peony), He Huan Pi (Mimosa Bark)",acupoints:"LV3, PC6, HT7, GB34",lifestyle:"Regular aerobic movement, journaling, reduce alcohol and fried foods"},
+              "Run / Endurance":{pattern:"Kidney Jing / Blood Deficiency",icon:"🏃",color:"#7FA891",desc:"Endurance capacity depends on Kidney Jing (constitutional essence) and Blood abundance.",herbs:"Gou Qi Zi (Goji), He Shou Wu (Fo-Ti), Huang Qi (Astragalus)",acupoints:"KD3, ST36, SP6, BL23",lifestyle:"Adequate protein, iron-rich foods, sleep before midnight"},
+              "Manage a Condition":{pattern:"Pattern varies by condition",icon:"🩺",color:"#94897A",desc:"In TCM, chronic conditions reflect disruptions in Qi, Blood, Yin, or Yang balance. A personalized assessment identifies your specific pattern.",herbs:"Consult a licensed TCM practitioner for condition-specific formulas",acupoints:"Ask Ailara: 'What is my TCM pattern?'",lifestyle:"Anti-inflammatory diet, regular movement, stress management"},
             };
             const pm=PM[g1];if(!pm)return null;
             return(
-              <div style={{background:`${pm.color}10`,border:`1px solid ${pm.color}30`,borderRadius:14,padding:"14px 16px",marginBottom:4}}>
+              <div style={{position:"relative",background:"#FFFFFF",border:"1px solid #141414",padding:"14px 16px 14px 20px",marginBottom:4,overflow:"hidden"}}>
+                <div style={{position:"absolute",left:0,top:0,bottom:0,width:4,background:"#F4B400"}}/>
                 <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:10}}>
                   <span style={{fontSize:20}}>{pm.icon}</span>
                   <div>
-                    <div style={{fontSize:"0.72rem",fontWeight:800,textTransform:"uppercase",letterSpacing:"0.1em",color:pm.color,marginBottom:1}}>Your TCM Pattern — {g1}</div>
-                    <div style={{fontSize:"0.84rem",fontWeight:800,color:"#1A1D1B"}}>{pm.pattern}</div>
+                    <div style={{fontFamily:HEAVY_FONT,fontSize:"0.68rem",fontWeight:800,textTransform:"uppercase",letterSpacing:"0.06em",color:"#141414",marginBottom:1}}>Your TCM Pattern — {g1}</div>
+                    <div style={{fontFamily:HEAVY_FONT,fontSize:"0.92rem",fontWeight:900,color:"#141414",letterSpacing:"-0.01em",textTransform:"uppercase"}}>{pm.pattern}</div>
                   </div>
                 </div>
-                <div style={{fontSize:"0.72rem",color:"#047857",lineHeight:1.6,marginBottom:10}}>{pm.desc}</div>
+                <div style={{fontSize:"0.72rem",color:"#141414",lineHeight:1.6,marginBottom:10}}>{pm.desc}</div>
                 {[{label:"🌿 Key Herbs",value:pm.herbs},{label:"📍 Acupoints",value:pm.acupoints},{label:"🍃 Lifestyle",value:pm.lifestyle}].map(row=>(
                   <div key={row.label} style={{display:"flex",gap:8,marginBottom:5}}>
-                    <span style={{fontSize:"0.75rem",fontWeight:700,color:pm.color,flexShrink:0,minWidth:100}}>{row.label}</span>
-                    <span style={{fontSize:"0.75rem",color:"#0F766E",lineHeight:1.5}}>{row.value}</span>
+                    <span style={{fontFamily:HEAVY_FONT,fontSize:"0.7rem",fontWeight:800,letterSpacing:"0.03em",textTransform:"uppercase",color:"#141414",flexShrink:0,minWidth:100}}>{row.label}</span>
+                    <span style={{fontSize:"0.75rem",color:"#5B6572",lineHeight:1.5}}>{row.value}</span>
                   </div>
                 ))}
-                <div style={{marginTop:8,fontSize:"0.72rem",color:"#6B7280",fontStyle:"italic"}}>⚠️ TCM is complementary care. Always consult a licensed practitioner and your physician.</div>
+                <div style={{marginTop:8,fontSize:"0.72rem",color:"#5B6572",fontStyle:"italic"}}>⚠️ TCM is complementary care. Always consult a licensed practitioner and your physician.</div>
               </div>
             );
           })()}
           {TCM_RESEARCH.map((t, ti) => {
             const isOpen = expandedTcm === ti;
-            const evidenceColor = { "Strong — Multiple RCTs":"#10B981","Strong":"#10B981","Moderate–Strong":"#6EE7B7","Moderate":"#D97706","Moderate (Asian RCTs)":"#D97706","Limited (Traditional use)":"#DC2626","Emerging":"#7C3AED","Strong — Cochrane Reviews":"#10B981" };
-            const evColor = evidenceColor[t.evidence] || "#4B5563";
             return (
-              <div key={ti} style={{ background:SURFACE, border:`1px solid ${BORDER}`, borderRadius:14, overflow:"hidden" }}>
+              <div key={ti} style={{ background:"#FFFFFF", border:"1px solid #141414", overflow:"hidden" }}>
                 <button onClick={() => setExpandedTcm(isOpen ? null : ti)}
-                  style={{ width:"100%", display:"flex", alignItems:"center", gap:12, padding:"14px 16px", background:"transparent", border:"none", cursor:"pointer", textAlign:"left" }}>
+                  style={{ width:"100%", display:"flex", alignItems:"center", gap:12, padding:"14px 16px", background: isOpen ? "#F4B400" : "transparent", border:"none", cursor:"pointer", textAlign:"left" }}>
                   <div style={{ flex:1 }}>
-                    <div style={{ fontWeight:700, color:"#1A1D1B", fontSize:"0.85rem" }}>{t.herb}</div>
-                    <div style={{ color:"#4B5563", fontSize:"0.72rem", marginTop:2 }}>{t.condition}</div>
+                    <div style={{ fontFamily:HEAVY_FONT, fontWeight:900, color:"#141414", fontSize:"0.9rem", letterSpacing:"-0.01em", textTransform:"uppercase" }}>{t.herb}</div>
+                    <div style={{ color:"#5B6572", fontSize:"0.72rem", marginTop:2 }}>{t.condition}</div>
                     <div style={{ marginTop:4 }}>
-                      <span style={{ fontSize:"0.72rem", color:evColor, background:`${evColor}18`, border:`1px solid ${evColor}30`, padding:"2px 8px", borderRadius:10 }}>{t.evidence}</span>
+                      <span style={{ fontFamily:HEAVY_FONT, fontSize:"0.66rem", fontWeight:700, letterSpacing:"0.03em", textTransform:"uppercase", color:"#141414", border:"1px solid #141414", padding:"2px 8px" }}>{t.evidence}</span>
                     </div>
                   </div>
-                  <span style={{ color:ACCENT_TEXT, fontSize:18, transform:isOpen?"rotate(90deg)":"none", transition:"transform 0.2s" }}>›</span>
+                  <span style={{ color:"#141414", fontSize:18, transform:isOpen?"rotate(90deg)":"none", transition:"transform 0.2s" }}>›</span>
                 </button>
                 {isOpen && (
-                  <div style={{ borderTop:`1px solid ${BORDER}`, padding:"14px 16px", display:"flex", flexDirection:"column", gap:10 }}>
-                    {t.summary && <div style={{ color:"#047857", fontSize:"0.78rem", lineHeight:1.6 }}>{t.summary}</div>}
+                  <div style={{ borderTop:"1px solid #141414", padding:"14px 16px", display:"flex", flexDirection:"column", gap:10 }}>
+                    {t.summary && <div style={{ color:"#141414", fontSize:"0.78rem", lineHeight:1.6 }}>{t.summary}</div>}
                     <div style={{ display:"flex", gap:8, flexWrap:"wrap" }}>
-                      {t.pubmed && <a href={t.pubmed} target="_blank" rel="noopener noreferrer" style={{ fontSize:"0.8rem", color:"#1D4ED8", textDecoration:"none", background:"rgba(59,130,246,0.1)", border:"1px solid rgba(59,130,246,0.3)", borderRadius:8, padding:"4px 10px" }}>📄 PubMed</a>}
-                      {t.nccih  && <a href={t.nccih}  target="_blank" rel="noopener noreferrer" style={{ fontSize:"0.8rem", color:"#047857", textDecoration:"none", background:"rgba(16,185,129,0.1)", border:"1px solid rgba(16,185,129,0.3)", borderRadius:8, padding:"4px 10px" }}>🔬 NCCIH</a>}
-                      {t.ccmu   && <a href={t.ccmu}   target="_blank" rel="noopener noreferrer" style={{ fontSize:"0.8rem", color:"#7C3AED", textDecoration:"none", background:"rgba(139,92,246,0.1)", border:"1px solid rgba(139,92,246,0.3)", borderRadius:8, padding:"4px 10px" }}>📚 CCMU</a>}
+                      {t.pubmed && <a href={t.pubmed} target="_blank" rel="noopener noreferrer" style={{ fontFamily:HEAVY_FONT, fontSize:"0.7rem", fontWeight:700, letterSpacing:"0.03em", textTransform:"uppercase", color:"#141414", textDecoration:"none", border:"1px solid #141414", padding:"4px 10px" }}>📄 PubMed</a>}
+                      {t.nccih  && <a href={t.nccih}  target="_blank" rel="noopener noreferrer" style={{ fontFamily:HEAVY_FONT, fontSize:"0.7rem", fontWeight:700, letterSpacing:"0.03em", textTransform:"uppercase", color:"#141414", textDecoration:"none", border:"1px solid #141414", padding:"4px 10px" }}>🔬 NCCIH</a>}
+                      {t.ccmu   && <a href={t.ccmu}   target="_blank" rel="noopener noreferrer" style={{ fontFamily:HEAVY_FONT, fontSize:"0.7rem", fontWeight:700, letterSpacing:"0.03em", textTransform:"uppercase", color:"#141414", textDecoration:"none", border:"1px solid #141414", padding:"4px 10px" }}>📚 CCMU</a>}
                     </div>
-                    {t.badgeColor && <span style={{ fontSize:"0.72rem", color:t.badgeColor, background:`${t.badgeColor}18`, border:`1px solid ${t.badgeColor}30`, borderRadius:20, padding:"2px 10px", alignSelf:"flex-start" }}>TCM Research</span>}
+                    {t.badgeColor && <span style={{ fontFamily:HEAVY_FONT, fontSize:"0.66rem", fontWeight:700, letterSpacing:"0.03em", textTransform:"uppercase", color:"#141414", background:"#F4B400", padding:"2px 10px", alignSelf:"flex-start" }}>TCM Research</span>}
                   </div>
                 )}
 
@@ -10813,19 +10980,19 @@ function NutritionHub({ profile }) {
     <div style={{ flex:1, overflowY:"auto", padding:"0 0 80px" }}>
 
       {/* Sticky header with tabs + search + filter pills */}
-      <div style={{ padding:"12px 14px 0", position:"sticky", top:0, background:"rgba(255,255,255,0.95)", backdropFilter:"blur(12px)", zIndex:10, borderBottom:`1px solid ${BORDER}` }}>
-        <div style={{ fontFamily:"'Playfair Display',serif", fontSize:"1.15rem", fontWeight:800, color:"#1A1D1B", marginBottom:2 }}>📚 Education & Resources</div>
-        <div style={{ color:"#4B5563", fontSize:"0.72rem", marginBottom:10 }}>JISSN · NIH ODS · ACSM · Harvard Health · Cochrane · CDC — no fad diets</div>
+      <div style={{ padding:"12px 14px 0", position:"sticky", top:0, background:"#FFFFFF", zIndex:10, borderBottom:"1px solid #141414" }}>
+        <div style={{ fontFamily:HEAVY_FONT, fontSize:"1.15rem", fontWeight:900, color:"#141414", letterSpacing:"-0.01em", textTransform:"uppercase", marginBottom:2 }}>Education &amp; Resources</div>
+        <div style={{ color:"#5B6572", fontSize:"0.72rem", marginBottom:10 }}>JISSN · NIH ODS · ACSM · Harvard Health · Cochrane · CDC — no fad diets</div>
 
         {/* 3 main tab buttons */}
-        <div style={{ display:"flex", gap:6, marginBottom:10 }}>
+        <div style={{ display:"flex", gap:0, marginBottom:10, border:"1px solid #141414" }}>
           {[
-            { label:"🥗 Resources", active:!recipeView&&!tcmView, action:()=>{ setRecipeView(false); setTcmView(false); } },
-            { label:"👨‍🍳 Recipes",   active:recipeView,             action:()=>{ setRecipeView(true);  setTcmView(false); } },
-            { label:"🌿 TCM",        active:tcmView,               action:()=>{ setTcmView(true);   setRecipeView(false); } },
-          ].map(t => (
+            { label:"Resources", active:!recipeView&&!tcmView, action:()=>{ setRecipeView(false); setTcmView(false); } },
+            { label:"Recipes",   active:recipeView,             action:()=>{ setRecipeView(true);  setTcmView(false); } },
+            { label:"TCM",       active:tcmView,               action:()=>{ setTcmView(true);   setRecipeView(false); } },
+          ].map((t, ti) => (
             <button key={t.label} onClick={t.action}
-              style={{ flex:1, background: t.active ? "rgba(16,185,129,0.25)" : "rgba(0,0,0,0.03)", border:`1px solid ${t.active ? ACCENT : BORDER}`, borderRadius:10, padding:"9px 8px", color: t.active ? ACCENT2_TEXT : "#4B5563", cursor:"pointer", fontSize:"0.74rem", fontFamily:"'Inter',sans-serif", fontWeight: t.active ? 700 : 400, transition:"all 0.15s" }}>
+              style={{ flex:1, background: t.active ? "#141414" : "#FFFFFF", borderLeft: ti === 0 ? "none" : "1px solid #141414", border:"none", padding:"10px 8px", color: t.active ? "#FFFFFF" : "#141414", cursor:"pointer", fontSize:"0.7rem", fontFamily:HEAVY_FONT, fontWeight:800, letterSpacing:"0.04em", textTransform:"uppercase", transition:"all 0.12s" }}>
               {t.label}
             </button>
           ))}
@@ -10833,27 +11000,30 @@ function NutritionHub({ profile }) {
 
         {/* Search */}
         <div style={{ position:"relative", marginBottom:10 }}>
-          <span style={{ position:"absolute", left:12, top:"50%", transform:"translateY(-50%)", fontSize:14, color:"#6B7280" }}>🔍</span>
+          <span style={{ position:"absolute", left:12, top:"50%", transform:"translateY(-50%)", fontSize:14, color:"#5B6572" }}>🔍</span>
           <input value={searchQ} onChange={e => setSearchQ(e.target.value)}
             placeholder="Search resources, creators, topics…"
-            style={{ width:"100%", background:"#F2F3F1", border:`1px solid ${BORDER}`, borderRadius:10, padding:"10px 14px 10px 36px", color:"#1A1D1B", fontSize:"0.82rem", fontFamily:"'Inter',sans-serif", outline:"none", boxSizing:"border-box" }} />
+            style={{ width:"100%", background:"#FFFFFF", border:"1px solid #141414", borderRadius:4, padding:"10px 14px 10px 36px", color:"#141414", fontSize:"0.82rem", fontFamily:"'Inter',sans-serif", outline:"none", boxSizing:"border-box" }} />
         </div>
 
-        {/* Group filter pills — horizontal scroll like Workouts */}
+        {/* Group filter pills */}
         <div style={{ display:"flex", gap:6, overflowX:"auto", paddingBottom:10, scrollbarWidth:"none" }}>
-          {GROUPS.map(g => (
-            <button key={g.key} onClick={() => setActiveGroup(g.key)}
-              style={{ flexShrink:0, background: activeGroup===g.key ? g.color : "rgba(0,0,0,0.04)", border:`1px solid ${activeGroup===g.key ? g.color : BORDER}`, color: activeGroup===g.key ? "white" : "#4B5563", padding:"5px 13px", borderRadius:20, cursor:"pointer", fontSize:"0.8rem", fontFamily:"'Inter',sans-serif", fontWeight: activeGroup===g.key ? 700 : 400, transition:"all 0.15s", whiteSpace:"nowrap" }}>
-              {g.label}
-            </button>
-          ))}
+          {GROUPS.map(g => {
+            const on = activeGroup===g.key;
+            return (
+              <button key={g.key} onClick={() => setActiveGroup(g.key)}
+                style={{ flexShrink:0, background: on ? "#141414" : "#FFFFFF", border:"1px solid #141414", color: on ? "#FFFFFF" : "#141414", padding:"5px 12px", borderRadius:4, cursor:"pointer", fontSize:"0.68rem", fontFamily:HEAVY_FONT, fontWeight:700, letterSpacing:"0.03em", textTransform:"uppercase", whiteSpace:"nowrap" }}>
+                {g.label}
+              </button>
+            );
+          })}
         </div>
       </div>
 
       {/* ── GROUPED SECTIONS + 2-COL CARD GRID ── */}
       <div style={{ padding:"14px 14px 0" }}>
         {visibleCats.length === 0 && (
-          <div style={{ textAlign:"center", padding:"40px 20px", color:"#6B7280", fontSize:"0.85rem" }}>
+          <div style={{ textAlign:"center", padding:"40px 20px", color:"#5B6572", fontSize:"0.85rem" }}>
             No resources found for "{searchQ}"
           </div>
         )}
@@ -10863,29 +11033,30 @@ function NutritionHub({ profile }) {
         {(()=>{
           const g1=(profile?.goals||[])[0];if(!g1)return null;
           const PM={
-            "Lose Weight":{color:"#C2410C",icon:"🔥",articles:[{title:"HIIT vs Continuous Training",url:"https://pubmed.ncbi.nlm.nih.gov/23038727/",source:"PubMed",snippet:"HIIT produces superior fat loss with less time investment than steady-state cardio."},{title:"Workout & Nutrition Timing",url:"https://blog.nasm.org/workout-and-nutrition-timing",source:"NASM",snippet:"Strategic fueling around workouts maximizes fat utilization and preserves lean muscle."}]},
-            "Build Muscle":{color:"#4338CA",icon:"💪",articles:[{title:"Resistance Training Guidelines",url:"https://pubmed.ncbi.nlm.nih.gov/19204579/",source:"PubMed",snippet:"Progressive overload with 6–12 reps at 75–85% 1RM is the evidence-based standard for hypertrophy."},{title:"Strength Training Basics",url:"https://blog.nasm.org/strength-training-basics",source:"NASM",snippet:"Compound movements, progressive overload, and protein are the three pillars of muscle growth."}]},
-            "More Energy":{color:"#92400E",icon:"⚡",articles:[{title:"Active Recovery Workouts",url:"https://blog.nasm.org/active-recovery-workouts",source:"NASM",snippet:"Low-intensity movement on rest days accelerates recovery and sustains energy levels."},{title:"Resting Metabolic Rate",url:"https://blog.nasm.org/resting-metabolic-rate-how-to-calculate-and-improve-yours",source:"NASM",snippet:"Muscle mass is the primary driver of metabolic rate — strength training raises it most effectively."}]},
-            "Heart Health":{color:"#DC2626",icon:"❤️",articles:[{title:"Training Intensity Distribution",url:"https://pubmed.ncbi.nlm.nih.gov/19124971/",source:"PubMed",snippet:"Elite endurance athletes perform 80% at low intensity (Zone 2) — this builds the aerobic base."},{title:"Healthy Fats for Performance",url:"https://blog.nasm.org/healthy-fats-foods",source:"NASM",snippet:"Omega-3s, olive oil, and avocado reduce inflammation and support cardiovascular health."}]},
-            "Reduce Stress":{color:"#7C3AED",icon:"🧘",articles:[{title:"Yoga and Performance",url:"https://blog.nasm.org/celebrating-national-yoga-month",source:"NASM",snippet:"Regular yoga reduces cortisol, improves mobility, and accelerates recovery between sessions."},{title:"Mindful Stress Management",url:"https://blog.nasm.org/benefits-of-nasm-mindful-stress-management-course",source:"NASM",snippet:"Structured stress management is as important as training load for recovery outcomes."}]},
-            "Run / Endurance":{color:"#047857",icon:"🏃",articles:[{title:"Strength Training for Runners",url:"https://blog.nasm.org/why-should-runners-add-strength-training",source:"NASM",snippet:"Strength training improves running economy by 2–8%, reducing injury risk and increasing speed."},{title:"Running Biomechanics",url:"https://blog.nasm.org/running-101",source:"NASM",snippet:"Cadence, foot strike, and posture are the foundation for injury-free running performance."}]},
-            "Manage a Condition":{color:"#0E7490",icon:"🩺",articles:[{title:"Corrective Exercise",url:"https://blog.nasm.org/corrective-exercise",source:"NASM",snippet:"Movement dysfunction is the root cause of most chronic pain. The NASM corrective model addresses root causes."},{title:"Posture & Movement Dysfunction",url:"https://blog.nasm.org/posture-and-movement-dysfunction",source:"NASM",snippet:"Poor posture links directly to injury risk. Assessment-first training prevents aggravating conditions."}]},
+            "Lose Weight":{color:"#EE9C5B",icon:"🔥",articles:[{title:"HIIT vs Continuous Training",url:"https://pubmed.ncbi.nlm.nih.gov/23038727/",source:"PubMed",snippet:"HIIT produces superior fat loss with less time investment than steady-state cardio."},{title:"Workout & Nutrition Timing",url:"https://blog.nasm.org/workout-and-nutrition-timing",source:"NASM",snippet:"Strategic fueling around workouts maximizes fat utilization and preserves lean muscle."}]},
+            "Build Muscle":{color:"#3C5A4A",icon:"💪",articles:[{title:"Resistance Training Guidelines",url:"https://pubmed.ncbi.nlm.nih.gov/19204579/",source:"PubMed",snippet:"Progressive overload with 6–12 reps at 75–85% 1RM is the evidence-based standard for hypertrophy."},{title:"Strength Training Basics",url:"https://blog.nasm.org/strength-training-basics",source:"NASM",snippet:"Compound movements, progressive overload, and protein are the three pillars of muscle growth."}]},
+            "More Energy":{color:"#C79245",icon:"⚡",articles:[{title:"Active Recovery Workouts",url:"https://blog.nasm.org/active-recovery-workouts",source:"NASM",snippet:"Low-intensity movement on rest days accelerates recovery and sustains energy levels."},{title:"Resting Metabolic Rate",url:"https://blog.nasm.org/resting-metabolic-rate-how-to-calculate-and-improve-yours",source:"NASM",snippet:"Muscle mass is the primary driver of metabolic rate — strength training raises it most effectively."}]},
+            "Heart Health":{color:"#E8836B",icon:"❤️",articles:[{title:"Training Intensity Distribution",url:"https://pubmed.ncbi.nlm.nih.gov/19124971/",source:"PubMed",snippet:"Elite endurance athletes perform 80% at low intensity (Zone 2) — this builds the aerobic base."},{title:"Healthy Fats for Performance",url:"https://blog.nasm.org/healthy-fats-foods",source:"NASM",snippet:"Omega-3s, olive oil, and avocado reduce inflammation and support cardiovascular health."}]},
+            "Reduce Stress":{color:"#7FA891",icon:"🧘",articles:[{title:"Yoga and Performance",url:"https://blog.nasm.org/celebrating-national-yoga-month",source:"NASM",snippet:"Regular yoga reduces cortisol, improves mobility, and accelerates recovery between sessions."},{title:"Mindful Stress Management",url:"https://blog.nasm.org/benefits-of-nasm-mindful-stress-management-course",source:"NASM",snippet:"Structured stress management is as important as training load for recovery outcomes."}]},
+            "Run / Endurance":{color:"#7FA891",icon:"🏃",articles:[{title:"Strength Training for Runners",url:"https://blog.nasm.org/why-should-runners-add-strength-training",source:"NASM",snippet:"Strength training improves running economy by 2–8%, reducing injury risk and increasing speed."},{title:"Running Biomechanics",url:"https://blog.nasm.org/running-101",source:"NASM",snippet:"Cadence, foot strike, and posture are the foundation for injury-free running performance."}]},
+            "Manage a Condition":{color:"#94897A",icon:"🩺",articles:[{title:"Corrective Exercise",url:"https://blog.nasm.org/corrective-exercise",source:"NASM",snippet:"Movement dysfunction is the root cause of most chronic pain. The NASM corrective model addresses root causes."},{title:"Posture & Movement Dysfunction",url:"https://blog.nasm.org/posture-and-movement-dysfunction",source:"NASM",snippet:"Poor posture links directly to injury risk. Assessment-first training prevents aggravating conditions."}]},
           };
           const pin=PM[g1];if(!pin)return null;
           return(
-            <div style={{marginBottom:14,background:`${pin.color}0a`,border:`1px solid ${pin.color}25`,borderRadius:14,padding:"12px 14px"}}>
+            <div style={{position:"relative",marginBottom:14,background:"#FFFFFF",border:"1px solid #141414",padding:"12px 14px 12px 18px",overflow:"hidden"}}>
+              <div style={{position:"absolute",left:0,top:0,bottom:0,width:4,background:"#F4B400"}}/>
               <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:10}}>
                 <span style={{fontSize:16}}>{pin.icon}</span>
-                <div style={{fontSize:"0.78rem",fontWeight:800,color:pin.color,fontFamily:"'Inter',sans-serif"}}>Pinned for {g1}</div>
+                <div style={{fontFamily:HEAVY_FONT,fontSize:"0.7rem",fontWeight:800,letterSpacing:"0.06em",textTransform:"uppercase",color:"#141414"}}>Pinned for {g1}</div>
               </div>
               {pin.articles.map((a,i)=>(
                 <a key={i} href={a.url} target="_blank" rel="noopener noreferrer"
-                  style={{display:"flex",alignItems:"flex-start",gap:10,textDecoration:"none",padding:"8px 0",borderBottom:i<pin.articles.length-1?`1px solid ${pin.color}15`:"none"}}>
+                  style={{display:"flex",alignItems:"flex-start",gap:10,textDecoration:"none",padding:"8px 0",borderTop:i===0?"none":"1px solid #E6E4DF"}}>
                   <span style={{fontSize:12,marginTop:2,flexShrink:0}}>📄</span>
                   <div>
-                    <div style={{fontSize:"0.72rem",fontWeight:700,color:"#1A1D1B",marginBottom:2}}>{a.title}</div>
-                    <div style={{fontSize:"0.72rem",color:"#4B5563",marginBottom:3}}>{a.source}</div>
-                    <div style={{fontSize:"0.72rem",color:"#6B7280",lineHeight:1.4}}>{a.snippet}</div>
+                    <div style={{fontSize:"0.72rem",fontWeight:700,color:"#141414",marginBottom:2}}>{a.title}</div>
+                    <div style={{fontSize:"0.72rem",color:"#5B6572",marginBottom:3}}>{a.source}</div>
+                    <div style={{fontSize:"0.72rem",color:"#5B6572",lineHeight:1.4}}>{a.snippet}</div>
                   </div>
                 </a>
               ))}
@@ -10903,41 +11074,39 @@ function NutritionHub({ profile }) {
 
           return (
             <div key={group.key} style={{ marginBottom:32 }}>
-              {/* Section banner — identical to Workouts group banner */}
-              <div style={{ background:`linear-gradient(90deg, ${group.color}22, ${group.color}08)`, border:`1px solid ${group.color}35`, borderRadius:12, padding:"12px 16px", marginBottom:12, display:"flex", alignItems:"center", gap:12 }}>
-                <div style={{ width:40, height:40, borderRadius:12, background:`${group.color}25`, border:`2px solid ${group.color}50`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:20, flexShrink:0 }}>
+              {/* Section banner — flat, hard border, gold section bar */}
+              <div style={{ position:"relative", background:"#FFFFFF", border:"1px solid #141414", padding:"12px 16px 12px 20px", marginBottom:12, display:"flex", alignItems:"center", gap:12, overflow:"hidden" }}>
+                <div style={{ position:"absolute", left:0, top:0, bottom:0, width:4, background:"#F4B400" }} />
+                <div style={{ width:38, height:38, border:"1px solid #141414", display:"flex", alignItems:"center", justifyContent:"center", fontSize:19, flexShrink:0 }}>
                   {group.icon || "📚"}
                 </div>
                 <div style={{ flex:1 }}>
-                  <div style={{ fontFamily:"'Playfair Display',serif", fontWeight:800, color:"#1A1D1B", fontSize:"1.05rem", lineHeight:1.2 }}>
+                  <div style={{ fontFamily:HEAVY_FONT, fontWeight:900, color:"#141414", fontSize:"1.05rem", letterSpacing:"-0.01em", textTransform:"uppercase", lineHeight:1.1 }}>
                     {group.label}
                   </div>
-                  <div style={{ fontSize:"0.8rem", color:group.color, marginTop:3, fontWeight:600 }}>
+                  <div style={{ fontFamily:HEAVY_FONT, fontSize:"0.68rem", color:"#141414", marginTop:3, fontWeight:800, letterSpacing:"0.04em", textTransform:"uppercase" }}>
                     {cats.length} categor{cats.length !== 1 ? "ies" : "y"} · {totalResources} resources
                   </div>
                 </div>
               </div>
 
-              {/* 2-col card grid — identical structure to Workouts creator cards */}
-              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10 }}>
+              {/* Card grid — one bordered container */}
+              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:0, border:"1px solid #141414" }}>
                 {cats.map((cat, ci) => (
                   <div key={ci} onClick={() => setSelectedCategory(cat)}
-                    style={{ background:`linear-gradient(135deg, ${cat.color}14, #FFFFFF)`, border:`1px solid ${cat.color}30`, borderRadius:14, padding:"14px 12px", cursor:"pointer", transition:"all 0.2s", position:"relative", overflow:"hidden" }}
-                    onMouseEnter={e => { e.currentTarget.style.transform="translateY(-2px)"; e.currentTarget.style.boxShadow=`0 8px 24px ${cat.color}30`; e.currentTarget.style.borderColor=`${cat.color}65`; }}
-                    onMouseLeave={e => { e.currentTarget.style.transform="translateY(0)"; e.currentTarget.style.boxShadow="none"; e.currentTarget.style.borderColor=`${cat.color}30`; }}>
-                    {/* Top color bar */}
-                    <div style={{ position:"absolute", top:0, left:0, right:0, height:3, background:`linear-gradient(90deg, ${cat.color}, transparent)`, borderRadius:"14px 14px 0 0" }} />
-                    <div style={{ fontSize:28, marginBottom:8, textAlign:"center" }}>{cat.icon}</div>
-                    <div style={{ fontFamily:"'Playfair Display',serif", fontWeight:800, color:"#1A1D1B", fontSize:"0.82rem", lineHeight:1.3, textAlign:"center", marginBottom:6 }}>
+                    style={{ background:"#FFFFFF", borderTop: ci >= 2 ? "1px solid #E6E4DF" : "none", borderLeft: ci % 2 === 1 ? "1px solid #E6E4DF" : "none", padding:"14px 12px", cursor:"pointer", transition:"background 0.12s" }}
+                    onMouseEnter={e => { e.currentTarget.style.background="#FBF7EF"; }}
+                    onMouseLeave={e => { e.currentTarget.style.background="#FFFFFF"; }}>
+                    <div style={{ width:44, height:44, border:"1px solid #141414", display:"flex", alignItems:"center", justifyContent:"center", fontSize:22, margin:"0 auto 8px" }}>{cat.icon}</div>
+                    <div style={{ fontFamily:HEAVY_FONT, fontWeight:900, color:"#141414", fontSize:"0.82rem", letterSpacing:"-0.01em", textTransform:"uppercase", lineHeight:1.15, textAlign:"center", marginBottom:6 }}>
                       {cat.category}
                     </div>
                     <div style={{ display:"flex", justifyContent:"center", gap:4, flexWrap:"wrap", marginBottom:8 }}>
-                      <span style={{ fontSize:"0.72rem", fontWeight:700, color:cat.color, background:`${cat.color}18`, border:`1px solid ${cat.color}35`, padding:"2px 7px", borderRadius:12 }}>
+                      <span style={{ fontSize:"0.68rem", fontFamily:HEAVY_FONT, fontWeight:700, letterSpacing:"0.03em", textTransform:"uppercase", color:"#141414", border:"1px solid #141414", padding:"2px 7px" }}>
                         {(cat.resources||[]).length} resources
                       </span>
-                      <span style={{ fontSize:"0.72rem", color:"#6B7280", background:"rgba(0,0,0,0.04)", border:`1px solid ${BORDER}`, padding:"2px 7px", borderRadius:12 }}>🆓</span>
                     </div>
-                    <div style={{ textAlign:"center", fontSize:"0.75rem", color:cat.color, fontWeight:600 }}>
+                    <div style={{ textAlign:"center", fontSize:"0.72rem", color:"#5B6572", fontWeight:600 }}>
                       Tap to explore →
                     </div>
                   </div>
@@ -10952,23 +11121,22 @@ function NutritionHub({ profile }) {
       {sourceDrawer && (() => {
         const stars = sourceDrawer.stars || 0;
         const starDisplay = "★".repeat(stars) + "☆".repeat(5 - stars);
-        const starColor = stars >= 5 ? "#10B981" : stars >= 4 ? "#6EE7B7" : stars >= 3 ? "#D97706" : stars >= 2 ? "#7C3AED" : "#6B7280";
         const evidenceLabel = stars >= 5 ? "Systematic Review / Position Stand" : stars >= 4 ? "NIH Clinical Review / Multiple RCTs" : stars >= 3 ? "Peer-Reviewed RCT" : stars >= 2 ? "Emerging / Traditional Evidence" : "Theoretical / Traditional Use";
         const sourceIcon = (sourceDrawer.source||"").includes("JISSN") ? "📄" : (sourceDrawer.source||"").includes("NIH") || (sourceDrawer.source||"").includes("ODS") ? "🏛️" : (sourceDrawer.source||"").includes("Cochrane") ? "📊" : (sourceDrawer.source||"").includes("ACSM") ? "🏥" : (sourceDrawer.source||"").includes("NASM") ? "💪" : "📄";
         return (
           <div onClick={() => setSourceDrawer(null)}
             style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.4)", backdropFilter:"blur(10px)", zIndex:400, display:"flex", alignItems:"flex-end", justifyContent:"center" }}>
             <div onClick={e => e.stopPropagation()}
-              style={{ background:"#EEF0ED", border:"1px solid rgba(59,130,246,0.3)", borderRadius:"20px 20px 0 0", padding:"24px 20px 40px", width:"100%", maxWidth:520, animation:"fadeUp 0.2s ease" }}>
-              <div style={{ width:36, height:4, background:"rgba(0,0,0,0.15)", borderRadius:2, margin:"0 auto 18px" }} />
+              style={{ background:"#FFFFFF", border:"1px solid #141414", borderRadius:0, padding:"24px 20px 40px", width:"100%", maxWidth:520, animation:"fadeUp 0.2s ease" }}>
+              <div style={{ width:36, height:4, background:"#141414", margin:"0 auto 18px" }} />
 
               {/* Evidence star rating */}
               {stars > 0 && (
-                <div style={{ display:"flex", alignItems:"center", gap:8, background:`${starColor}12`, border:`1px solid ${starColor}30`, borderRadius:10, padding:"7px 12px", marginBottom:14 }}>
-                  <span style={{ fontSize:"1rem", letterSpacing:2, color:starColor }}>{starDisplay}</span>
+                <div style={{ display:"flex", alignItems:"center", gap:8, background:"#FBF7EF", borderLeft:"4px solid #F4B400", border:"1px solid #E6E4DF", padding:"7px 12px", marginBottom:14 }}>
+                  <span style={{ fontSize:"1rem", letterSpacing:2, color:"#141414" }}>{starDisplay}</span>
                   <div>
-                    <div style={{ fontSize:"0.72rem", fontWeight:800, color:starColor, textTransform:"uppercase", letterSpacing:"0.08em" }}>{stars}/5 — {evidenceLabel}</div>
-                    <div style={{ fontSize:"0.72rem", color:"#4B5563", marginTop:1 }}>Evidence strength per Cochrane / JISSN / NIH grading standards</div>
+                    <div style={{ fontFamily:HEAVY_FONT, fontSize:"0.7rem", fontWeight:800, color:"#141414", textTransform:"uppercase", letterSpacing:"0.06em" }}>{stars}/5 — {evidenceLabel}</div>
+                    <div style={{ fontSize:"0.72rem", color:"#5B6572", marginTop:1 }}>Evidence strength per Cochrane / JISSN / NIH grading standards</div>
                   </div>
                 </div>
               )}
@@ -10977,37 +11145,37 @@ function NutritionHub({ profile }) {
               <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:12 }}>
                 <span style={{ fontSize:20 }}>{sourceIcon}</span>
                 <div>
-                  <div style={{ fontSize:"0.72rem", fontWeight:700, letterSpacing:"0.1em", textTransform:"uppercase", color:"#1D4ED8", marginBottom:2 }}>
+                  <div style={{ fontFamily:HEAVY_FONT, fontSize:"0.68rem", fontWeight:800, letterSpacing:"0.06em", textTransform:"uppercase", color:"#141414", marginBottom:2 }}>
                     {sourceDrawer.source || "Peer-Reviewed Research"}
-                    {sourceDrawer.year && <span style={{ color:"#1D4ED8", marginLeft:6 }}>{sourceDrawer.year}</span>}
+                    {sourceDrawer.year && <span style={{ color:"#5B6572", marginLeft:6 }}>{sourceDrawer.year}</span>}
                   </div>
-                  <div style={{ fontWeight:700, color:"#1A1D1B", fontSize:"0.9rem", lineHeight:1.35 }}>{sourceDrawer.title}</div>
+                  <div style={{ fontWeight:700, color:"#141414", fontSize:"0.9rem", lineHeight:1.35 }}>{sourceDrawer.title}</div>
                 </div>
               </div>
 
               {/* Abstract snippet */}
               {sourceDrawer.snippet && (
-                <div style={{ background:"rgba(59,130,246,0.06)", border:"1px solid rgba(59,130,246,0.15)", borderRadius:12, padding:"12px 14px", marginBottom:14 }}>
-                  <div style={{ fontSize:"0.78rem", color:"#1D4ED8", fontStyle:"italic", lineHeight:1.65 }}>{sourceDrawer.snippet}</div>
+                <div style={{ background:"#FBF7EF", border:"1px solid #E6E4DF", borderRadius:0, padding:"12px 14px", marginBottom:14 }}>
+                  <div style={{ fontSize:"0.78rem", color:"#141414", fontStyle:"italic", lineHeight:1.65 }}>{sourceDrawer.snippet}</div>
                 </div>
               )}
 
               {/* Disclaimer */}
-              <div style={{ background:"rgba(245,158,11,0.06)", border:"1px solid rgba(245,158,11,0.2)", borderRadius:10, padding:"9px 12px", marginBottom:14 }}>
-                <div style={{ fontSize:"0.72rem", color:"#92400E", lineHeight:1.5 }}>
+              <div style={{ background:"#FBF7EF", border:"1px solid #E6E4DF", borderRadius:0, padding:"9px 12px", marginBottom:14 }}>
+                <div style={{ fontSize:"0.72rem", color:"#141414", lineHeight:1.5 }}>
                   ⚕️ <strong>Educational purposes only.</strong> This information is not a substitute for professional medical advice. Verify dosages with primary sources and consult your physician before acting on any recommendation.
                 </div>
               </div>
 
               {sourceDrawer.url && (
                 <a href={sourceDrawer.url} target="_blank" rel="noopener noreferrer"
-                  style={{ display:"flex", alignItems:"center", justifyContent:"center", gap:8, background:"rgba(59,130,246,0.12)", border:"1px solid rgba(59,130,246,0.35)", borderRadius:12, padding:"12px", textDecoration:"none", marginBottom:10 }}>
+                  style={{ display:"flex", alignItems:"center", justifyContent:"center", gap:8, background:"#F4B400", border:"none", borderRadius:4, padding:"13px", textDecoration:"none", marginBottom:10 }}>
                   <span style={{ fontSize:14 }}>🔗</span>
-                  <span style={{ color:"#1D4ED8", fontWeight:700, fontSize:"0.8rem", fontFamily:"'Inter',sans-serif" }}>→ Open Primary Source</span>
+                  <span style={{ color:"#141414", fontWeight:800, fontSize:"0.8rem", fontFamily:HEAVY_FONT, letterSpacing:"0.04em", textTransform:"uppercase" }}>Open Primary Source</span>
                 </a>
               )}
               <button onClick={() => setSourceDrawer(null)}
-                style={{ width:"100%", background:"transparent", border:"1px solid rgba(0,0,0,0.08)", borderRadius:12, padding:"11px", color:"#4B5563", cursor:"pointer", fontSize:"0.8rem", fontFamily:"'Inter',sans-serif" }}>
+                style={{ width:"100%", background:"transparent", border:"1px solid #141414", borderRadius:4, padding:"11px", color:"#141414", cursor:"pointer", fontFamily:HEAVY_FONT, fontWeight:700, fontSize:"0.75rem", letterSpacing:"0.04em", textTransform:"uppercase" }}>
                 Close
               </button>
             </div>
@@ -12695,7 +12863,7 @@ const TABS = [
   { id: "chat", label: "Coach" },
   { id: "workouts", label: "Workouts" },
   { id: "nutrition", label: "Resources" },
-  { id: "meals", label: "Meal Plan" },
+  { id: "meals", label: "Meals" },
   { id: "supplements", label: "Supplements" },
   { id: "progress", label: "Progress" },
   { id: "profile", label: "Profile" },
@@ -12846,7 +13014,7 @@ export default function AilaraApp() {
   return (
     <div style={{ height: "100vh", background: BG, display: "flex", flexDirection: "column", fontFamily: "'Inter','Segoe UI',sans-serif", color: "#1A1D1B", position: "relative", overflow: "hidden" }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700;800;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500&family=Bricolage+Grotesque:opsz,wght@12..96,400..700&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700;800;900&display=swap');
         *{box-sizing:border-box;margin:0;padding:0;}
         ::-webkit-scrollbar{width:3px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:rgba(16,185,129,0.2);border-radius:2px;}
         @keyframes dotPulse{0%,100%{opacity:0.2;transform:scale(0.7)}50%{opacity:1;transform:scale(1)}}
@@ -12854,9 +13022,11 @@ export default function AilaraApp() {
         @keyframes spin{to{transform:rotate(360deg)}}
         @keyframes glow{0%,100%{box-shadow:0 0 8px rgba(16,185,129,0.2)}50%{box-shadow:0 0 22px rgba(16,185,129,0.45)}}
         @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.6}}
+        @keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.03)}}
         input,textarea{outline:none;resize:none;}
         select{appearance:none;}
-        .tab-btn:hover{background:rgba(16,185,129,0.07)!important;}
+        .tab-btn:hover{opacity:0.82;}
+        @media (prefers-reduced-motion:reduce){*{animation:none!important;transition-duration:0.01ms!important;}}
       `}</style>
 
       {/* Pro Upgrade Modal */}
@@ -12883,58 +13053,28 @@ export default function AilaraApp() {
       <div style={{ position:"fixed",top:-80,right:-80,width:380,height:380,borderRadius:"50%",background:"radial-gradient(circle,rgba(16,185,129,0.05) 0%,transparent 70%)",pointerEvents:"none",zIndex:0}}/>
       <div style={{ position:"fixed",bottom:-100,left:-60,width:300,height:300,borderRadius:"50%",background:"radial-gradient(circle,rgba(16,185,129,0.04) 0%,transparent 70%)",pointerEvents:"none",zIndex:0}}/>
 
-      {/* HEADER */}
+      {/* HEADER — coach's-brief (LS), all tabs */}
       {tab !== "onboarding" && (
-        <header style={{ position:"sticky",top:0,zIndex:20,background:"rgba(255,255,255,0.95)",backdropFilter:"blur(20px)",borderBottom:`1px solid ${BORDER}`,padding:"0 20px",height:56,display:"flex",alignItems:"center",justifyContent:"space-between",flexShrink:0 }}>
-          <div style={{ display:"flex",alignItems:"center",gap:11 }}>
-            <div style={{ width:36,height:36,borderRadius:10,background:"linear-gradient(135deg,#064E3B,#10B981)",display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"'Playfair Display',serif",fontSize:16,fontWeight:800,color:"white",animation:"glow 3s ease-in-out infinite",flexShrink:0 }}>A</div>
-            <div>
-              <div style={{ fontFamily:"'Playfair Display',serif",fontSize:"1.05rem",fontWeight:800,color:"#1A1D1B",letterSpacing:"-0.02em",lineHeight:1 }}>AILARA</div>
-              <div style={{ fontSize:"0.72rem",color:ACCENT_TEXT,letterSpacing:"0.14em",textTransform:"uppercase",marginTop:1 }}>Your One-Stop Health & Fitness Hub</div>
-            </div>
-          </div>
-          <div style={{ display:"flex",alignItems:"center",gap:8 }}>
-            {/* Pro badge or upgrade button */}
-            {isPro ? (
-              <div style={{ display:"flex",alignItems:"center",gap:5,background:"rgba(245,158,11,0.1)",border:"1px solid rgba(245,158,11,0.3)",borderRadius:20,padding:"3px 10px" }}>
-                <span style={{ fontSize:12 }}>👑</span>
-                <span style={{ fontSize:"0.72rem",color:"#92400E",letterSpacing:"0.06em",fontWeight:700 }}>PRO</span>
-              </div>
-            ) : (
-              <button onClick={() => openUpgrade()}
-                style={{ display:"flex",alignItems:"center",gap:5,background:"rgba(245,158,11,0.08)",border:"1px solid rgba(245,158,11,0.25)",borderRadius:20,padding:"4px 11px",cursor:"pointer" }}>
-                <span style={{ fontSize:12 }}>👑</span>
-                <span style={{ fontSize:"0.72rem",color:"#92400E",fontWeight:700,fontFamily:"'Inter',sans-serif" }}>Upgrade</span>
-              </button>
-            )}
-            {/* Global Search Button */}
-            <button onClick={() => setShowSearch(true)}
-              style={{ display:"flex",alignItems:"center",gap:6,background:"rgba(16,185,129,0.07)",border:`1px solid rgba(16,185,129,0.22)`,borderRadius:20,padding:"5px 12px",cursor:"pointer",transition:"all 0.15s" }}
-              onMouseEnter={e=>{ e.currentTarget.style.background="rgba(16,185,129,0.25)"; e.currentTarget.style.borderColor="rgba(16,185,129,0.45)"; }}
-              onMouseLeave={e=>{ e.currentTarget.style.background="rgba(16,185,129,0.07)"; e.currentTarget.style.borderColor="rgba(16,185,129,0.22)"; }}>
-              <span style={{ fontSize:13, opacity:0.8 }}>🔍</span>
-              <span style={{ fontSize:"0.72rem",color:ACCENT2_TEXT,fontWeight:600,fontFamily:"'Inter',sans-serif" }}>Search</span>
-              <span style={{ fontSize:"0.72rem",color:"#6B7280",background:"rgba(0,0,0,0.06)",border:`1px solid ${BORDER}`,borderRadius:4,padding:"1px 5px",fontFamily:"monospace" }}>⌘K</span>
-            </button>
-            <div style={{ display:"flex",alignItems:"center",gap:5,background:"rgba(16,185,129,0.07)",border:`1px solid rgba(16,185,129,0.18)`,borderRadius:20,padding:"3px 10px" }}>
-              <div style={{ width:5,height:5,borderRadius:"50%",background:ACCENT,animation:"pulse 2s ease-in-out infinite" }}/>
-              <span style={{ fontSize:"0.72rem",color:ACCENT2_TEXT,letterSpacing:"0.06em",fontWeight:600 }}>LIVE</span>
-            </div>
-          </div>
+        <header style={{ position:"sticky",top:0,zIndex:20,background:LS.paper,borderBottom:`1px solid ${LS.ink}`,padding:"0 16px",height:56,display:"flex",alignItems:"center",justifyContent:"space-between",flexShrink:0 }}>
+          <div style={{ fontFamily:HEAVY_FONT,fontSize:"1.15rem",fontWeight:900,color:LS.ink,letterSpacing:"0.03em",lineHeight:1 }}>AILARA</div>
+          <button onClick={() => setShowSearch(true)} aria-label="Search" title="Search (⌘K)"
+            style={{ width:34,height:34,borderRadius:4,background:LS.paper,border:`1px solid ${LS.ink}`,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,flexShrink:0 }}>
+            🔍
+          </button>
         </header>
       )}
 
       {/* CONTENT */}
-      <div style={{ flex:1,overflowY:"auto",position:"relative",zIndex:1,display:"flex",flexDirection:"column" }}>
+      <div style={{ flex:1,overflowY:"auto",position:"relative",zIndex:1,display:"flex",flexDirection:"column",background: (tab==="chat"||tab==="onboarding") ? LS.paper : (["workouts","nutrition","meals","profile"].includes(tab) ? W.sand : undefined) }}>
         {tab === "onboarding" && (
-          <div style={{ flex:1,overflowY:"auto" }}>
-            {/* Compact hero — just logo + tagline, fast to scan */}
-            <div style={{ padding:"28px 24px 8px",maxWidth:540,margin:"0 auto",textAlign:"center" }}>
-              <div style={{ width:52,height:52,borderRadius:14,background:"linear-gradient(135deg,#064E3B,#10B981)",display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"'Playfair Display',serif",fontSize:22,fontWeight:800,color:"white",margin:"0 auto 12px",animation:"glow 3s ease-in-out infinite" }}>A</div>
-              <div style={{ fontFamily:"'Playfair Display',serif",fontSize:"1.5rem",fontWeight:800,color:"#1A1D1B",marginBottom:6,lineHeight:1.2 }}>Your Health & Fitness Hub</div>
-              <div style={{ display:"flex",flexWrap:"wrap",gap:5,justifyContent:"center",marginBottom:8 }}>
-                {["💬 AI Coach","🏋️ 1,800+ Workouts","📚 Resources","💊 Supplements","📅 Meal Plans"].map(f => (
-                  <span key={f} style={{ fontSize:"0.75rem",color:ACCENT2_TEXT,background:"rgba(16,185,129,0.08)",border:`1px solid rgba(16,185,129,0.18)`,padding:"3px 9px",borderRadius:20,fontWeight:600 }}>{f}</span>
+          <div style={{ flex:1,overflowY:"auto",background:LS.paper }}>
+            {/* Compact hero — heavy wordmark + tagline */}
+            <div style={{ padding:"26px 20px 6px",maxWidth:520,margin:"0 auto" }}>
+              <div style={{ fontFamily:HEAVY_FONT,fontSize:"1.15rem",fontWeight:900,color:"#141414",letterSpacing:"0.03em",lineHeight:1,marginBottom:8 }}>AILARA</div>
+              <div style={{ fontFamily:HEAVY_FONT,fontSize:"1.6rem",fontWeight:900,color:"#141414",letterSpacing:"-0.02em",lineHeight:1.0,textTransform:"uppercase",marginBottom:10 }}>Your Health &amp; Fitness Hub</div>
+              <div style={{ display:"flex",flexWrap:"wrap",gap:6,marginBottom:8 }}>
+                {["AI Coach","1,800+ Workouts","Resources","Supplements","Meal Plans"].map(f => (
+                  <span key={f} style={{ fontFamily:"'Inter',sans-serif",fontSize:"0.72rem",color:"#141414",border:"1px solid #141414",padding:"3px 9px",borderRadius:4,fontWeight:600 }}>{f}</span>
                 ))}
               </div>
             </div>
@@ -12957,22 +13097,22 @@ export default function AilaraApp() {
                 {profile.generatedPlan && (() => {
                   const gp = profile.generatedPlan;
                   return (
-                    <div style={{ background:"rgba(16,185,129,0.06)",border:`1px solid rgba(16,185,129,0.25)`,borderRadius:12,padding:"14px 16px",marginBottom:4 }}>
+                    <div style={{ background:W.cream,border:`1px solid ${W.haze}`,borderRadius:16,padding:"14px 16px",marginBottom:4,boxShadow:W.shadowRest }}>
                       <div style={{ fontFamily:"'Playfair Display',serif",fontWeight:800,color:"#1A1D1B",fontSize:"0.95rem",marginBottom:6 }}>✨ Your Personalized Plan</div>
-                      {gp.greeting && <div style={{ color:ACCENT2_TEXT,fontSize:"0.8rem",lineHeight:1.5,marginBottom:8 }}>{gp.greeting}</div>}
+                      {gp.greeting && <div style={{ color:"#3C5A4A",fontSize:"0.8rem",lineHeight:1.5,marginBottom:8 }}>{gp.greeting}</div>}
                       <div style={{ display:"flex",gap:8,flexWrap:"wrap",marginBottom:10 }}>
-                        {gp.dietPlan?.name && <span style={{ fontSize:"0.8rem",color:"#047857",background:"rgba(16,185,129,0.1)",border:"1px solid rgba(16,185,129,0.25)",padding:"3px 10px",borderRadius:20,fontWeight:700 }}>🥗 {gp.dietPlan.name}</span>}
-                        {gp.exercisePlan?.name && <span style={{ fontSize:"0.8rem",color:"#1D4ED8",background:"rgba(59,130,246,0.1)",border:"1px solid rgba(59,130,246,0.25)",padding:"3px 10px",borderRadius:20,fontWeight:700 }}>🏋️ {gp.exercisePlan.name}</span>}
+                        {gp.dietPlan?.name && <span style={{ fontSize:"0.8rem",color:"#3C5A4A",background:W.tileSage,padding:"3px 10px",borderRadius:999,fontWeight:700 }}>🥗 {gp.dietPlan.name}</span>}
+                        {gp.exercisePlan?.name && <span style={{ fontSize:"0.8rem",color:"#3C5A4A",background:W.tileSage,padding:"3px 10px",borderRadius:999,fontWeight:700 }}>🏋️ {gp.exercisePlan.name}</span>}
                       </div>
                       {gp.dietPlan?.macroTarget && (
                         <div style={{ display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:5,marginBottom:8 }}>
                           {[
-                            {label:"Cal",val:gp.dietPlan.macroTarget.calories,color:"#92400E"},
-                            {label:"Protein",val:gp.dietPlan.macroTarget.protein,color:"#047857"},
-                            {label:"Carbs",val:gp.dietPlan.macroTarget.carbs,color:"#1D4ED8"},
-                            {label:"Fat",val:gp.dietPlan.macroTarget.fat,color:"#BE185D"},
+                            {label:"Cal",val:gp.dietPlan.macroTarget.calories,color:"#C79245"},
+                            {label:"Protein",val:gp.dietPlan.macroTarget.protein,color:"#3C5A4A"},
+                            {label:"Carbs",val:gp.dietPlan.macroTarget.carbs,color:"#7FA891"},
+                            {label:"Fat",val:gp.dietPlan.macroTarget.fat,color:"#E8836B"},
                           ].map(({label,val,color})=>(
-                            <div key={label} style={{background:`${color}12`,border:`1px solid ${color}30`,borderRadius:8,padding:"6px 4px",textAlign:"center"}}>
+                            <div key={label} style={{background:`${color}14`,border:`1px solid ${color}30`,borderRadius:10,padding:"6px 4px",textAlign:"center"}}>
                               <div style={{color,fontWeight:800,fontSize:"0.78rem"}}>{val}</div>
                               <div style={{color:"#6B7280",fontSize:"0.72rem",textTransform:"uppercase",letterSpacing:"0.06em"}}>{label}</div>
                             </div>
@@ -12981,9 +13121,9 @@ export default function AilaraApp() {
                       )}
                       {gp.exercisePlan?.weeklySchedule?.slice(0,7).map((d,i) => {
                         const dc = d.focus?.toLowerCase() || "";
-                        const c = dc.includes("rest")||dc.includes("recovery")?"#6B7280":dc.includes("upper")||dc.includes("push")?"#1D4ED8":dc.includes("lower")||dc.includes("leg")?"#7C3AED":dc.includes("pull")||dc.includes("back")?"#D97706":dc.includes("hiit")||dc.includes("cardio")?"#DC2626":dc.includes("full")?"#10B981":dc.includes("core")?"#BE185D":ACCENT;
+                        const c = dc.includes("rest")||dc.includes("recovery")?"#94897A":dc.includes("upper")||dc.includes("push")?"#3C5A4A":dc.includes("lower")||dc.includes("leg")?"#7FA891":dc.includes("pull")||dc.includes("back")?"#C79245":dc.includes("hiit")||dc.includes("cardio")?"#E8836B":dc.includes("full")?"#EE9C5B":dc.includes("core")?"#E8836B":"#3C5A4A";
                         return (
-                          <div key={i} style={{display:"flex",gap:8,alignItems:"center",padding:"5px 8px",borderRadius:7,background:"rgba(0,0,0,0.02)",border:`1px solid ${BORDER}`,marginBottom:4}}>
+                          <div key={i} style={{display:"flex",gap:8,alignItems:"center",padding:"5px 8px",borderRadius:9,background:W.sand,border:`1px solid ${W.haze}`,marginBottom:4}}>
                             <span style={{fontSize:"0.72rem",fontWeight:800,color:c,width:24,flexShrink:0}}>{(d.day||"").slice(0,3).toUpperCase()}</span>
                             <span style={{fontSize:"0.72rem",color:"#1A1D1B",flex:1}}>{d.focus}</span>
                             {d.duration && <span style={{fontSize:"0.72rem",color:"#6B7280"}}>⏱{d.duration}</span>}
@@ -13013,34 +13153,34 @@ export default function AilaraApp() {
                   ["Stress Level", profile.stressLevel || "—"],
                   ["Notes", profile.notes || "—"],
                 ].map(([label, val]) => (
-                  <div key={label} style={{ background:SURFACE,border:`1px solid ${BORDER}`,borderRadius:10,padding:"10px 14px",display:"flex",justifyContent:"space-between",alignItems:"flex-start",gap:12 }}>
-                    <span style={{ fontSize:"0.78rem",fontWeight:700,textTransform:"uppercase",letterSpacing:"0.08em",color:"#6B7280",flexShrink:0 }}>{label}</span>
-                    <span style={{ fontSize:"0.8rem",color:"#047857",textAlign:"right" }}>{val}</span>
+                  <div key={label} style={{ background:W.cream,border:`1px solid ${W.haze}`,borderRadius:12,padding:"10px 14px",display:"flex",justifyContent:"space-between",alignItems:"flex-start",gap:12,boxShadow:W.shadowRest }}>
+                    <span style={{ fontSize:"0.78rem",fontWeight:700,textTransform:"uppercase",letterSpacing:"0.08em",color:W.taupe,flexShrink:0 }}>{label}</span>
+                    <span style={{ fontSize:"0.8rem",color:"#3C5A4A",textAlign:"right" }}>{val}</span>
                   </div>
                 ))}
                 {/* Nav shortcuts */}
-                <div style={{ marginTop: 4, background: "rgba(16,185,129,0.04)", border: `1px solid ${BORDER}`, borderRadius: 10, padding: "12px 14px" }}>
-                  <div style={{ fontSize: "0.75rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: "#6B7280", marginBottom: 10 }}>Quick Navigate</div>
+                <div style={{ marginTop: 4, background: W.cream, border: `1px solid ${W.haze}`, borderRadius: 16, padding: "12px 14px", boxShadow: W.shadowRest }}>
+                  <div style={{ fontSize: "0.75rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: W.taupe, marginBottom: 10 }}>Quick Navigate</div>
                   <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
                     {TABS.filter(t => t.id !== "profile").map(t => (
-                      <button key={t.id} onClick={() => setTab(t.id)} style={{ display:"flex", alignItems:"center", gap:6, background: "rgba(16,185,129,0.07)", border: `1px solid ${BORDER}`, color: ACCENT2_TEXT, padding: "7px 14px", borderRadius: 8, cursor: "pointer", fontSize: "0.75rem", fontFamily: "'Inter',sans-serif", fontWeight: 600 }}><NavIcon id={t.id} size={14}/> {t.label}</button>
+                      <button key={t.id} onClick={() => setTab(t.id)} style={{ display:"flex", alignItems:"center", gap:6, background: W.sand, border: `1px solid ${W.haze}`, color: "#3C5A4A", padding: "7px 14px", borderRadius: 999, cursor: "pointer", fontSize: "0.75rem", fontFamily: "'Inter',sans-serif", fontWeight: 600 }}><NavIcon id={t.id} size={14}/> {t.label}</button>
                     ))}
                   </div>
                 </div>
-                <button onClick={() => setTab("onboarding")} style={{ background:"rgba(16,185,129,0.08)",border:`1px solid rgba(16,185,129,0.25)`,color:ACCENT2_TEXT,padding:"10px",borderRadius:10,cursor:"pointer",fontSize:"0.82rem",fontFamily:"'Inter',sans-serif",fontWeight:600 }}>✏️ Edit Profile & Regenerate Plan</button>
-              <button onClick={() => { if(window.confirm("Clear your saved profile?")) { setProfile(null); setTab("onboarding"); try { window.storage.set("ailara:profile", JSON.stringify(null)); window.storage.set("ailara:chatHistory", JSON.stringify([])); } catch {} }}} style={{ background:"rgba(239,68,68,0.07)",border:"1px solid rgba(239,68,68,0.2)",color:"#DC2626",padding:"8px 14px",borderRadius:10,cursor:"pointer",fontSize:"0.72rem",fontFamily:"'Inter',sans-serif",fontWeight:600,marginTop:4 }}>🗑 Reset Profile & Clear Data</button>
+                <button onClick={() => setTab("onboarding")} style={{ background:"#3C5A4A",border:"none",color:"white",padding:"11px",borderRadius:12,cursor:"pointer",fontSize:"0.82rem",fontFamily:"'Inter',sans-serif",fontWeight:600,boxShadow:W.shadowRest }}>✏️ Edit Profile & Regenerate Plan</button>
+              <button onClick={() => { if(window.confirm("Clear your saved profile?")) { setProfile(null); setTab("onboarding"); try { window.storage.set("ailara:profile", JSON.stringify(null)); window.storage.set("ailara:chatHistory", JSON.stringify([])); } catch {} }}} style={{ background:"rgba(232,131,107,0.10)",border:"1px solid rgba(232,131,107,0.3)",color:"#C2410C",padding:"8px 14px",borderRadius:999,cursor:"pointer",fontSize:"0.72rem",fontFamily:"'Inter',sans-serif",fontWeight:600,marginTop:4 }}>🗑 Reset Profile & Clear Data</button>
 
               {/* ── Goal Alignment ── */}
               {(()=>{
                 const goals=profile?.goals||[];if(!goals.length)return null;
                 return(
-                  <div style={{marginTop:16,background:"rgba(16,185,129,0.05)",border:"1px solid rgba(16,185,129,0.2)",borderRadius:14,padding:"14px 16px"}}>
+                  <div style={{marginTop:16,background:W.cream,border:`1px solid ${W.haze}`,borderRadius:16,padding:"14px 16px",boxShadow:W.shadowRest}}>
                     <div style={{fontWeight:800,color:"#1A1D1B",fontSize:"0.82rem",marginBottom:10}}>🎯 Your Goals</div>
                     <div style={{display:"flex",flexWrap:"wrap",gap:8}}>
                       {goals.map(g=>{
-                        const gc={"Lose Weight":"#C2410C","Build Muscle":"#4338CA","More Energy":"#D97706","Heart Health":"#DC2626","Reduce Stress":"#7C3AED","Run / Endurance":"#10B981","Manage a Condition":"#0E7490"}[g]||ACCENT;
+                        const gc={"Lose Weight":"#EE9C5B","Build Muscle":"#3C5A4A","More Energy":"#C79245","Heart Health":"#E8836B","Reduce Stress":"#7FA891","Run / Endurance":"#7FA891","Manage a Condition":"#94897A"}[g]||"#3C5A4A";
                         return(
-                          <div key={g} style={{display:"flex",alignItems:"center",gap:8,background:`${gc}10`,border:`1px solid ${gc}30`,borderRadius:10,padding:"7px 12px"}}>
+                          <div key={g} style={{display:"flex",alignItems:"center",gap:8,background:`${gc}14`,border:`1px solid ${gc}33`,borderRadius:12,padding:"7px 12px"}}>
                             <div style={{width:8,height:8,borderRadius:"50%",background:gc,flexShrink:0}}/>
                             <div>
                               <div style={{fontSize:"0.8rem",fontWeight:700,color:gc}}>{g}</div>
@@ -13056,7 +13196,7 @@ export default function AilaraApp() {
               })()}
 
               {/* ── Subscription & Elite Wearables Section ── */}
-              <div style={{ marginTop:16, background:"rgba(0,0,0,0.02)", border:"1px solid rgba(0,0,0,0.07)", borderRadius:14, padding:"16px" }}>
+              <div style={{ marginTop:16, background:W.cream, border:`1px solid ${W.haze}`, borderRadius:16, padding:"16px", boxShadow:W.shadowRest }}>
                 <div style={{ fontWeight:800, color:"#1A1D1B", fontSize:"0.85rem", marginBottom:12 }}>
                   Subscription
                 </div>
@@ -13065,7 +13205,7 @@ export default function AilaraApp() {
                   <div style={{ display:"flex", alignItems:"center", gap:8 }}>
                     <span style={{ fontSize:18 }}>{tier==="elite" ? "⚡" : tier==="pro" ? "👑" : "🆓"}</span>
                     <div>
-                      <div style={{ fontWeight:700, color: tier==="elite" ? "#7C3AED" : tier==="pro" ? "#92400E" : "#4B5563", fontSize:"0.82rem" }}>
+                      <div style={{ fontWeight:700, color: tier==="elite" ? "#7FA891" : tier==="pro" ? "#92400E" : W.taupe, fontSize:"0.82rem" }}>
                         {tier==="elite" ? "Elite" : tier==="pro" ? "Pro" : "Free"} Plan
                       </div>
                       <div style={{ fontSize:"0.72rem", color:"#6B7280" }}>
@@ -13075,24 +13215,24 @@ export default function AilaraApp() {
                   </div>
                   {tier === "free" && (
                     <button onClick={() => openUpgrade("Upgrade from Profile", "pro")}
-                      style={{ background:"#D97706", border:"none", borderRadius:9, padding:"6px 14px", color:"white", cursor:"pointer", fontSize:"0.8rem", fontWeight:800, fontFamily:"'Inter',sans-serif" }}>
+                      style={{ background:"#EE9C5B", border:"none", borderRadius:999, padding:"6px 14px", color:"white", cursor:"pointer", fontSize:"0.8rem", fontWeight:800, fontFamily:"'Inter',sans-serif" }}>
                       Upgrade 👑
                     </button>
                   )}
                   {tier === "pro" && (
                     <button onClick={() => openUpgrade("Upgrade to Elite", "elite")}
-                      style={{ background:"rgba(139,92,246,0.15)", border:"1px solid rgba(139,92,246,0.4)", borderRadius:9, padding:"6px 14px", color:"#7C3AED", cursor:"pointer", fontSize:"0.8rem", fontWeight:700, fontFamily:"'Inter',sans-serif" }}>
+                      style={{ background:"rgba(127,168,145,0.15)", border:"1px solid rgba(127,168,145,0.4)", borderRadius:999, padding:"6px 14px", color:"#3C5A4A", cursor:"pointer", fontSize:"0.8rem", fontWeight:700, fontFamily:"'Inter',sans-serif" }}>
                       → Elite ⚡
                     </button>
                   )}
                 </div>
 
                 {/* Elite wearables — coming soon */}
-                <div style={{ borderTop:"1px solid rgba(0,0,0,0.06)", paddingTop:12 }}>
+                <div style={{ borderTop:`1px solid ${W.haze}`, paddingTop:12 }}>
                   <div style={{ display:"flex", alignItems:"center", gap:6, marginBottom:10 }}>
                     <span style={{ fontSize:13 }}>⚡</span>
-                    <div style={{ fontSize:"0.72rem", fontWeight:700, color:"#7C3AED" }}>Elite Features</div>
-                    <span style={{ fontSize:"0.72rem", color:"#7C3AED", background:"rgba(139,92,246,0.15)", border:"1px solid rgba(139,92,246,0.3)", borderRadius:6, padding:"1px 7px" }}>Coming Soon</span>
+                    <div style={{ fontSize:"0.72rem", fontWeight:700, color:"#7FA891" }}>Elite Features</div>
+                    <span style={{ fontSize:"0.72rem", color:"#3C5A4A", background:"rgba(127,168,145,0.15)", border:"1px solid rgba(127,168,145,0.3)", borderRadius:999, padding:"1px 8px" }}>Coming Soon</span>
                   </div>
                   {[
                     { icon:"⌚", name:"Oura Ring Sync",       sub:"Sleep, HRV, readiness scores" },
@@ -13101,18 +13241,18 @@ export default function AilaraApp() {
                     { icon:"🔔", name:"Proactive AI Check-ins", sub:"Ailara messages you based on your data" },
                     { icon:"🧠", name:"AI Recovery Coaching",  sub:"Adapts your plan to last night's sleep" },
                   ].map(w => (
-                    <div key={w.name} style={{ display:"flex", alignItems:"center", gap:10, padding:"8px 0", borderBottom:"1px solid rgba(0,0,0,0.04)" }}>
+                    <div key={w.name} style={{ display:"flex", alignItems:"center", gap:10, padding:"8px 0", borderBottom:`1px solid ${W.haze}` }}>
                       <span style={{ fontSize:16, opacity:0.5 }}>{w.icon}</span>
                       <div style={{ flex:1 }}>
-                        <div style={{ fontSize:"0.74rem", color:"rgba(236,253,245,0.5)", fontWeight:600 }}>{w.name}</div>
+                        <div style={{ fontSize:"0.74rem", color:W.cocoa, fontWeight:600 }}>{w.name}</div>
                         <div style={{ fontSize:"0.72rem", color:"#6B7280" }}>{w.sub}</div>
                       </div>
-                      <span style={{ fontSize:"0.72rem", color:"#7C3AED", background:"rgba(139,92,246,0.1)", border:"1px solid rgba(139,92,246,0.25)", borderRadius:6, padding:"2px 7px", whiteSpace:"nowrap" }}>Soon</span>
+                      <span style={{ fontSize:"0.72rem", color:"#3C5A4A", background:"rgba(127,168,145,0.12)", border:"1px solid rgba(127,168,145,0.25)", borderRadius:999, padding:"2px 8px", whiteSpace:"nowrap" }}>Soon</span>
                     </div>
                   ))}
                   {tier !== "elite" && (
                     <button onClick={() => openUpgrade("Unlock wearables + proactive AI", "elite")}
-                      style={{ width:"100%", background:"rgba(139,92,246,0.1)", border:"1px solid rgba(139,92,246,0.3)", borderRadius:10, padding:"9px", color:"#7C3AED", cursor:"pointer", fontSize:"0.73rem", fontWeight:700, fontFamily:"'Inter',sans-serif", marginTop:10 }}>
+                      style={{ width:"100%", background:"rgba(127,168,145,0.14)", border:"1px solid rgba(127,168,145,0.3)", borderRadius:12, padding:"9px", color:"#3C5A4A", cursor:"pointer", fontSize:"0.73rem", fontWeight:700, fontFamily:"'Inter',sans-serif", marginTop:10 }}>
                       ⚡ Unlock with Elite — $12.99/mo
                     </button>
                   )}
@@ -13122,7 +13262,7 @@ export default function AilaraApp() {
             ) : (
               <div style={{ textAlign:"center",padding:"40px 0" }}>
                 <div style={{ color:"#4B5563",marginBottom:16,fontSize:"0.85rem" }}>No profile set up yet.</div>
-                <button onClick={() => setTab("onboarding")} style={{ background:ACCENT,border:"none",color:"white",padding:"10px 24px",borderRadius:10,cursor:"pointer",fontSize:"0.85rem",fontFamily:"'Inter',sans-serif",fontWeight:600 }}>Set Up Profile</button>
+                <button onClick={() => setTab("onboarding")} style={{ background:"#3C5A4A",border:"none",color:"white",padding:"11px 24px",borderRadius:12,cursor:"pointer",fontSize:"0.85rem",fontFamily:"'Inter',sans-serif",fontWeight:600,boxShadow:W.shadowRest }}>Set Up Profile</button>
               </div>
             )}
           </div>
@@ -13131,7 +13271,7 @@ export default function AilaraApp() {
 
       {/* ── Legal Footer ── */}
       {tab === "profile" && (
-        <div style={{ padding:"16px 18px 8px", borderTop:"1px solid rgba(0,0,0,0.05)" }}>
+        <div style={{ padding:"16px 18px 8px", borderTop:`1px solid ${W.haze}`, background:W.sand }}>
           <div style={{ fontSize:"0.72rem", color:"#6B7280", lineHeight:1.7, textAlign:"center" }}>
             <strong style={{ color:"#6B7280" }}>Ailara Coach AI</strong> — Educational purposes only. Not medical advice.{" "}
             Citations sourced from JISSN, NIH ODS, ACSM, Cochrane, and NASM.{" "}
@@ -13144,7 +13284,7 @@ export default function AilaraApp() {
               { label:"NASM", url:"https://blog.nasm.org/" },
             ].map(l => (
               <a key={l.label} href={l.url} target="_blank" rel="noopener noreferrer"
-                style={{ fontSize:"0.72rem", color:"#4B5563", textDecoration:"none", borderBottom:"1px solid rgba(90,138,104,0.3)" }}>
+                style={{ fontSize:"0.72rem", color:"#4B5563", textDecoration:"none", borderBottom:"1px solid rgba(127,168,145,0.4)" }}>
                 {l.label}
               </a>
             ))}
@@ -13152,16 +13292,18 @@ export default function AilaraApp() {
         </div>
       )}
 
-      {/* BOTTOM NAV */}
+      {/* BOTTOM NAV — coach's-brief (LS), all tabs */}
       {tab !== "onboarding" && (
-        <nav style={{ position:"sticky",bottom:0,zIndex:20,background:"rgba(255,255,255,0.97)",backdropFilter:"blur(20px)",borderTop:`1px solid ${BORDER}`,display:"flex",flexShrink:0 }}>
-          {TABS.map(t => (
-            <button key={t.id} className="tab-btn" onClick={() => setTab(t.id)} style={{ flex:1,padding:"9px 2px 11px",background:"transparent",border:"none",cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",gap:2,transition:"all 0.15s",minWidth:0 }}>
-              <span style={{ display:"flex",color:tab===t.id?ACCENT2_TEXT:"#6B7280",opacity:tab===t.id?1:0.55,transition:"all 0.15s" }}><NavIcon id={t.id}/></span>
-              <span style={{ fontSize:"0.72rem",fontWeight:700,letterSpacing:"0.04em",textTransform:"uppercase",color:tab===t.id?ACCENT2_TEXT:"#6B7280",transition:"all 0.15s",lineHeight:1 }}>{t.label}</span>
-              {tab===t.id && <div style={{ width:18,height:2,borderRadius:1,background:ACCENT,marginTop:2 }}/>}
-            </button>
-          ))}
+        <nav style={{ position:"sticky",bottom:0,zIndex:20,background:LS.paper,borderTop:`1px solid ${LS.ink}`,display:"flex",flexShrink:0 }}>
+          {TABS.map(t => {
+            const on = tab === t.id;
+            return (
+              <button key={t.id} className="tab-btn" onClick={() => setTab(t.id)} style={{ flex:1,padding:"9px 2px 0",background:"transparent",border:"none",borderTop:on?`3px solid ${LS.accent}`:"3px solid transparent",cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",gap:4,minWidth:0 }}>
+                <span style={{ display:"flex",alignItems:"center",justifyContent:"center",color:on?LS.ink:LS.slate }}><NavIcon id={t.id} size={19}/></span>
+                <span style={{ fontFamily:HEAVY_FONT,fontSize:"0.6rem",fontWeight:800,letterSpacing:"0.06em",textTransform:"uppercase",color:on?LS.ink:LS.slate,lineHeight:1,paddingBottom:8 }}>{t.label}</span>
+              </button>
+            );
+          })}
         </nav>
       )}
     </div>
