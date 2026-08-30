@@ -6598,19 +6598,30 @@ function Chat({ profile, isPro, tier, plansUsed, aiQuestionsToday, setAiQuestion
   const [sourceDrawer, setSourceDrawer] = useState(null);  // { title, source, year, url, snippet }
   const [weekDays, setWeekDays] = useState(null);          // days active in the last 7 (home orb), null = loading
   const [homeReady, setHomeReady] = useState(false);       // gates the one-time home load animation
+  const [homeStreak, setHomeStreak] = useState(0);         // consecutive days (incl. today) with any habit checked
+  const [homeStreakDots, setHomeStreakDots] = useState([]);// [{key,label,done}] for the last 7 days
+  const [homeMeals, setHomeMeals] = useState(null);        // { dayLabel, items:[{mealType,name}] } or null if no plan
+  const [homeWorkoutsWeek, setHomeWorkoutsWeek] = useState(0);
+  const [homeWeightDelta, setHomeWeightDelta] = useState(null); // number of lbs vs. start, or null
   const FREE_AI_LIMIT = 5;
   const messagesEndRef = useRef(null);
   const textareaRef = useRef(null);
   const imageInputRef = useRef(null);
+  const compactInputRef = useRef(null); // the dashboard's compact "ask anything" field
 
-  // Load chat history from storage on mount
+  // Load chat history from storage on mount.
+  // Note: this only loads the messages so a resumed conversation has
+  // content — it deliberately does NOT setStarted(true). The Coach tab
+  // always opens on the home dashboard, even for returning users with
+  // saved history; tapping the compact input (or sending a message)
+  // is what transitions into the full transcript.
   useEffect(() => {
     (async () => {
       try {
         const r = await window.storage.get("ailara:chatHistory");
         if (r?.value) {
           const saved = JSON.parse(r.value);
-          if (saved.length > 0) { setMessages(saved); setStarted(true); }
+          if (saved.length > 0) setMessages(saved);
         }
       } catch {}
     })();
@@ -6618,16 +6629,72 @@ function Chat({ profile, isPro, tier, plansUsed, aiQuestionsToday, setAiQuestion
 
   useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages, loading]);
 
-  // Weekly momentum for the home orb — count distinct days in the last 7 with any
-  // habit checked (same "ailara:checked" store the Progress tab writes).
+  // Lets the shared app header (the AILARA wordmark, rendered once above all
+  // tabs) send the Coach tab back to its dashboard — same pattern as the
+  // window._ailaraSetTab hook the app shell already registers.
+  useEffect(() => {
+    window._ailaraChatHome = () => setStarted(false);
+    return () => { delete window._ailaraChatHome; };
+  }, []);
+
+  // Home dashboard summary data — habit streak, today's meals preview, and a
+  // progress snapshot. All read from the same stores the Progress and Meal
+  // Plans tabs write to, so the cards stay in sync without duplicating logic.
   useEffect(() => {
     (async () => {
       try {
-        const r = await window.storage.get("ailara:checked");
-        const obj = r?.value ? JSON.parse(r.value) : {};
-        const week = getLast7().map(d => d.key);
-        const n = week.reduce((acc, k) => acc + (obj[k] && Object.values(obj[k]).some(Boolean) ? 1 : 0), 0);
-        setWeekDays(n);
+        const [checkedRes, mealPlanRes, mealDayRes, workoutsRes, weightRes] = await Promise.all([
+          window.storage.get("ailara:checked"),
+          window.storage.get("ailara:mealPlan"),
+          window.storage.get("ailara:mealPlanDay"),
+          window.storage.get("ailara:workouts"),
+          window.storage.get("ailara:weightLog"),
+        ]);
+
+        // ── Weekly momentum + habit streak (from "ailara:checked") ──
+        const checked = checkedRes?.value ? JSON.parse(checkedRes.value) : {};
+        const dayHasAny = (k) => !!(checked[k] && Object.values(checked[k]).some(Boolean));
+        const last7 = getLast7();
+        setWeekDays(last7.reduce((acc, d) => acc + (dayHasAny(d.key) ? 1 : 0), 0));
+        setHomeStreakDots(last7.map(d => ({ key: d.key, label: d.label, done: dayHasAny(d.key) })));
+        let streak = 0;
+        const today = todayKey();
+        for (let i = last7.length - 1; i >= 0; i--) {
+          if (dayHasAny(last7[i].key)) streak++;
+          else if (last7[i].key !== today) break; // today can be empty without breaking the streak yet
+        }
+        setHomeStreak(streak);
+
+        // ── Today's meals preview (from "ailara:mealPlan") ──
+        if (mealPlanRes?.value) {
+          try {
+            const plan = JSON.parse(mealPlanRes.value);
+            const dayIdx = mealDayRes?.value ? (parseInt(mealDayRes.value) || 0) : 0;
+            const day = plan?.days?.[dayIdx];
+            if (day?.meals?.length) {
+              const DAY_LABELS = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+              setHomeMeals({ dayLabel: DAY_LABELS[dayIdx] || `Day ${dayIdx + 1}`, items: day.meals.slice(0, 3) });
+            }
+          } catch {}
+        }
+
+        // ── Progress snapshot: workouts this week + weight trend ──
+        if (workoutsRes?.value) {
+          try {
+            const workouts = JSON.parse(workoutsRes.value);
+            const week = last7.map(d => d.key);
+            setHomeWorkoutsWeek(workouts.filter(w => week.includes(w.date)).length);
+          } catch {}
+        }
+        if (weightRes?.value) {
+          try {
+            const weightLog = JSON.parse(weightRes.value);
+            const entries = Object.entries(weightLog).sort(([a], [b]) => a.localeCompare(b));
+            const startW = profile?.weight ? parseFloat(profile.weight) : (entries[0] ? entries[0][1] : null);
+            const currentW = entries.length ? entries[entries.length - 1][1] : null;
+            if (startW != null && currentW != null) setHomeWeightDelta(+(currentW - startW).toFixed(1));
+          } catch {}
+        }
       } catch { setWeekDays(0); }
       requestAnimationFrame(() => setHomeReady(true));
     })();
@@ -7258,9 +7325,29 @@ function Chat({ profile, isPro, tier, plansUsed, aiQuestionsToday, setAiQuestion
               <div style={{ fontFamily: HEAVY_FONT, fontStyle: "italic", fontWeight: 400, fontSize: "0.95rem", color: LS.slate, marginBottom: 18 }}>
                 {deck}
               </div>
-              <button onClick={() => textareaRef.current?.focus()}
+              <button onClick={() => compactInputRef.current?.focus()}
                 style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, background: LS.accent, color: LS.ink, border: "none", borderRadius: 4, padding: "14px 16px", cursor: "pointer", fontFamily: HEAVY_FONT, fontWeight: 800, fontSize: "0.95rem", letterSpacing: "0.02em" }}>
                 <span>ASK YOUR COACH</span><span style={{ fontSize: "1.15rem" }}>→</span>
+              </button>
+            </div>
+
+            {/* ── COMPACT INPUT — tapping it with existing history resumes the
+                 conversation; typing + sending starts/continues it. Never the
+                 raw transcript on open — see the mount effect above. ── */}
+            <div style={{ display: "flex", alignItems: "center", gap: 8, border: `1px solid ${LS.ink}`, borderRadius: 4, padding: "11px 12px", marginBottom: 28, background: LS.paper }}>
+              <span style={{ fontSize: 15, flexShrink: 0 }}>💬</span>
+              <input
+                ref={compactInputRef}
+                value={input}
+                onChange={e => setInput(e.target.value)}
+                onFocus={() => { if (messages.length > 0) { setStarted(true); setTimeout(() => textareaRef.current?.focus(), 60); } }}
+                onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); } }}
+                placeholder={messages.length > 0 ? "Continue your conversation…" : "Ask your coach anything…"}
+                style={{ flex: 1, minWidth: 0, border: "none", outline: "none", background: "transparent", fontFamily: "'Inter',sans-serif", fontSize: "0.86rem", color: LS.ink }}
+              />
+              <button onClick={() => sendMessage()} disabled={!input.trim()} aria-label="Send"
+                style={{ width: 30, height: 30, flexShrink: 0, background: input.trim() ? LS.accent : LS.line, border: "none", display: "flex", alignItems: "center", justifyContent: "center", cursor: input.trim() ? "pointer" : "default", color: LS.ink, fontSize: 14 }}>
+                →
               </button>
             </div>
 
@@ -7297,6 +7384,73 @@ function Chat({ profile, isPro, tier, plansUsed, aiQuestionsToday, setAiQuestion
                 <div style={{ fontFamily: HEAVY_FONT, fontWeight: 900, fontSize: "1.35rem", lineHeight: 1.05, letterSpacing: "-0.01em" }}>Browse 1,800+ guided workouts →</div>
               </button>
             )}
+
+            {/* ── TODAY'S MEALS ── */}
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
+              <span style={{ fontFamily: HEAVY_FONT, fontSize: "0.72rem", fontWeight: 800, letterSpacing: "0.1em", color: LS.ink }}>TODAY'S MEALS</span>
+              <span style={{ flex: 1, height: 1, background: LS.ink }} />
+            </div>
+            {homeMeals ? (
+              <button onClick={() => { if (window._ailaraSetTab) window._ailaraSetTab("meals"); }}
+                style={{ display: "block", width: "100%", textAlign: "left", border: `1px solid ${LS.ink}`, background: LS.paper, padding: 0, marginBottom: 28, cursor: "pointer" }}>
+                <div style={{ padding: "11px 16px", borderBottom: `1px solid ${LS.line}`, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <span style={{ fontFamily: HEAVY_FONT, fontSize: "0.68rem", fontWeight: 800, letterSpacing: "0.06em", color: LS.slate, textTransform: "uppercase" }}>{homeMeals.dayLabel}'s Plan</span>
+                  <span style={{ fontFamily: HEAVY_FONT, fontSize: "0.66rem", fontWeight: 800, color: LS.ink, letterSpacing: "0.03em" }}>VIEW / SWAP →</span>
+                </div>
+                {homeMeals.items.map((m, i) => (
+                  <div key={i} style={{ padding: "10px 16px", borderTop: i === 0 ? "none" : `1px solid ${LS.line}` }}>
+                    <span style={{ fontFamily: HEAVY_FONT, fontSize: "0.66rem", fontWeight: 800, letterSpacing: "0.04em", color: LS.ink, textTransform: "uppercase" }}>{m.mealType}</span>
+                    <span style={{ fontSize: "0.82rem", color: LS.ink }}> · {m.name}</span>
+                  </div>
+                ))}
+              </button>
+            ) : (
+              <button onClick={() => { if (window._ailaraSetTab) window._ailaraSetTab("meals"); }}
+                style={{ display: "block", width: "100%", textAlign: "left", border: `1px solid ${LS.ink}`, background: LS.navy, color: "#fff", padding: "24px 18px", marginBottom: 28, cursor: "pointer" }}>
+                <div style={{ fontFamily: HEAVY_FONT, fontSize: "0.68rem", fontWeight: 800, letterSpacing: "0.1em", color: LS.accent, marginBottom: 6 }}>NO PLAN YET</div>
+                <div style={{ fontFamily: HEAVY_FONT, fontWeight: 900, fontSize: "1.25rem", lineHeight: 1.05, letterSpacing: "-0.01em" }}>Build your 5-day meal plan →</div>
+              </button>
+            )}
+
+            {/* ── HABIT STREAK ── */}
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
+              <span style={{ fontFamily: HEAVY_FONT, fontSize: "0.72rem", fontWeight: 800, letterSpacing: "0.1em", color: LS.ink }}>HABIT STREAK</span>
+              <span style={{ flex: 1, height: 1, background: LS.ink }} />
+            </div>
+            <button onClick={() => { if (window._ailaraSetTab) window._ailaraSetTab("progress"); }}
+              style={{ display: "flex", alignItems: "center", gap: 16, width: "100%", textAlign: "left", border: `1px solid ${LS.ink}`, background: LS.paper, padding: "16px 18px", marginBottom: 28, cursor: "pointer" }}>
+              <div style={{ flexShrink: 0 }}>
+                <div style={{ fontFamily: HEAVY_FONT, fontWeight: 900, fontSize: "1.8rem", color: LS.ink, lineHeight: 1 }}>{homeStreak}<span style={{ fontSize: "1rem" }}>🔥</span></div>
+                <div style={{ fontFamily: HEAVY_FONT, fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.06em", color: LS.slate, textTransform: "uppercase", marginTop: 3, whiteSpace: "nowrap" }}>day streak</div>
+              </div>
+              <div style={{ flex: 1, display: "flex", gap: 4, minWidth: 0 }}>
+                {homeStreakDots.map(d => (
+                  <div key={d.key} style={{ flex: 1, textAlign: "center" }}>
+                    <div style={{ width: "100%", aspectRatio: "1", background: d.done ? LS.accent : LS.paper, border: `1px solid ${LS.ink}` }} />
+                    <div style={{ fontSize: "0.6rem", color: LS.slate, marginTop: 3, textTransform: "uppercase" }}>{d.label.slice(0, 1)}</div>
+                  </div>
+                ))}
+              </div>
+            </button>
+
+            {/* ── PROGRESS SNAPSHOT ── */}
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
+              <span style={{ fontFamily: HEAVY_FONT, fontSize: "0.72rem", fontWeight: 800, letterSpacing: "0.1em", color: LS.ink }}>PROGRESS SNAPSHOT</span>
+              <span style={{ flex: 1, height: 1, background: LS.ink }} />
+            </div>
+            <button onClick={() => { if (window._ailaraSetTab) window._ailaraSetTab("progress"); }}
+              style={{ display: "grid", gridTemplateColumns: homeWeightDelta !== null ? "1fr 1fr" : "1fr", width: "100%", textAlign: "left", border: `1px solid ${LS.ink}`, background: LS.paper, cursor: "pointer", marginBottom: 24, padding: 0 }}>
+              <div style={{ padding: "16px 18px", borderRight: homeWeightDelta !== null ? `1px solid ${LS.line}` : "none" }}>
+                <div style={{ fontFamily: HEAVY_FONT, fontWeight: 900, fontSize: "1.6rem", color: LS.ink, lineHeight: 1 }}>{homeWorkoutsWeek}</div>
+                <div style={{ fontFamily: HEAVY_FONT, fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.06em", color: LS.slate, textTransform: "uppercase", marginTop: 4 }}>workout{homeWorkoutsWeek !== 1 ? "s" : ""} this week</div>
+              </div>
+              {homeWeightDelta !== null && (
+                <div style={{ padding: "16px 18px" }}>
+                  <div style={{ fontFamily: HEAVY_FONT, fontWeight: 900, fontSize: "1.6rem", color: LS.ink, lineHeight: 1 }}>{homeWeightDelta > 0 ? "+" : ""}{homeWeightDelta}</div>
+                  <div style={{ fontFamily: HEAVY_FONT, fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.06em", color: LS.slate, textTransform: "uppercase", marginTop: 4 }}>lbs vs. start</div>
+                </div>
+              )}
+            </button>
 
             {/* ── FOR YOU ── */}
             <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
@@ -7336,6 +7490,16 @@ function Chat({ profile, isPro, tier, plansUsed, aiQuestionsToday, setAiQuestion
           </div>
           );
         })()}
+
+        {/* Back to the dashboard — never lost, just navigated away from */}
+        {started && (
+        <>
+        <div style={{ maxWidth: 640, margin: "0 auto 14px" }}>
+          <button onClick={() => setStarted(false)}
+            style={{ display: "flex", alignItems: "center", gap: 6, background: "none", border: "none", cursor: "pointer", color: "#141414", fontFamily: HEAVY_FONT, fontWeight: 800, fontSize: "0.72rem", letterSpacing: "0.03em", textTransform: "uppercase", padding: "4px 2px" }}>
+            <span style={{ fontSize: 15 }}>←</span> Dashboard
+          </button>
+        </div>
 
         {messages.map((msg, i) => {
           const isUser = msg.role === "user";
@@ -7389,6 +7553,8 @@ function Chat({ profile, isPro, tier, plansUsed, aiQuestionsToday, setAiQuestion
             <div style={{ width: 28, height: 28, background: "#141414", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 900, color: "#F4B400", fontFamily: HEAVY_FONT }}>A</div>
             <div style={{ background: "#FFFFFF", padding: "10px 15px", border: "1px solid #141414", borderRadius: 4 }}><TypingDots /></div>
           </div>
+        )}
+        </>
         )}
         <div ref={messagesEndRef} />
       </div>
@@ -13116,7 +13282,8 @@ export default function AilaraApp() {
       {/* HEADER — coach's-brief (LS), all tabs */}
       {tab !== "onboarding" && (
         <header style={{ position:"sticky",top:0,zIndex:20,background:LS.paper,borderBottom:`1px solid ${LS.ink}`,padding:"0 16px",height:56,display:"flex",alignItems:"center",justifyContent:"space-between",flexShrink:0 }}>
-          <div style={{ fontFamily:HEAVY_FONT,fontSize:"1.15rem",fontWeight:900,color:LS.ink,letterSpacing:"0.03em",lineHeight:1 }}>AILARA</div>
+          <button onClick={() => { setTab("chat"); if (window._ailaraChatHome) window._ailaraChatHome(); }} aria-label="Go to Coach home" title="Coach home"
+            style={{ fontFamily:HEAVY_FONT,fontSize:"1.15rem",fontWeight:900,color:LS.ink,letterSpacing:"0.03em",lineHeight:1,background:"none",border:"none",padding:0,cursor:"pointer" }}>AILARA</button>
           <button onClick={() => setShowSearch(true)} aria-label="Search" title="Search (⌘K)"
             style={{ width:34,height:34,borderRadius:4,background:LS.paper,border:`1px solid ${LS.ink}`,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,flexShrink:0 }}>
             🔍
