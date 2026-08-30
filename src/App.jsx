@@ -5589,35 +5589,36 @@ function MealPlanner({ profile, isPro, onUpgrade, plansUsed: plansUsedProp, setP
     return (
       <div style={{ maxWidth: 700, margin: "0 auto", padding: "20px 16px 80px" }}>
         <div style={{ marginBottom: 24 }}>
-          <div style={{ fontFamily: "'Playfair Display',serif", fontSize: "1.25rem", fontWeight: 800, color: "#1A1D1B", marginBottom: 4 }}>5-Day Meal Plans</div>
-          <div style={{ color: "#4B5563", fontSize: "0.82rem" }}>
+          <div style={{ fontFamily: HEAVY_FONT, fontSize: "1.5rem", fontWeight: 900, color: "#141414", letterSpacing: "-0.02em", textTransform: "uppercase", lineHeight: 1.05, marginBottom: 4 }}>5-Day Meal Plans</div>
+          <div style={{ color: "#5B6572", fontSize: "0.82rem" }}>
             Choose a plan built around your goals.{profile?.allergies?.filter(a=>a!=="None").length > 0 && ` Allergen-free: ${profile.allergies.filter(a=>a!=="None").join(", ")}.`}
           </div>
         </div>
 
         {/* Free tier usage banner */}
         {!isPro && (
-          <div style={{ background: W.blush, border: `1px solid ${W.haze}`, borderRadius: 16, padding: "12px 16px", marginBottom: 16, display: "flex", alignItems: "center", gap: 12, boxShadow: W.shadowRest }}>
+          <div style={{ position: "relative", background: "#FFFFFF", border: "1px solid #141414", padding: "12px 16px 12px 20px", marginBottom: 16, display: "flex", alignItems: "center", gap: 12, overflow: "hidden" }}>
+            <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: 4, background: "#F4B400" }} />
             <span style={{ fontSize: 22, flexShrink: 0 }}>{atLimit ? "🔒" : "💡"}</span>
             <div style={{ flex: 1 }}>
-              <div style={{ fontWeight: 700, color: atLimit ? "#E8836B" : "#3C5A4A", fontSize: "0.8rem", marginBottom: 2 }}>
+              <div style={{ fontFamily: HEAVY_FONT, fontWeight: 800, color: "#141414", fontSize: "0.75rem", letterSpacing: "0.03em", textTransform: "uppercase", marginBottom: 2 }}>
                 {atLimit ? "Free plan limit reached" : `Free plan: ${FREE_PLAN_LIMIT - plansUsed} remaining`}
               </div>
-              <div style={{ color: "#6B7280", fontSize: "0.8rem" }}>
+              <div style={{ color: "#5B6572", fontSize: "0.8rem" }}>
                 {atLimit ? "Upgrade to Pro for unlimited AI meal plans" : "Free users get 1 meal plan. Upgrade for unlimited."}
               </div>
             </div>
             <button onClick={() => onUpgrade("Upgrade for unlimited meal plans")}
-              style={{ flexShrink: 0, background: atLimit ? "#E8836B" : "#EE9C5B", border: "none", borderRadius: 999, padding: "7px 14px", color: "white", cursor: "pointer", fontSize: "0.8rem", fontFamily: "'Inter',sans-serif", fontWeight: 700 }}>
+              style={{ flexShrink: 0, background: "#F4B400", border: "none", borderRadius: 4, padding: "8px 14px", color: "#141414", cursor: "pointer", fontSize: "0.72rem", fontFamily: HEAVY_FONT, fontWeight: 800, letterSpacing: "0.04em", textTransform: "uppercase" }}>
               {atLimit ? "Upgrade" : "Go Pro"}
             </button>
           </div>
         )}
 
         {isPro && (
-          <div style={{ background: W.cream, border: `1px solid ${W.haze}`, borderRadius: 14, padding: "9px 14px", marginBottom: 16, display: "flex", alignItems: "center", gap: 8, boxShadow: W.shadowRest }}>
+          <div style={{ background: "#FFFFFF", border: "1px solid #141414", padding: "10px 14px", marginBottom: 16, display: "flex", alignItems: "center", gap: 8 }}>
             <span style={{ fontSize: 16 }}>👑</span>
-            <span style={{ fontSize: "0.72rem", color: "#92400E", fontWeight: 700 }}>Pro: Unlimited meal plan generations</span>
+            <span style={{ fontFamily: HEAVY_FONT, fontSize: "0.7rem", color: "#141414", fontWeight: 800, letterSpacing: "0.03em", textTransform: "uppercase" }}>Pro: Unlimited meal plan generations</span>
           </div>
         )}
 
@@ -5626,31 +5627,29 @@ function MealPlanner({ profile, isPro, onUpgrade, plansUsed: plansUsedProp, setP
             const isRecommended = recommendedPlanId === opt.id;
             const isPopular = !isRecommended && opt.id === "BALANCE BOOSTER";
             return (
-            <div key={opt.id} style={{ position: "relative", background: "#FFFBF4", border: `${isRecommended ? 2 : 1}px solid ${isRecommended ? opt.color : "#EFE5D6"}`, borderRadius: 18, padding: "20px", cursor: "pointer", transition: "transform 0.15s, box-shadow 0.15s", boxShadow: "0 4px 16px rgba(120,90,55,0.08)" }}
-              onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 10px 30px rgba(120,90,55,0.12)"; }}
-              onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 4px 16px rgba(120,90,55,0.08)"; }}>
+            <div key={opt.id} style={{ position: "relative", background: "#FFFFFF", border: "1px solid #141414", padding: "20px", cursor: "pointer" }}>
               {(isRecommended || isPopular) && (
-                <div style={{ position: "absolute", top: -11, left: 16, background: opt.color, color: "white", fontSize: "0.68rem", fontWeight: 800, padding: "3px 10px", borderRadius: 999, letterSpacing: "0.03em" }}>
-                  {isRecommended ? "✨ Recommended for you" : "🔥 Most popular"}
+                <div style={{ position: "absolute", top: -11, left: 16, background: "#F4B400", color: "#141414", fontFamily: HEAVY_FONT, fontSize: "0.64rem", fontWeight: 800, padding: "3px 10px", letterSpacing: "0.05em", textTransform: "uppercase" }}>
+                  {isRecommended ? "★ Recommended for you" : "🔥 Most popular"}
                 </div>
               )}
               <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12 }}>
                 <div style={{ flex: 1 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
-                    <div style={{ width: 46, height: 46, borderRadius: 999, flexShrink: 0, background: "#E7F0EA", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24 }}>{opt.icon}</div>
+                    <div style={{ width: 46, height: 46, flexShrink: 0, border: "1px solid #141414", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24 }}>{opt.icon}</div>
                     <div>
-                      <div style={{ fontFamily: "'Playfair Display',serif", fontWeight: 800, fontSize: "1.05rem", color: "#1A1D1B" }}>{opt.name}</div>
-                      <div style={{ fontSize: "0.72rem", color: opt.color, fontWeight: 600 }}>{opt.tagline}</div>
+                      <div style={{ fontFamily: HEAVY_FONT, fontWeight: 900, fontSize: "1.15rem", color: "#141414", letterSpacing: "-0.01em", textTransform: "uppercase" }}>{opt.name}</div>
+                      <div style={{ fontSize: "0.72rem", color: "#5B6572", fontWeight: 600 }}>{opt.tagline}</div>
                     </div>
                   </div>
-                  <div style={{ fontSize: "0.78rem", color: "#4B5563", lineHeight: 1.6, marginBottom: 10 }}>{opt.desc}</div>
+                  <div style={{ fontSize: "0.78rem", color: "#5B6572", lineHeight: 1.6, marginBottom: 10 }}>{opt.desc}</div>
                   <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 12 }}>
-                    <span style={{ fontSize: "0.75rem", color: opt.color, background: `${opt.color}1A`, border: `1px solid ${opt.color}33`, padding: "2px 10px", borderRadius: 999, fontWeight: 700 }}>📊 {opt.split}</span>
-                    {opt.good.map(g => <span key={g} style={{ fontSize: "0.75rem", color: "#94897A", background: "#FCF7F0", border: "1px solid #EFE5D6", padding: "2px 9px", borderRadius: 999 }}>✓ {g}</span>)}
+                    <span style={{ fontSize: "0.72rem", color: "#141414", background: "#F4B400", padding: "2px 10px", fontFamily: HEAVY_FONT, fontWeight: 800, letterSpacing: "0.03em", textTransform: "uppercase" }}>📊 {opt.split}</span>
+                    {opt.good.map(g => <span key={g} style={{ fontSize: "0.72rem", color: "#5B6572", border: "1px solid #E6E4DF", padding: "2px 9px" }}>✓ {g}</span>)}
                   </div>
                 </div>
               </div>
-              <button onClick={() => generate(opt.id)} style={{ width: "100%", background: opt.color, border: "none", color: "white", padding: "11px", borderRadius: 12, cursor: "pointer", fontSize: "0.85rem", fontWeight: 700, fontFamily: "'Inter',sans-serif", boxShadow: "0 4px 16px rgba(120,90,55,0.08)" }}>
+              <button onClick={() => generate(opt.id)} style={{ width: "100%", background: "#F4B400", border: "none", color: "#141414", padding: "12px", borderRadius: 4, cursor: "pointer", fontSize: "0.8rem", fontWeight: 800, fontFamily: HEAVY_FONT, letterSpacing: "0.04em", textTransform: "uppercase" }}>
                 Generate {opt.name} Plan →
               </button>
             </div>
@@ -5658,10 +5657,10 @@ function MealPlanner({ profile, isPro, onUpgrade, plansUsed: plansUsedProp, setP
           })}
         </div>
         {error && (
-          <div style={{ background:"rgba(239,68,68,0.1)", border:"1px solid rgba(239,68,68,0.4)", borderRadius:10, padding:"12px 16px", marginTop:16 }}>
-            <div style={{ color:"#DC2626", fontSize:"0.78rem", fontWeight:700, marginBottom:4 }}>⚠️ Generation failed</div>
-            <div style={{ color:"#DC2626", fontSize:"0.75rem", fontFamily:"'Courier New',monospace", wordBreak:"break-all", lineHeight:1.5 }}>{error}</div>
-            <div style={{ color:"#4B5563", fontSize:"0.8rem", marginTop:6 }}>Check browser console (F12) for more detail.</div>
+          <div style={{ background:"#FFFFFF", border:"1px solid #141414", borderLeft:"4px solid #F4B400", padding:"12px 16px", marginTop:16 }}>
+            <div style={{ fontFamily:HEAVY_FONT, color:"#141414", fontSize:"0.75rem", fontWeight:800, letterSpacing:"0.03em", textTransform:"uppercase", marginBottom:4 }}>⚠️ Generation failed</div>
+            <div style={{ color:"#141414", fontSize:"0.75rem", fontFamily:"'Courier New',monospace", wordBreak:"break-all", lineHeight:1.5 }}>{error}</div>
+            <div style={{ color:"#5B6572", fontSize:"0.8rem", marginTop:6 }}>Check browser console (F12) for more detail.</div>
           </div>
         )}
       </div>
@@ -5673,11 +5672,11 @@ function MealPlanner({ profile, isPro, onUpgrade, plansUsed: plansUsedProp, setP
     return (
       <div style={{ maxWidth: 700, margin: "0 auto", padding: "80px 20px", textAlign: "center" }}>
         <div style={{ display: "inline-flex", gap: 6, marginBottom: 16 }}>
-          {[0,1,2].map(i => <div key={i} style={{ width: 10, height: 10, borderRadius: "50%", background: activePlanOption?.color || ACCENT, animation: `dotPulse 1.3s ease-in-out ${i*0.15}s infinite` }}/>)}
+          {[0,1,2].map(i => <div key={i} style={{ width: 10, height: 10, background: "#F4B400", animation: `dotPulse 1.3s ease-in-out ${i*0.15}s infinite` }}/>)}
         </div>
-        <div style={{ color: "#1A1D1B", fontWeight: 600, marginBottom: 6 }}>Building your {activePlanOption?.name || ""} plan…</div>
-        <div style={{ color: "#4B5563", fontSize: "0.82rem", marginBottom: 16 }}>{planType === "MASS BUILDER" ? "Generating your 5-day Mass Builder plan (6 meals/day)…" : "Generating your 5-day weekday plan (Mon–Fri)…"}</div>
-        <div style={{ color: "#6B7280", fontSize: "0.72rem" }}>{planType === "MASS BUILDER" ? "6 meals · 5 days · personalised to your TDEE — ~25 seconds" : "5 quick calls, one per day — takes ~25 seconds"}</div>
+        <div style={{ fontFamily: HEAVY_FONT, color: "#141414", fontWeight: 900, letterSpacing: "-0.01em", textTransform: "uppercase", marginBottom: 6 }}>Building your {activePlanOption?.name || ""} plan…</div>
+        <div style={{ color: "#5B6572", fontSize: "0.82rem", marginBottom: 16 }}>{planType === "MASS BUILDER" ? "Generating your 5-day Mass Builder plan (6 meals/day)…" : "Generating your 5-day weekday plan (Mon–Fri)…"}</div>
+        <div style={{ color: "#5B6572", fontSize: "0.72rem" }}>{planType === "MASS BUILDER" ? "6 meals · 5 days · personalised to your TDEE — ~25 seconds" : "5 quick calls, one per day — takes ~25 seconds"}</div>
       </div>
     );
   }
@@ -5688,25 +5687,25 @@ function MealPlanner({ profile, isPro, onUpgrade, plansUsed: plansUsedProp, setP
   return (
     <div style={{ maxWidth: 700, margin: "0 auto", padding: "16px 16px 80px", animation: "fadeUp 0.3s ease" }}>
       {/* Plan header */}
-      <div style={{ background: W.cream, border: `1px solid ${W.haze}`, borderRadius: 18, padding: "14px 16px", marginBottom: 16, boxShadow: W.shadowRest }}>
+      <div style={{ background: "#FFFFFF", border: "1px solid #141414", padding: "14px 16px", marginBottom: 16 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 10 }}>
           <div>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 3 }}>
               <span style={{ fontSize: 18 }}>{planOpt.icon}</span>
-              <div style={{ fontFamily: "'Playfair Display',serif", fontWeight: 800, color: "#1A1D1B", fontSize: "1rem" }}>{plan?.planType || planOpt.name}</div>
+              <div style={{ fontFamily: HEAVY_FONT, fontWeight: 900, color: "#141414", fontSize: "1.1rem", letterSpacing: "-0.01em", textTransform: "uppercase" }}>{plan?.planType || planOpt.name}</div>
             </div>
-            <div style={{ fontSize: "0.72rem", color: planOpt.color, fontWeight: 600 }}>{plan?.macroSplit}</div>
+            <div style={{ fontSize: "0.72rem", color: "#5B6572", fontWeight: 600 }}>{plan?.macroSplit}</div>
           </div>
           <div style={{ display:"flex", gap:8, flexWrap:"wrap", alignItems:"center" }}>
-            <button onClick={() => { setPlan(null); setPlanType(null); clearSavedPlan(); }} style={{ background: W.cream, border: `1px solid ${W.haze}`, color: W.taupe, padding: "6px 14px", borderRadius: 999, cursor: "pointer", fontSize: "0.75rem" }}>← Change Plan</button>
+            <button onClick={() => { setPlan(null); setPlanType(null); clearSavedPlan(); }} style={{ background: "#FFFFFF", border: "1px solid #141414", color: "#141414", padding: "6px 14px", borderRadius: 4, cursor: "pointer", fontFamily: HEAVY_FONT, fontWeight: 700, fontSize: "0.68rem", letterSpacing: "0.04em", textTransform: "uppercase" }}>← Change Plan</button>
             {plan && (
               <>
                 <button onClick={() => setShareModal({ type:"mealDay", data:{ plan, planName:plan?.planType||planOpt.name, dayIndex:activeDay, dayLabel:DAY_LABELS[activeDay]||`Day ${activeDay+1}` } })}
-                  style={{ background:W.tileSage, border:"none", color:"#3C5A4A", padding:"6px 12px", borderRadius:999, cursor:"pointer", fontSize:"0.72rem", fontFamily:"'Inter',sans-serif", fontWeight:600, display:"flex", alignItems:"center", gap:5 }}>
+                  style={{ background:"#F4B400", border:"none", color:"#141414", padding:"6px 12px", borderRadius:4, cursor:"pointer", fontFamily:HEAVY_FONT, fontSize:"0.66rem", fontWeight:800, letterSpacing:"0.03em", textTransform:"uppercase", display:"flex", alignItems:"center", gap:5 }}>
                   📤 Share Day
                 </button>
                 <button onClick={() => setShareModal({ type:"mealWeek", data:{ plan, planName:plan?.planType||planOpt.name } })}
-                  style={{ background:W.cream, border:`1px solid ${W.haze}`, color:W.taupe, padding:"6px 12px", borderRadius:999, cursor:"pointer", fontSize:"0.72rem", fontFamily:"'Inter',sans-serif", fontWeight:600, display:"flex", alignItems:"center", gap:5 }}>
+                  style={{ background:"#FFFFFF", border:"1px solid #141414", color:"#141414", padding:"6px 12px", borderRadius:4, cursor:"pointer", fontFamily:HEAVY_FONT, fontSize:"0.66rem", fontWeight:700, letterSpacing:"0.03em", textTransform:"uppercase", display:"flex", alignItems:"center", gap:5 }}>
                   📤 Full Week
                 </button>
               </>
@@ -5718,7 +5717,7 @@ function MealPlanner({ profile, isPro, onUpgrade, plansUsed: plansUsedProp, setP
         {plan?.keyPrinciples?.length > 0 && (
           <div style={{ marginTop: 10, display: "flex", gap: 6, flexWrap: "wrap" }}>
             {plan.keyPrinciples.map((p, i) => (
-              <span key={i} style={{ fontSize: "0.77rem", color: W.taupe, background: W.sand, border: `1px solid ${W.haze}`, padding: "3px 9px", borderRadius: 999 }}>◆ {p}</span>
+              <span key={i} style={{ fontSize: "0.77rem", color: "#5B6572", border: "1px solid #E6E4DF", padding: "3px 9px" }}><span style={{ color: "#F4B400" }}>◆</span> {p}</span>
             ))}
           </div>
         )}
@@ -5726,25 +5725,25 @@ function MealPlanner({ profile, isPro, onUpgrade, plansUsed: plansUsedProp, setP
 
       {/* Daily targets */}
       {plan?.tdeeInfo?.tdee && (
-        <div style={{ background:W.cream, border:`1px solid ${W.haze}`, borderRadius:14, padding:"10px 14px", marginBottom:12, display:"flex", gap:12, flexWrap:"wrap", alignItems:"center", boxShadow:W.shadowRest }}>
+        <div style={{ background:"#FFFFFF", border:"1px solid #141414", borderLeft:"4px solid #F4B400", padding:"10px 14px", marginBottom:12, display:"flex", gap:12, flexWrap:"wrap", alignItems:"center" }}>
           <span style={{ fontSize:13 }}>🧮</span>
-          <div style={{ fontSize:"0.75rem", color:"#3C5A4A", lineHeight:1.5 }}>
-            <strong style={{ color:"#3C5A4A" }}>Personalised Targets</strong> — BMR: <strong>{plan.tdeeInfo.bmr} kcal</strong> · TDEE: <strong>{plan.tdeeInfo.tdee} kcal</strong> · Meals/day: <strong>{plan.tdeeInfo.mealCount}</strong>
-            <span style={{ color:W.taupe, marginLeft:8 }}>Calculated via Mifflin-St Jeor from your height, weight & activity level</span>
+          <div style={{ fontSize:"0.75rem", color:"#141414", lineHeight:1.5 }}>
+            <strong>Personalised Targets</strong> — BMR: <strong>{plan.tdeeInfo.bmr} kcal</strong> · TDEE: <strong>{plan.tdeeInfo.tdee} kcal</strong> · Meals/day: <strong>{plan.tdeeInfo.mealCount}</strong>
+            <span style={{ color:"#5B6572", marginLeft:8 }}>Calculated via Mifflin-St Jeor from your height, weight & activity level</span>
           </div>
         </div>
       )}
       {plan?.dailyTarget && (
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 8, marginBottom: 16 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 0, marginBottom: 16, border: "1px solid #141414" }}>
           {[
-            { label: "Calories", val: plan.dailyTarget.calories, unit: "kcal", color: MACRO.cal },
-            { label: "Protein", val: plan.dailyTarget.protein, unit: "g", color: MACRO.protein },
-            { label: "Carbs", val: plan.dailyTarget.carbs, unit: "g", color: MACRO.carbs },
-            { label: "Fat", val: plan.dailyTarget.fat, unit: "g", color: MACRO.fat },
-          ].map(({ label, val, unit, color }) => (
-            <div key={label} style={{ background: `${color}14`, border: `1px solid ${color}30`, borderRadius: 12, padding: "10px 8px", textAlign: "center" }}>
-              <div style={{ color, fontSize: "1rem", fontWeight: 800 }}>{val}<span style={{ fontSize: "0.72rem", color: "#4B5563", fontWeight: 400 }}>{unit}</span></div>
-              <div style={{ color: "#6B7280", fontSize: "0.72rem", textTransform: "uppercase", letterSpacing: "0.08em" }}>{label}</div>
+            { label: "Calories", val: plan.dailyTarget.calories, unit: "kcal" },
+            { label: "Protein", val: plan.dailyTarget.protein, unit: "g" },
+            { label: "Carbs", val: plan.dailyTarget.carbs, unit: "g" },
+            { label: "Fat", val: plan.dailyTarget.fat, unit: "g" },
+          ].map(({ label, val, unit }, mi) => (
+            <div key={label} style={{ background: "#FFFFFF", borderLeft: mi === 0 ? "none" : "1px solid #E6E4DF", padding: "10px 8px", textAlign: "center" }}>
+              <div style={{ fontFamily: HEAVY_FONT, color: "#141414", fontSize: "1.15rem", fontWeight: 900, letterSpacing: "-0.01em" }}>{val}<span style={{ fontSize: "0.7rem", color: "#5B6572", fontWeight: 400 }}>{unit}</span></div>
+              <div style={{ fontFamily: HEAVY_FONT, color: "#141414", fontSize: "0.62rem", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.06em" }}>{label}</div>
             </div>
           ))}
         </div>
@@ -5753,7 +5752,7 @@ function MealPlanner({ profile, isPro, onUpgrade, plansUsed: plansUsedProp, setP
       {/* Day tabs */}
       <div style={{ display: "flex", gap: 5, marginBottom: 16, overflowX: "auto", paddingBottom: 4 }}>
         {plan?.days?.map((d, i) => (
-          <button key={i} onClick={() => { setActiveDay(i); try { window.storage.set("ailara:mealPlanDay", String(i)); } catch {} }} style={{ flexShrink: 0, padding: "6px 12px", borderRadius: 999, border: `1px solid ${i === activeDay ? "rgba(127,168,145,0.5)" : W.haze}`, background: i === activeDay ? W.tileSage : W.cream, color: i === activeDay ? "#3C5A4A" : W.taupe, cursor: "pointer", fontSize: "0.72rem", fontWeight: 700, transition: "all 0.15s" }}>
+          <button key={i} onClick={() => { setActiveDay(i); try { window.storage.set("ailara:mealPlanDay", String(i)); } catch {} }} style={{ flexShrink: 0, padding: "6px 12px", borderRadius: 4, border: "1px solid #141414", background: i === activeDay ? "#141414" : "#FFFFFF", color: i === activeDay ? "#FFFFFF" : "#141414", cursor: "pointer", fontFamily: HEAVY_FONT, fontSize: "0.68rem", fontWeight: 800, letterSpacing: "0.03em", transition: "all 0.12s" }}>
             {(d.day || DAY_LABELS[i] || `Day ${i+1}`).slice(0,3).toUpperCase()}
           </button>
         ))}
@@ -5764,39 +5763,39 @@ function MealPlanner({ profile, isPro, onUpgrade, plansUsed: plansUsedProp, setP
         {plan?.days?.[activeDay]?.meals?.map((meal, i) => {
           const matched = matchRecipe(meal.name, meal.type);
           return (
-          <div key={i} style={{ background: W.cream, border: `1px solid ${W.haze}`, borderRadius: 16, padding: "14px 16px", boxShadow: W.shadowRest }}>
+          <div key={i} style={{ background: "#FFFFFF", border: "1px solid #141414", padding: "14px 16px" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 12 }}>
-              <div style={{ width: 44, height: 44, borderRadius: 999, flexShrink: 0, background: `${MEAL_COLORS[meal.type] || "#7FA891"}18`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22 }}>
+              <div style={{ width: 44, height: 44, flexShrink: 0, border: "1px solid #141414", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22 }}>
                 {mealEmoji(meal.name, meal.type)}
               </div>
               <div style={{ flex: 1 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 5, flexWrap: "wrap" }}>
-                  <span style={{ fontSize: "0.72rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: MEAL_COLORS[meal.type] || "#3C5A4A", background: `${MEAL_COLORS[meal.type] || "#7FA891"}1A`, padding: "2px 8px", borderRadius: 999 }}>{meal.type}</span>
-                  {matched && <span style={{ fontSize: "0.72rem", color: "#3C5A4A", background: W.tileSage, padding: "1px 7px", borderRadius: 999 }}>📖 Recipe match</span>}
+                  <span style={{ fontFamily: HEAVY_FONT, fontSize: "0.66rem", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.06em", color: "#141414", border: "1px solid #141414", padding: "2px 8px" }}>{meal.type}</span>
+                  {matched && <span style={{ fontFamily: HEAVY_FONT, fontSize: "0.64rem", fontWeight: 800, letterSpacing: "0.03em", textTransform: "uppercase", color: "#141414", background: "#F4B400", padding: "2px 7px" }}>📖 Recipe match</span>}
                 </div>
-                <div style={{ color: "#1A1D1B", fontWeight: 600, fontSize: "0.88rem", marginBottom: 4 }}>{meal.name}</div>
+                <div style={{ color: "#141414", fontWeight: 700, fontSize: "0.88rem", marginBottom: 4 }}>{meal.name}</div>
                 {matched && (
                   <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 5 }}>
-                    <span style={{ fontSize: "0.78rem", color: "#C79245", background: "rgba(199,146,69,0.14)", border: "1px solid rgba(199,146,69,0.30)", padding: "2px 7px", borderRadius: 999 }}>📊 {matched.macros}</span>
-                    <span style={{ fontSize: "0.78rem", color: W.taupe, background: W.sand, border: `1px solid ${W.haze}`, padding: "2px 7px", borderRadius: 999 }}>⏱ {matched.time}</span>
-                    {matched.dietary?.slice(0,2).map(d => <span key={d} style={{ fontSize: "0.72rem", color: "#7FA891", background: "rgba(127,168,145,0.14)", border: "1px solid rgba(127,168,145,0.30)", padding: "1px 6px", borderRadius: 999 }}>{d}</span>)}
+                    <span style={{ fontSize: "0.76rem", color: "#141414", background: "#F4B400", padding: "2px 7px" }}>📊 {matched.macros}</span>
+                    <span style={{ fontSize: "0.76rem", color: "#5B6572", border: "1px solid #E6E4DF", padding: "2px 7px" }}>⏱ {matched.time}</span>
+                    {matched.dietary?.slice(0,2).map(d => <span key={d} style={{ fontSize: "0.72rem", color: "#5B6572", border: "1px solid #E6E4DF", padding: "1px 6px" }}>{d}</span>)}
                   </div>
                 )}
                 {meal.ingredients?.length > 0 && (
                   <div style={{ display: "flex", flexWrap: "wrap", gap: 4, marginBottom: 5 }}>
                     {meal.ingredients.map((ing, ii) => (
-                      <span key={ii} style={{ fontSize: "0.76rem", color: W.taupe, background: W.sand, border: `1px solid ${W.haze}`, padding: "1px 7px", borderRadius: 999 }}>{ing}</span>
+                      <span key={ii} style={{ fontSize: "0.76rem", color: "#5B6572", border: "1px solid #E6E4DF", padding: "1px 7px" }}>{ing}</span>
                     ))}
                   </div>
                 )}
-                {meal.notes && <div style={{ color: "#4B5563", fontSize: "0.73rem", lineHeight: 1.5 }}>{meal.notes}</div>}
+                {meal.notes && <div style={{ color: "#5B6572", fontSize: "0.73rem", lineHeight: 1.5 }}>{meal.notes}</div>}
               </div>
               <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 8, flexShrink: 0 }}>
                 <div style={{ textAlign: "right", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "2px 12px" }}>
-                  <div style={{ color: MACRO.cal, fontWeight: 700, fontSize: "0.88rem" }}>{meal.calories}<span style={{ fontSize: "0.72rem", color: "#6B7280", fontWeight: 400 }}>kcal</span></div>
-                  <div style={{ color: MACRO.protein, fontWeight: 700, fontSize: "0.88rem" }}>{meal.protein}<span style={{ fontSize: "0.72rem", color: "#6B7280", fontWeight: 400 }}>p</span></div>
-                  <div style={{ color: MACRO.carbs, fontWeight: 600, fontSize: "0.82rem" }}>{meal.carbs}<span style={{ fontSize: "0.72rem", color: "#6B7280", fontWeight: 400 }}>c</span></div>
-                  <div style={{ color: MACRO.fat, fontWeight: 600, fontSize: "0.82rem" }}>{meal.fat}<span style={{ fontSize: "0.72rem", color: "#6B7280", fontWeight: 400 }}>f</span></div>
+                  <div style={{ fontFamily: HEAVY_FONT, color: "#141414", fontWeight: 900, fontSize: "0.92rem" }}>{meal.calories}<span style={{ fontSize: "0.7rem", color: "#5B6572", fontWeight: 400 }}>kcal</span></div>
+                  <div style={{ fontFamily: HEAVY_FONT, color: "#141414", fontWeight: 900, fontSize: "0.92rem" }}>{meal.protein}<span style={{ fontSize: "0.7rem", color: "#5B6572", fontWeight: 400 }}>p</span></div>
+                  <div style={{ fontFamily: HEAVY_FONT, color: "#141414", fontWeight: 700, fontSize: "0.84rem" }}>{meal.carbs}<span style={{ fontSize: "0.7rem", color: "#5B6572", fontWeight: 400 }}>c</span></div>
+                  <div style={{ fontFamily: HEAVY_FONT, color: "#141414", fontWeight: 700, fontSize: "0.84rem" }}>{meal.fat}<span style={{ fontSize: "0.7rem", color: "#5B6572", fontWeight: 400 }}>f</span></div>
                 </div>
                 {matched && (
                   <button
@@ -5804,7 +5803,7 @@ function MealPlanner({ profile, isPro, onUpgrade, plansUsed: plansUsedProp, setP
                       if (window._ailaraSetTab) window._ailaraSetTab("nutrition");
                       if (window._ailaraGoToRecipe) window._ailaraGoToRecipe(matched.name);
                     }}
-                    style={{ background: "#3C5A4A", border: "none", color: "white", padding: "5px 11px", borderRadius: 999, cursor: "pointer", fontSize: "0.8rem", fontFamily: "'Inter',sans-serif", fontWeight: 700, whiteSpace: "nowrap" }}>
+                    style={{ background: "#F4B400", border: "none", color: "#141414", padding: "6px 11px", borderRadius: 4, cursor: "pointer", fontFamily: HEAVY_FONT, fontSize: "0.68rem", fontWeight: 800, letterSpacing: "0.03em", textTransform: "uppercase", whiteSpace: "nowrap" }}>
                     📖 Full Recipe
                   </button>
                 )}
@@ -5817,53 +5816,53 @@ function MealPlanner({ profile, isPro, onUpgrade, plansUsed: plansUsedProp, setP
 
       {/* Day totals */}
       {plan?.days?.[activeDay]?.totals && (
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 8, marginTop: 12 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 0, marginTop: 12, border: "1px solid #141414" }}>
           {[
-            { label: "Calories", val: plan.days[activeDay].totals.calories, unit: "kcal", target: plan.dailyTarget?.calories, color: MACRO.cal },
-            { label: "Protein", val: plan.days[activeDay].totals.protein, unit: "g", target: plan.dailyTarget?.protein, color: MACRO.protein },
-            { label: "Carbs", val: plan.days[activeDay].totals.carbs, unit: "g", target: plan.dailyTarget?.carbs, color: MACRO.carbs },
-            { label: "Fat", val: plan.days[activeDay].totals.fat, unit: "g", target: plan.dailyTarget?.fat, color: MACRO.fat },
-          ].map(({ label, val, unit, target, color }) => (
-            <div key={label} style={{ background: `${color}14`, border: `1px solid ${color}30`, borderRadius: 12, padding: "9px 8px", textAlign: "center" }}>
-              <div style={{ color, fontWeight: 700, fontSize: "0.88rem" }}>{val}<span style={{ fontSize: "0.72rem", color: "#4B5563" }}>{unit}</span></div>
-              <div style={{ color: "#6B7280", fontSize: "0.72rem", textTransform: "uppercase", letterSpacing: "0.07em" }}>{label}</div>
-              {target && <div style={{ color: "#6B7280", fontSize: "0.72rem", marginTop: 1 }}>/ {target}</div>}
+            { label: "Calories", val: plan.days[activeDay].totals.calories, unit: "kcal", target: plan.dailyTarget?.calories },
+            { label: "Protein", val: plan.days[activeDay].totals.protein, unit: "g", target: plan.dailyTarget?.protein },
+            { label: "Carbs", val: plan.days[activeDay].totals.carbs, unit: "g", target: plan.dailyTarget?.carbs },
+            { label: "Fat", val: plan.days[activeDay].totals.fat, unit: "g", target: plan.dailyTarget?.fat },
+          ].map(({ label, val, unit, target }, ti) => (
+            <div key={label} style={{ background: "#FFFFFF", borderLeft: ti === 0 ? "none" : "1px solid #E6E4DF", padding: "9px 8px", textAlign: "center" }}>
+              <div style={{ fontFamily: HEAVY_FONT, color: "#141414", fontWeight: 900, fontSize: "0.92rem", letterSpacing: "-0.01em" }}>{val}<span style={{ fontSize: "0.7rem", color: "#5B6572" }}>{unit}</span></div>
+              <div style={{ fontFamily: HEAVY_FONT, color: "#141414", fontSize: "0.6rem", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.06em" }}>{label}</div>
+              {target && <div style={{ color: "#5B6572", fontSize: "0.7rem", marginTop: 1 }}>/ {target}</div>}
             </div>
           ))}
         </div>
       )}
 
       {plan?.notes && (
-        <div style={{ marginTop: 14, background: W.cream, border: `1px solid ${W.haze}`, borderRadius: 14, padding: "12px 14px", color: "#4B5563", fontSize: "0.8rem", lineHeight: 1.6, boxShadow: W.shadowRest }}>
+        <div style={{ marginTop: 14, background: "#FFFFFF", border: "1px solid #141414", borderLeft: "4px solid #F4B400", padding: "12px 14px", color: "#141414", fontSize: "0.8rem", lineHeight: 1.6 }}>
           💡 {plan.notes}
         </div>
       )}
 
       {/* ── GROCERY LIST BUTTON & VIEW ── */}
       <div style={{ marginTop: 16 }}>
-        <div style={{ display:"flex", gap:8, marginBottom: showGrocery ? 0 : 0 }}>
-          <button onClick={() => { setShowGrocery(!showGrocery); setCheckedItems({}); }} style={{ flex:1, background: showGrocery ? W.tileSage : W.cream, border: `1px solid ${showGrocery ? "rgba(127,168,145,0.5)" : W.haze}`, color: "#3C5A4A", padding: "11px", borderRadius: 12, cursor: "pointer", fontSize: "0.88rem", fontWeight: 700, fontFamily: "'Inter',sans-serif", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, boxShadow: W.shadowRest }}>
+        <div style={{ display:"flex", gap:8 }}>
+          <button onClick={() => { setShowGrocery(!showGrocery); setCheckedItems({}); }} style={{ flex:1, background: showGrocery ? "#141414" : "#FFFFFF", border: "1px solid #141414", color: showGrocery ? "#FFFFFF" : "#141414", padding: "12px", borderRadius: 4, cursor: "pointer", fontSize: "0.8rem", fontWeight: 800, fontFamily: HEAVY_FONT, letterSpacing: "0.04em", textTransform: "uppercase", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
             🛒 {showGrocery ? "Hide Grocery List" : "Generate Grocery List"}
           </button>
           {showGrocery && buildGroceryList().length > 0 && (
             <button onClick={() => setShareModal({ type:"grocery", data:{ groceryList:buildGroceryList(), planName:plan?.planType||planOpt.name, scope: groceryDays==="all" ? "Full Week (Mon–Fri)" : DAY_LABELS[parseInt(groceryDays)]||`Day ${parseInt(groceryDays)+1}` } })}
-              style={{ background:"#3C5A4A", border:"none", color:"white", padding:"11px 14px", borderRadius:12, cursor:"pointer", fontSize:"0.82rem", fontWeight:700, fontFamily:"'Inter',sans-serif", display:"flex", alignItems:"center", gap:5, flexShrink:0, boxShadow:W.shadowRest }}>
+              style={{ background:"#F4B400", border:"none", color:"#141414", padding:"12px 14px", borderRadius:4, cursor:"pointer", fontSize:"0.72rem", fontWeight:800, fontFamily:HEAVY_FONT, letterSpacing:"0.04em", textTransform:"uppercase", display:"flex", alignItems:"center", gap:5, flexShrink:0 }}>
               📤 Export
             </button>
           )}
         </div>
 
         {showGrocery && (
-          <div style={{ marginTop: 14, background: W.cream, border: `1px solid ${W.haze}`, borderRadius: 16, padding: "16px", boxShadow: W.shadowRest }}>
+          <div style={{ marginTop: 14, background: "#FFFFFF", border: "1px solid #141414", padding: "16px" }}>
             {/* Day selector */}
             <div style={{ marginBottom: 14 }}>
-              <div style={{ fontSize: "0.75rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "#4B5563", marginBottom: 8 }}>Generate list for:</div>
+              <div style={{ fontFamily: HEAVY_FONT, fontSize: "0.68rem", fontWeight: 800, letterSpacing: "0.08em", textTransform: "uppercase", color: "#141414", marginBottom: 8 }}>Generate list for:</div>
               <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-                <button onClick={() => setGroceryDays("all")} style={{ padding: "5px 12px", borderRadius: 999, border: `1px solid ${groceryDays === "all" ? "#3C5A4A" : W.haze}`, background: groceryDays === "all" ? "#3C5A4A" : W.cream, color: groceryDays === "all" ? "white" : W.taupe, cursor: "pointer", fontSize: "0.72rem", fontWeight: 600, fontFamily: "'Inter',sans-serif" }}>
+                <button onClick={() => setGroceryDays("all")} style={{ padding: "5px 12px", borderRadius: 4, border: "1px solid #141414", background: groceryDays === "all" ? "#141414" : "#FFFFFF", color: groceryDays === "all" ? "#FFFFFF" : "#141414", cursor: "pointer", fontFamily: HEAVY_FONT, fontSize: "0.66rem", fontWeight: 800, letterSpacing: "0.03em", textTransform: "uppercase" }}>
                   📅 Full Plan
                 </button>
                 {plan?.days?.map((d, i) => (
-                  <button key={i} onClick={() => setGroceryDays(String(i))} style={{ padding: "5px 12px", borderRadius: 999, border: `1px solid ${groceryDays === String(i) ? "#3C5A4A" : W.haze}`, background: groceryDays === String(i) ? "#3C5A4A" : W.cream, color: groceryDays === String(i) ? "white" : W.taupe, cursor: "pointer", fontSize: "0.72rem", fontWeight: 600, fontFamily: "'Inter',sans-serif" }}>
+                  <button key={i} onClick={() => setGroceryDays(String(i))} style={{ padding: "5px 12px", borderRadius: 4, border: "1px solid #141414", background: groceryDays === String(i) ? "#141414" : "#FFFFFF", color: groceryDays === String(i) ? "#FFFFFF" : "#141414", cursor: "pointer", fontFamily: HEAVY_FONT, fontSize: "0.66rem", fontWeight: 800, letterSpacing: "0.03em", textTransform: "uppercase" }}>
                     {(d.day || ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"][i] || `Day ${i+1}`).slice(0,3)}
                   </button>
                 ))}
@@ -5873,18 +5872,18 @@ function MealPlanner({ profile, isPro, onUpgrade, plansUsed: plansUsedProp, setP
             {/* Grocery categories */}
             {buildGroceryList().map(([category, items]) => (
               <div key={category} style={{ marginBottom: 14 }}>
-                <div style={{ fontSize: "0.72rem", fontWeight: 700, color: "#3C5A4A", marginBottom: 6, letterSpacing: "0.04em" }}>{category}</div>
+                <div style={{ fontFamily: HEAVY_FONT, fontSize: "0.68rem", fontWeight: 800, color: "#141414", marginBottom: 6, letterSpacing: "0.04em", textTransform: "uppercase", borderBottom: "1px solid #141414", paddingBottom: 4 }}>{category}</div>
                 <div style={{ display: "grid", gap: 4 }}>
                   {items.map((item, idx) => {
                     const key = `${category}-${idx}`;
                     const checked = !!checkedItems[key];
                     return (
-                      <div key={idx} onClick={() => setCheckedItems(p => ({ ...p, [key]: !p[key] }))} style={{ display: "flex", alignItems: "center", gap: 10, padding: "7px 10px", borderRadius: 10, background: checked ? "rgba(127,168,145,0.14)" : W.sand, border: `1px solid ${W.haze}`, cursor: "pointer", transition: "all 0.15s" }}>
-                        <div style={{ width: 18, height: 18, borderRadius: 6, border: `2px solid ${checked ? "#7FA891" : "#94897A"}`, background: checked ? "#7FA891" : "transparent", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                          {checked && <span style={{ color: "white", fontSize: "0.75rem", fontWeight: 900 }}>✓</span>}
+                      <div key={idx} onClick={() => setCheckedItems(p => ({ ...p, [key]: !p[key] }))} style={{ display: "flex", alignItems: "center", gap: 10, padding: "7px 10px", background: checked ? "#FBF7EF" : "#FFFFFF", border: "1px solid #E6E4DF", cursor: "pointer", transition: "all 0.12s" }}>
+                        <div style={{ width: 18, height: 18, border: "1px solid #141414", background: checked ? "#F4B400" : "transparent", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                          {checked && <span style={{ color: "#141414", fontSize: "0.75rem", fontWeight: 900 }}>✓</span>}
                         </div>
                         <div style={{ flex: 1 }}>
-                          <span style={{ color: checked ? "#6B7280" : "#1A1D1B", fontSize: "0.82rem", fontWeight: 500, textDecoration: checked ? "line-through" : "none" }}>{item.name}</span>
+                          <span style={{ color: checked ? "#5B6572" : "#141414", fontSize: "0.82rem", fontWeight: 500, textDecoration: checked ? "line-through" : "none" }}>{item.name}</span>
                         </div>
                       </div>
                     );
@@ -5894,12 +5893,12 @@ function MealPlanner({ profile, isPro, onUpgrade, plansUsed: plansUsedProp, setP
             ))}
 
             {buildGroceryList().length === 0 && (
-              <div style={{ color: "#4B5563", fontSize: "0.82rem", textAlign: "center", padding: "20px 0" }}>
+              <div style={{ color: "#5B6572", fontSize: "0.82rem", textAlign: "center", padding: "20px 0" }}>
                 🛒 Generate your AI meal plan above first — the grocery list will auto-populate here.
               </div>
             )}
 
-            <div style={{ marginTop: 10, fontSize: "0.72rem", color: "#6B7280", textAlign: "center" }}>
+            <div style={{ marginTop: 10, fontSize: "0.72rem", color: "#5B6572", textAlign: "center" }}>
               Tap items to check them off as you shop ✓
             </div>
           </div>
@@ -6062,7 +6061,7 @@ function SupplementTracker({ profile }) {
   const RING_R = 26, RING_CX = 32, RING_CY = 32;
   const circumference = 2 * Math.PI * RING_R;
   const dashOffset = circumference * (1 - pct/100);
-  const ringColor = pct === 100 ? "#10B981" : pct >= 50 ? "#D97706" : "#6B7280";
+  const ringColor = pct === 100 ? "#F4B400" : "#141414";
 
   const navTabs = [
     { key:"today",   label:"Today",    icon:"✅" },
@@ -6072,106 +6071,107 @@ function SupplementTracker({ profile }) {
 
   if (!loaded) return (
     <div style={{ display:"flex", alignItems:"center", justifyContent:"center", height:300 }}>
-      <div style={{ color:"#4B5563", fontSize:"0.85rem" }}>💊 Loading your stack...</div>
+      <div style={{ color:"#5B6572", fontSize:"0.85rem" }}>💊 Loading your stack...</div>
     </div>
   );
 
   return (
+    <div style={{ background:"#FFFFFF", minHeight:"100%" }}>
     <div style={{ maxWidth:680, margin:"0 auto", padding:"20px 16px" }}>
 
       <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:16 }}>
         <div>
-          <div style={{ fontFamily:"'Playfair Display',serif", fontSize:"1.2rem", fontWeight:800, color:"#1A1D1B", marginBottom:2 }}>
+          <div style={{ fontFamily:HEAVY_FONT, fontSize:"1.5rem", fontWeight:900, color:"#141414", letterSpacing:"-0.02em", textTransform:"uppercase", lineHeight:1.05, marginBottom:4 }}>
             {view === "today" ? "Supplement Ritual" : view === "stack" ? "My Stack" : "Supplement Library"}
           </div>
-          <div style={{ color:"#4B5563", fontSize:"0.75rem" }}>
+          <div style={{ color:"#5B6572", fontSize:"0.8rem" }}>
             {view === "today" ? "Daily stack · Research-backed · Time-optimized" : view === "stack" ? "Build your personalized supplement stack" : "Browse 40 research-backed supplements"}
           </div>
           {(profile?.goals||[]).length > 0 && view === "today" && (
             <div style={{display:"flex",flexWrap:"wrap",gap:5,marginTop:6}}>
-              <span style={{fontSize:"0.72rem",color:"#4B5563",alignSelf:"center"}}>Stack optimized for:</span>
-              {(profile.goals||[]).slice(0,2).map(g=>{
-                const gc={"Lose Weight":"#C2410C","Build Muscle":"#4338CA","More Energy":"#D97706","Heart Health":"#DC2626","Reduce Stress":"#7C3AED","Run / Endurance":"#10B981","Manage a Condition":"#0E7490"}[g]||ACCENT;
-                return <span key={g} style={{fontSize:"0.72rem",fontWeight:700,color:gc,background:`${gc}15`,border:`1px solid ${gc}35`,borderRadius:20,padding:"2px 9px",fontFamily:"'Inter',sans-serif"}}>{g}</span>;
-              })}
+              <span style={{fontSize:"0.72rem",color:"#5B6572",alignSelf:"center"}}>Stack optimized for:</span>
+              {(profile.goals||[]).slice(0,2).map(g=>(
+                <span key={g} style={{fontSize:"0.68rem",fontFamily:HEAVY_FONT,fontWeight:700,letterSpacing:"0.03em",textTransform:"uppercase",color:"#141414",border:"1px solid #141414",padding:"2px 8px"}}>{g}</span>
+              ))}
             </div>
           )}
         </div>
         <div style={{ display:"flex", gap:7 }}>
           <button onClick={() => setShowCustomAdd(true)}
-            style={{ background:"rgba(16,185,129,0.1)", border:"1px solid rgba(16,185,129,0.3)", color:"#0F766E", padding:"7px 14px", borderRadius:9, cursor:"pointer", fontSize:"0.75rem", fontFamily:"'Inter',sans-serif", fontWeight:600 }}>
+            style={{ background:"#FFFFFF", border:"1px solid #141414", color:"#141414", padding:"6px 12px", cursor:"pointer", fontSize:"0.68rem", fontFamily:HEAVY_FONT, fontWeight:700, letterSpacing:"0.02em", textTransform:"uppercase" }}>
             ✏️ Custom
           </button>
           <button onClick={() => setView("library")}
-            style={{ background:"rgba(16,185,129,0.1)", border:"1px solid rgba(16,185,129,0.3)", color:"#0F766E", padding:"7px 14px", borderRadius:9, cursor:"pointer", fontSize:"0.75rem", fontFamily:"'Inter',sans-serif", fontWeight:600 }}>
+            style={{ background:"#FFFFFF", border:"1px solid #141414", color:"#141414", padding:"6px 12px", cursor:"pointer", fontSize:"0.68rem", fontFamily:HEAVY_FONT, fontWeight:700, letterSpacing:"0.02em", textTransform:"uppercase" }}>
             📚 Library
           </button>
         </div>
       </div>
 
-      <div style={{ display:"flex", gap:6, marginBottom:16, background:"rgba(0,0,0,0.02)", border:"1px solid rgba(16,185,129,0.12)", borderRadius:12, padding:4 }}>
-        {navTabs.map(t => (
+      <div style={{ display:"flex", marginBottom:16, border:"1px solid #141414" }}>
+        {navTabs.map((t,ti) => (
           <button key={t.key} onClick={() => setView(t.key)}
-            style={{ flex:1, display:"flex", alignItems:"center", justifyContent:"center", gap:5, padding:"8px 6px", borderRadius:9, border:"none", background: view===t.key ? "rgba(16,185,129,0.18)" : "transparent", color: view===t.key ? "#0F766E" : "#4B5563", cursor:"pointer", fontSize:"0.72rem", fontFamily:"'Inter',sans-serif", fontWeight: view===t.key ? 700 : 400, transition:"all 0.15s" }}>
+            style={{ flex:1, display:"flex", alignItems:"center", justifyContent:"center", gap:5, padding:"8px 6px", border:"none", borderLeft:ti===0?"none":"1px solid #141414", background: view===t.key ? "#141414" : "#FFFFFF", color: view===t.key ? "#FFFFFF" : "#141414", cursor:"pointer", fontSize:"0.7rem", fontFamily:HEAVY_FONT, fontWeight:700, letterSpacing:"0.02em", textTransform:"uppercase", transition:"all 0.12s" }}>
             <span style={{ fontSize:13 }}>{t.icon}</span>
             <span style={{ whiteSpace:"nowrap" }}>{t.label}</span>
           </button>
         ))}
       </div>
 
-      <div style={{ background:"rgba(245,158,11,0.05)", border:"1px solid rgba(245,158,11,0.15)", borderRadius:8, padding:"8px 12px", marginBottom:14, display:"flex", gap:7, alignItems:"flex-start" }}>
+      <div style={{ position:"relative", background:"#FFFFFF", border:"1px solid #141414", padding:"8px 12px 8px 16px", marginBottom:14, display:"flex", gap:7, alignItems:"flex-start", overflow:"hidden" }}>
+        <div style={{ position:"absolute", left:0, top:0, bottom:0, width:4, background:"#F4B400" }} />
         <span style={{ fontSize:11, flexShrink:0 }}>💛</span>
-        <div style={{ fontSize:"0.78rem", color:"#92400E", lineHeight:1.5 }}>
-          <strong style={{ color:"#92400E" }}>Affiliate disclosure:</strong> Buy buttons link to BulkSupplements, Naked Nutrition, and Nature Made (Amazon). We earn a small commission at no extra cost to you.
+        <div style={{ fontSize:"0.76rem", color:"#5B6572", lineHeight:1.5 }}>
+          <strong style={{ color:"#141414" }}>Affiliate disclosure:</strong> Buy buttons link to BulkSupplements, Naked Nutrition, and Nature Made (Amazon). We earn a small commission at no extra cost to you.
         </div>
       </div>
 
       {view === "today" && (
         <div style={{ animation:"fadeUp 0.3s ease" }}>
           {mySupplements.length === 0 ? (
-            <div style={{ textAlign:"center", padding:"44px 20px" }}>
+            <div style={{ border:"1px solid #141414", textAlign:"center", padding:"44px 20px" }}>
               <div style={{ fontSize:"2.8rem", marginBottom:12 }}>💊</div>
-              <div style={{ color:"#1A1D1B", fontWeight:700, fontSize:"0.95rem", marginBottom:6 }}>No supplements added yet</div>
-              <div style={{ color:"#4B5563", fontSize:"0.8rem", marginBottom:22, lineHeight:1.6 }}>Start with a pre-built stack or browse the library to find what works for you.</div>
+              <div style={{ color:"#141414", fontWeight:700, fontSize:"0.95rem", marginBottom:6 }}>No supplements added yet</div>
+              <div style={{ color:"#5B6572", fontSize:"0.8rem", marginBottom:22, lineHeight:1.6 }}>Start with a pre-built stack or browse the library to find what works for you.</div>
               <div style={{ display:"flex", gap:10, justifyContent:"center", flexWrap:"wrap" }}>
                 <button onClick={() => { setView("stack"); setShowStacks(true); }}
-                  style={{ background:"linear-gradient(135deg,#10B981,#059669)", border:"none", color:"white", padding:"10px 20px", borderRadius:10, cursor:"pointer", fontSize:"0.8rem", fontFamily:"'Inter',sans-serif", fontWeight:700 }}>
+                  style={{ background:"#F4B400", border:"none", color:"#141414", padding:"11px 22px", cursor:"pointer", fontSize:"0.78rem", fontFamily:HEAVY_FONT, fontWeight:800, letterSpacing:"0.03em", textTransform:"uppercase" }}>
                   ✨ Quick Start Stacks
                 </button>
                 <button onClick={() => setView("library")}
-                  style={{ background:"rgba(16,185,129,0.08)", border:"1px solid rgba(16,185,129,0.3)", color:"#0F766E", padding:"10px 20px", borderRadius:10, cursor:"pointer", fontSize:"0.8rem", fontFamily:"'Inter',sans-serif", fontWeight:600 }}>
+                  style={{ background:"#FFFFFF", border:"1px solid #141414", color:"#141414", padding:"11px 22px", cursor:"pointer", fontSize:"0.78rem", fontFamily:HEAVY_FONT, fontWeight:700, letterSpacing:"0.03em", textTransform:"uppercase" }}>
                   Browse Library
                 </button>
               </div>
             </div>
           ) : (
             <div>
-              <div style={{ display:"flex", alignItems:"center", gap:14, background:"rgba(0,0,0,0.02)", border:"1px solid rgba(16,185,129,0.12)", borderRadius:14, padding:"14px 16px", marginBottom:18 }}>
+              <div style={{ display:"flex", alignItems:"center", gap:14, border:"1px solid #141414", padding:"14px 16px", marginBottom:18 }}>
                 <div style={{ flexShrink:0, position:"relative", width:64, height:64 }}>
                   <svg width={64} height={64} style={{ transform:"rotate(-90deg)", position:"absolute", top:0, left:0 }}>
-                    <circle cx={RING_CX} cy={RING_CY} r={RING_R} fill="none" stroke="rgba(16,185,129,0.12)" strokeWidth={5}/>
+                    <circle cx={RING_CX} cy={RING_CY} r={RING_R} fill="none" stroke="#E6E4DF" strokeWidth={5}/>
                     <circle cx={RING_CX} cy={RING_CY} r={RING_R} fill="none"
                       stroke={ringColor} strokeWidth={5}
                       strokeDasharray={circumference} strokeDashoffset={dashOffset}
                       strokeLinecap="round" style={{ transition:"stroke-dashoffset 0.5s ease" }}/>
                   </svg>
                   <div style={{ position:"absolute", inset:0, display:"flex", alignItems:"center", justifyContent:"center" }}>
-                    <span style={{ fontSize:"0.78rem", fontWeight:800, color:ringColor }}>{pct}%</span>
+                    <span style={{ fontFamily:HEAVY_FONT, fontSize:"0.78rem", fontWeight:900, color:"#141414" }}>{pct}%</span>
                   </div>
                 </div>
                 <div style={{ flex:1 }}>
-                  <div style={{ fontFamily:"'Playfair Display',serif", fontWeight:800, color:"#1A1D1B", fontSize:"0.95rem", marginBottom:3 }}>
+                  <div style={{ fontFamily:HEAVY_FONT, fontWeight:900, color:"#141414", fontSize:"0.95rem", letterSpacing:"-0.01em", textTransform:"uppercase", marginBottom:3 }}>
                     {pct===100 ? "All done today! 🎉" : pct===0 ? "Ready to start?" : takenCount + " of " + totalCount + " taken"}
                   </div>
-                  <div style={{ color:"#4B5563", fontSize:"0.75rem", lineHeight:1.5 }}>
+                  <div style={{ color:"#5B6572", fontSize:"0.75rem", lineHeight:1.5 }}>
                     {pct===100 ? "Great consistency. See you tomorrow." : pct===0 ? "Start with your morning stack when you wake up." : (totalCount-takenCount) + " supplement" + (totalCount-takenCount!==1?"s":"") + " remaining today."}
                   </div>
                 </div>
                 {streak > 0 && (
-                  <div style={{ flexShrink:0, textAlign:"center", background:"rgba(245,158,11,0.1)", border:"1px solid rgba(245,158,11,0.25)", borderRadius:10, padding:"8px 12px" }}>
+                  <div style={{ flexShrink:0, textAlign:"center", border:"1px solid #141414", padding:"8px 12px" }}>
                     <div style={{ fontSize:"1.3rem" }}>🔥</div>
-                    <div style={{ fontSize:"0.9rem", fontWeight:800, color:"#92400E" }}>{streak}</div>
-                    <div style={{ fontSize:"0.72rem", color:"#92400E", textTransform:"uppercase", letterSpacing:"0.08em", fontWeight:700 }}>day streak</div>
+                    <div style={{ fontFamily:HEAVY_FONT, fontSize:"0.9rem", fontWeight:900, color:"#141414" }}>{streak}</div>
+                    <div style={{ fontSize:"0.64rem", color:"#5B6572", textTransform:"uppercase", letterSpacing:"0.06em", fontWeight:700 }}>day streak</div>
                   </div>
                 )}
               </div>
@@ -6185,43 +6185,43 @@ function SupplementTracker({ profile }) {
                   <div key={block.key} style={{ marginBottom:22 }}>
                     <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:10 }}>
                       <span style={{ fontSize:18 }}>{block.icon}</span>
-                      <span style={{ fontFamily:"'Playfair Display',serif", fontWeight:700, color:"#1A1D1B", fontSize:"0.88rem" }}>{block.label}</span>
-                      <div style={{ flex:1, height:2, background:block.color+"20", borderRadius:2, marginLeft:4 }}>
-                        <div style={{ height:"100%", width:blockPct+"%", background:block.color, borderRadius:2, transition:"width 0.4s ease" }}/>
+                      <span style={{ fontFamily:HEAVY_FONT, fontWeight:800, color:"#141414", fontSize:"0.78rem", letterSpacing:"0.04em", textTransform:"uppercase" }}>{block.label}</span>
+                      <div style={{ flex:1, height:2, background:"#E6E4DF", marginLeft:4 }}>
+                        <div style={{ height:"100%", width:blockPct+"%", background:"#141414", transition:"width 0.4s ease" }}/>
                       </div>
-                      <span style={{ fontSize:"0.75rem", color:block.color, fontWeight:700 }}>{blockDone}/{items.length}</span>
+                      <span style={{ fontSize:"0.72rem", color:"#5B6572", fontWeight:700 }}>{blockDone}/{items.length}</span>
                     </div>
-                    <div style={{ display:"grid", gap:8 }}>
-                      {items.map(s => {
+                    <div style={{ border:"1px solid #141414" }}>
+                      {items.map((s,si) => {
                         const isTaken = !!todayTaken[s.name];
                         const isCelebrating = celebrateKey === s.name;
                         return (
                           <div key={s.name}
-                            style={{ background: isTaken ? block.color+"0D" : "rgba(0,0,0,0.025)", border:"1.5px solid "+(isTaken ? block.color+"55" : "rgba(16,185,129,0.12)"), borderRadius:12, padding:"12px 14px", display:"flex", alignItems:"center", gap:12, transition:"all 0.2s", animation: isCelebrating ? "glow 0.5s ease" : "none" }}>
+                            style={{ background: isTaken ? "#FBF7EF" : "#FFFFFF", borderTop: si===0?"none":"1px solid #E6E4DF", padding:"12px 14px", display:"flex", alignItems:"center", gap:12, transition:"all 0.2s", animation: isCelebrating ? "glow 0.5s ease" : "none" }}>
                             <button onClick={() => toggleTaken(s.name)}
-                              style={{ width:36, height:36, borderRadius:"50%", border:"2.5px solid "+(isTaken ? block.color : "rgba(16,185,129,0.25)"), background: isTaken ? block.color : "transparent", cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0, transition:"all 0.2s", boxShadow: isTaken ? "0 0 14px "+block.color+"66" : "none" }}>
-                              {isTaken && <span style={{ color:"white", fontSize:"0.85rem", fontWeight:900 }}>✓</span>}
+                              style={{ width:32, height:32, borderRadius:"50%", border:"1px solid #141414", background: isTaken ? "#F4B400" : "#FFFFFF", cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0, transition:"all 0.2s" }}>
+                              {isTaken && <span style={{ color:"#141414", fontSize:"0.85rem", fontWeight:900 }}>✓</span>}
                             </button>
                             <div style={{ flex:1, minWidth:0 }}>
                               <div style={{ display:"flex", alignItems:"center", gap:7, flexWrap:"wrap" }}>
-                                <span style={{ color: isTaken ? "#4B5563" : "#1A1D1B", fontWeight:600, fontSize:"0.86rem", textDecoration: isTaken ? "line-through" : "none", transition:"all 0.2s" }}>{s.name}</span>
-                                <span style={{ fontSize:"0.72rem", fontWeight:700, textTransform:"uppercase", color:CATEGORY_COLORS[s.category]||"#047857", background:(CATEGORY_COLORS[s.category]||"#10B981")+"18", padding:"1px 6px", borderRadius:7 }}>{s.category}</span>
+                                <span style={{ color: "#141414", fontWeight:600, fontSize:"0.86rem", textDecoration: isTaken ? "line-through" : "none", transition:"all 0.2s" }}>{s.name}</span>
+                                <span style={{ fontSize:"0.64rem", fontFamily:HEAVY_FONT, fontWeight:700, letterSpacing:"0.03em", textTransform:"uppercase", color:"#141414", border:"1px solid #141414", padding:"1px 6px" }}>{s.category}</span>
                               </div>
-                              <div style={{ color:"#6B7280", fontSize:"0.81rem", marginTop:2 }}>
+                              <div style={{ color:"#5B6572", fontSize:"0.8rem", marginTop:2 }}>
                                 {suppCustom[s.name]?.dose || s.dose} · {suppCustom[s.name]?.timing || s.timing}
-                                {suppCustom[s.name]?.brand && <span style={{ color:"#4B5563", marginLeft:6 }}>· {suppCustom[s.name].brand}</span>}
+                                {suppCustom[s.name]?.brand && <span style={{ marginLeft:6 }}>· {suppCustom[s.name].brand}</span>}
                               </div>
-                              {s.notes && !isTaken && <div style={{ color:"#6B7280", fontSize:"0.78rem", lineHeight:1.4, marginTop:3, overflow:"hidden", display:"-webkit-box", WebkitLineClamp:1, WebkitBoxOrient:"vertical" }}>{s.notes}</div>}
+                              {s.notes && !isTaken && <div style={{ color:"#5B6572", fontSize:"0.78rem", lineHeight:1.4, marginTop:3, overflow:"hidden", display:"-webkit-box", WebkitLineClamp:1, WebkitBoxOrient:"vertical" }}>{s.notes}</div>}
                             </div>
                             <div style={{ display:"flex", flexDirection:"column", gap:5, flexShrink:0 }}>
                               <div style={{ display:"flex", gap:4 }}>
                                 <button onClick={() => setEditingSupp({ ...s, ...(suppCustom[s.name]||{}) })}
-                                  style={{ fontSize:"0.75rem", color:"#7C3AED", background:"rgba(139,92,246,0.1)", border:"1px solid rgba(139,92,246,0.3)", borderRadius:7, padding:"3px 8px", cursor:"pointer", fontFamily:"'Inter',sans-serif", fontWeight:600 }}>
+                                  style={{ fontSize:"0.7rem", color:"#141414", background:"#FFFFFF", border:"1px solid #141414", padding:"3px 8px", cursor:"pointer", fontFamily:"'Inter',sans-serif", fontWeight:600 }}>
                                   ✏️ Edit
                                 </button>
-                                <a href={s.pubmed} target="_blank" rel="noopener noreferrer" style={{ fontSize:"0.75rem", color:"#0F766E", textDecoration:"none", background:"rgba(16,185,129,0.08)", padding:"3px 7px", borderRadius:6, border:"1px solid rgba(16,185,129,0.25)" }}>📄</a>
-                                {s.brandUrl && <a href={s.brandUrl} target="_blank" rel="noopener noreferrer" style={{ fontSize:"0.75rem", color:"#92400E", textDecoration:"none", background:"rgba(245,158,11,0.1)", padding:"3px 7px", borderRadius:6, border:"1px solid rgba(245,158,11,0.22)", fontWeight:600 }}>🛒</a>}
-                                {s.brand2Url && <a href={s.brand2Url} target="_blank" rel="noopener noreferrer" style={{ fontSize:"0.75rem", color:"#1D4ED8", textDecoration:"none", background:"rgba(59,130,246,0.1)", padding:"3px 7px", borderRadius:6, border:"1px solid rgba(59,130,246,0.22)", fontWeight:600 }}>🛒</a>}
+                                <a href={s.pubmed} target="_blank" rel="noopener noreferrer" style={{ fontSize:"0.7rem", color:"#141414", textDecoration:"none", background:"#FFFFFF", padding:"3px 7px", border:"1px solid #141414" }}>📄</a>
+                                {s.brandUrl && <a href={s.brandUrl} target="_blank" rel="noopener noreferrer" style={{ fontSize:"0.7rem", color:"#141414", textDecoration:"none", background:"#F4B400", padding:"3px 7px", border:"1px solid #141414", fontWeight:600 }}>🛒</a>}
+                                {s.brand2Url && <a href={s.brand2Url} target="_blank" rel="noopener noreferrer" style={{ fontSize:"0.7rem", color:"#141414", textDecoration:"none", background:"#F4B400", padding:"3px 7px", border:"1px solid #141414", fontWeight:600 }}>🛒</a>}
                               </div>
                             </div>
                           </div>
@@ -6233,12 +6233,12 @@ function SupplementTracker({ profile }) {
               })}
               <div style={{ display:"flex", gap:8, marginTop:4 }}>
                 <button onClick={() => { const next={...taken,[today]:{}}; setTaken(next); suppPersist("ailara:suppTaken",next); }}
-                  style={{ flex:1, background:"transparent", border:"1px solid rgba(16,185,129,0.12)", color:"#6B7280", padding:"8px", borderRadius:9, cursor:"pointer", fontSize:"0.73rem", fontFamily:"'Inter',sans-serif" }}>
+                  style={{ flex:1, background:"#FFFFFF", border:"1px solid #141414", color:"#141414", padding:"8px", cursor:"pointer", fontSize:"0.7rem", fontFamily:HEAVY_FONT, fontWeight:700, letterSpacing:"0.02em", textTransform:"uppercase" }}>
                   Reset today
                 </button>
                 {mySupplements.length > 0 && (
                   <button onClick={() => setShareModal({ type:"supplements", data:{ mySupplements, blockItems, TIME_BLOCKS } })}
-                    style={{ background:"rgba(59,130,246,0.1)", border:"1px solid rgba(59,130,246,0.3)", color:"#1D4ED8", padding:"8px 16px", borderRadius:9, cursor:"pointer", fontSize:"0.73rem", fontFamily:"'Inter',sans-serif", fontWeight:700, display:"flex", alignItems:"center", gap:5, flexShrink:0 }}>
+                    style={{ background:"#F4B400", border:"none", color:"#141414", padding:"8px 16px", cursor:"pointer", fontSize:"0.7rem", fontFamily:HEAVY_FONT, fontWeight:800, letterSpacing:"0.02em", textTransform:"uppercase", display:"flex", alignItems:"center", gap:5, flexShrink:0 }}>
                     📤 Share Protocol
                   </button>
                 )}
@@ -6252,27 +6252,27 @@ function SupplementTracker({ profile }) {
       {view === "stack" && (
         <div style={{ animation:"fadeUp 0.3s ease" }}>
           <button onClick={() => setShowStacks(!showStacks)}
-            style={{ width:"100%", display:"flex", alignItems:"center", justifyContent:"space-between", background:"rgba(16,185,129,0.07)", border:"1px solid rgba(16,185,129,0.25)", borderRadius:12, padding:"11px 16px", cursor:"pointer", marginBottom:14, fontFamily:"'Inter',sans-serif" }}>
-            <span style={{ color:"#0F766E", fontWeight:600, fontSize:"0.82rem" }}>✨ Quick Start Stacks</span>
-            <span style={{ color:"#6B7280", fontSize:"0.75rem" }}>{showStacks ? "▲ Close" : "▼ Browse"}</span>
+            style={{ width:"100%", display:"flex", alignItems:"center", justifyContent:"space-between", background:"#FFFFFF", border:"1px solid #141414", padding:"11px 16px", cursor:"pointer", marginBottom:14, fontFamily:HEAVY_FONT }}>
+            <span style={{ color:"#141414", fontWeight:800, fontSize:"0.72rem", letterSpacing:"0.03em", textTransform:"uppercase" }}>✨ Quick Start Stacks</span>
+            <span style={{ color:"#5B6572", fontSize:"0.72rem" }}>{showStacks ? "▲ Close" : "▼ Browse"}</span>
           </button>
 
           {showStacks && (
-            <div style={{ display:"grid", gap:8, marginBottom:16, animation:"fadeUp 0.2s ease" }}>
-              {QUICK_STACKS.map(qs => (
-                <div key={qs.name} style={{ background:"rgba(0,0,0,0.03)", border:"1px solid rgba(16,185,129,0.12)", borderRadius:12, padding:"13px 15px", display:"flex", alignItems:"center", gap:12 }}>
+            <div style={{ border:"1px solid #141414", marginBottom:16, animation:"fadeUp 0.2s ease" }}>
+              {QUICK_STACKS.map((qs,qi) => (
+                <div key={qs.name} style={{ borderTop:qi===0?"none":"1px solid #E6E4DF", padding:"13px 15px", display:"flex", alignItems:"center", gap:12 }}>
                   <span style={{ fontSize:22, flexShrink:0 }}>{qs.icon}</span>
                   <div style={{ flex:1 }}>
-                    <div style={{ color:"#1A1D1B", fontWeight:700, fontSize:"0.84rem", marginBottom:2 }}>{qs.name}</div>
-                    <div style={{ color:"#4B5563", fontSize:"0.81rem", marginBottom:6 }}>{qs.desc}</div>
+                    <div style={{ color:"#141414", fontWeight:700, fontSize:"0.84rem", marginBottom:2 }}>{qs.name}</div>
+                    <div style={{ color:"#5B6572", fontSize:"0.81rem", marginBottom:6 }}>{qs.desc}</div>
                     <div style={{ display:"flex", flexWrap:"wrap", gap:4 }}>
                       {qs.supplements.map(n => (
-                        <span key={n} style={{ fontSize:"0.72rem", color:"#0F766E", background:"rgba(16,185,129,0.08)", border:"1px solid rgba(16,185,129,0.2)", padding:"1px 7px", borderRadius:10 }}>{n}</span>
+                        <span key={n} style={{ fontSize:"0.68rem", color:"#141414", border:"1px solid #E6E4DF", padding:"1px 7px" }}>{n}</span>
                       ))}
                     </div>
                   </div>
                   <button onClick={() => loadQuickStack(qs)}
-                    style={{ background:"#10B981", border:"none", color:"white", padding:"7px 14px", borderRadius:8, cursor:"pointer", fontSize:"0.73rem", fontFamily:"'Inter',sans-serif", fontWeight:700, flexShrink:0 }}>
+                    style={{ background:"#F4B400", border:"none", color:"#141414", padding:"7px 14px", cursor:"pointer", fontSize:"0.7rem", fontFamily:HEAVY_FONT, fontWeight:800, letterSpacing:"0.02em", textTransform:"uppercase", flexShrink:0 }}>
                     Load
                   </button>
                 </div>
@@ -6281,12 +6281,12 @@ function SupplementTracker({ profile }) {
           )}
 
           {suggested.length > 0 && (
-            <div style={{ background:"rgba(16,185,129,0.05)", border:"1px solid rgba(16,185,129,0.12)", borderRadius:10, padding:"12px 14px", marginBottom:16 }}>
-              <div style={{ fontSize:"0.72rem", fontWeight:700, letterSpacing:"0.12em", textTransform:"uppercase", color:"#047857", marginBottom:10 }}>Suggested for your profile</div>
-              <div style={{ display:"flex", flexWrap:"wrap", gap:7 }}>
+            <div style={{ border:"1px solid #141414", padding:"12px 14px", marginBottom:16 }}>
+              <div style={{ fontSize:"0.68rem", fontFamily:HEAVY_FONT, fontWeight:800, letterSpacing:"0.08em", textTransform:"uppercase", color:"#141414", marginBottom:10 }}>Suggested for your profile</div>
+              <div style={{ display:"flex", flexWrap:"wrap", gap:6 }}>
                 {suggested.slice(0,5).map(s => (
                   <button key={s.name} onClick={() => addSupplement(s)}
-                    style={{ background:"rgba(16,185,129,0.08)", border:"1px solid rgba(16,185,129,0.25)", borderRadius:20, padding:"5px 12px", fontSize:"0.75rem", color:"#0F766E", cursor:"pointer", fontFamily:"'Inter',sans-serif", fontWeight:500, display:"flex", alignItems:"center", gap:4 }}>
+                    style={{ background:"#FFFFFF", border:"1px solid #141414", borderRadius:4, padding:"5px 12px", fontSize:"0.74rem", color:"#141414", cursor:"pointer", fontFamily:"'Inter',sans-serif", fontWeight:500, display:"flex", alignItems:"center", gap:4 }}>
                     <span style={{ fontWeight:800, fontSize:"0.75rem" }}>+</span>{s.name}
                   </button>
                 ))}
@@ -6295,7 +6295,7 @@ function SupplementTracker({ profile }) {
           )}
 
           {mySupplements.length === 0 ? (
-            <div style={{ textAlign:"center", padding:"24px", color:"#4B5563", fontSize:"0.82rem" }}>
+            <div style={{ textAlign:"center", padding:"24px", color:"#5B6572", fontSize:"0.82rem" }}>
               No supplements yet. Use Quick Start Stacks above or browse the Library.
             </div>
           ) : (
@@ -6306,28 +6306,28 @@ function SupplementTracker({ profile }) {
                 <div key={block.key} style={{ marginBottom:18 }}>
                   <div style={{ display:"flex", alignItems:"center", gap:6, marginBottom:8 }}>
                     <span style={{ fontSize:15 }}>{block.icon}</span>
-                    <span style={{ fontSize:"0.75rem", fontWeight:700, letterSpacing:"0.12em", textTransform:"uppercase", color:block.color }}>{block.label}</span>
+                    <span style={{ fontSize:"0.68rem", fontFamily:HEAVY_FONT, fontWeight:800, letterSpacing:"0.08em", textTransform:"uppercase", color:"#141414" }}>{block.label}</span>
                   </div>
-                  <div style={{ display:"grid", gap:7 }}>
-                    {items.map(s => (
-                      <div key={s.name} style={{ background:"#F2F3F1", border:"1px solid rgba(16,185,129,0.12)", borderRadius:10, padding:"11px 13px", display:"flex", alignItems:"flex-start", gap:10 }}>
+                  <div style={{ border:"1px solid #141414" }}>
+                    {items.map((s,si) => (
+                      <div key={s.name} style={{ background:"#FFFFFF", borderTop:si===0?"none":"1px solid #E6E4DF", padding:"11px 13px", display:"flex", alignItems:"flex-start", gap:10 }}>
                         <div style={{ flex:1 }}>
                           <div style={{ display:"flex", alignItems:"center", gap:7, marginBottom:3 }}>
-                            <span style={{ color:"#1A1D1B", fontWeight:600, fontSize:"0.84rem" }}>{s.name}</span>
-                            <span style={{ fontSize:"0.72rem", fontWeight:700, textTransform:"uppercase", color:CATEGORY_COLORS[s.category]||"#047857", background:(CATEGORY_COLORS[s.category]||"#10B981")+"18", padding:"1px 6px", borderRadius:7 }}>{s.category}</span>
+                            <span style={{ color:"#141414", fontWeight:600, fontSize:"0.84rem" }}>{s.name}</span>
+                            <span style={{ fontSize:"0.64rem", fontFamily:HEAVY_FONT, fontWeight:700, letterSpacing:"0.03em", textTransform:"uppercase", color:"#141414", border:"1px solid #141414", padding:"1px 6px" }}>{s.category}</span>
                           </div>
-                          <div style={{ color:"#6B7280", fontSize:"0.81rem" }}>{s.dose} · {s.timing}</div>
-                          {s.notes && <div style={{ color:"#6B7280", fontSize:"0.79rem", lineHeight:1.4, marginTop:4 }}>{s.notes}</div>}
+                          <div style={{ color:"#5B6572", fontSize:"0.81rem" }}>{s.dose} · {s.timing}</div>
+                          {s.notes && <div style={{ color:"#5B6572", fontSize:"0.79rem", lineHeight:1.4, marginTop:4 }}>{s.notes}</div>}
                           {(s.brandUrl || s.brand2Url) && (
                             <div style={{ display:"flex", gap:5, marginTop:6, flexWrap:"wrap" }}>
-                              {s.brandUrl && <a href={s.brandUrl} target="_blank" rel="noopener noreferrer" style={{ fontSize:"0.75rem", color:"#92400E", textDecoration:"none", background:"rgba(245,158,11,0.1)", padding:"2px 8px", borderRadius:6, border:"1px solid rgba(245,158,11,0.22)", fontWeight:600 }}>🛒 {s.brand}</a>}
-                              {s.brand2Url && <a href={s.brand2Url} target="_blank" rel="noopener noreferrer" style={{ fontSize:"0.75rem", color:"#1D4ED8", textDecoration:"none", background:"rgba(59,130,246,0.1)", padding:"2px 8px", borderRadius:6, border:"1px solid rgba(59,130,246,0.22)", fontWeight:600 }}>🛒 {s.brand2}</a>}
-                              {s.pubmed && <a href={s.pubmed} target="_blank" rel="noopener noreferrer" style={{ fontSize:"0.75rem", color:"#0F766E", textDecoration:"none", background:"rgba(16,185,129,0.08)", padding:"2px 8px", borderRadius:6, border:"1px solid rgba(16,185,129,0.18)" }}>📄 Research</a>}
+                              {s.brandUrl && <a href={s.brandUrl} target="_blank" rel="noopener noreferrer" style={{ fontSize:"0.72rem", color:"#141414", textDecoration:"none", background:"#F4B400", padding:"2px 8px", border:"1px solid #141414", fontWeight:600 }}>🛒 {s.brand}</a>}
+                              {s.brand2Url && <a href={s.brand2Url} target="_blank" rel="noopener noreferrer" style={{ fontSize:"0.72rem", color:"#141414", textDecoration:"none", background:"#F4B400", padding:"2px 8px", border:"1px solid #141414", fontWeight:600 }}>🛒 {s.brand2}</a>}
+                              {s.pubmed && <a href={s.pubmed} target="_blank" rel="noopener noreferrer" style={{ fontSize:"0.72rem", color:"#141414", textDecoration:"none", background:"#FFFFFF", padding:"2px 8px", border:"1px solid #141414" }}>📄 Research</a>}
                             </div>
                           )}
                         </div>
                         <button onClick={() => removeSupplement(s.name)}
-                          style={{ background:"transparent", border:"1px solid rgba(16,185,129,0.12)", color:"#6B7280", padding:"3px 9px", borderRadius:7, cursor:"pointer", fontSize:"0.8rem", flexShrink:0, fontFamily:"'Inter',sans-serif" }}>
+                          style={{ background:"#FFFFFF", border:"1px solid #141414", color:"#141414", padding:"3px 9px", cursor:"pointer", fontSize:"0.8rem", flexShrink:0, fontFamily:"'Inter',sans-serif" }}>
                           ×
                         </button>
                       </div>
@@ -6342,39 +6342,39 @@ function SupplementTracker({ profile }) {
 
       {view === "library" && (
         <div style={{ animation:"fadeUp 0.3s ease" }}>
-          <div style={{ fontSize:"0.72rem", fontWeight:700, textTransform:"uppercase", letterSpacing:"0.12em", color:"#6B7280", marginBottom:10 }}>
+          <div style={{ fontSize:"0.68rem", fontFamily:HEAVY_FONT, fontWeight:800, textTransform:"uppercase", letterSpacing:"0.08em", color:"#5B6572", marginBottom:10 }}>
             {SUPPLEMENT_LIBRARY.length} supplements · tap to add to your stack
           </div>
           <div style={{ display:"flex", flexWrap:"wrap", gap:6, marginBottom:14 }}>
             {ALL_CATS.map(cat => (
               <button key={cat} onClick={() => setFilterCat(cat)}
-                style={{ background: filterCat===cat ? (CATEGORY_COLORS[cat]||"#10B981")+"22" : "transparent", border:"1px solid "+(filterCat===cat ? (CATEGORY_COLORS[cat]||"#10B981") : "rgba(16,185,129,0.12)"), borderRadius:20, padding:"3px 10px", fontSize:"0.78rem", fontWeight:600, color: filterCat===cat ? (CATEGORY_COLORS[cat]||"#0F766E") : "#4B5563", cursor:"pointer", fontFamily:"'Inter',sans-serif", transition:"all 0.12s" }}>
+                style={{ background: filterCat===cat ? "#141414" : "#FFFFFF", border:"1px solid #141414", borderRadius:4, padding:"4px 11px", fontSize:"0.72rem", fontWeight:700, color: filterCat===cat ? "#FFFFFF" : "#141414", cursor:"pointer", fontFamily:"'Inter',sans-serif", transition:"all 0.12s" }}>
                 {cat}
               </button>
             ))}
           </div>
-          <div style={{ display:"grid", gap:7 }}>
-            {filteredLibrary.map(s => {
+          <div style={{ border:"1px solid #141414" }}>
+            {filteredLibrary.map((s,si) => {
               const inStack = !!mySupplements.find(m => m.name === s.name);
               return (
-                <div key={s.name} style={{ background: inStack ? "rgba(16,185,129,0.06)" : "#F2F3F1", border:"1px solid "+(inStack ? "rgba(16,185,129,0.3)" : "rgba(16,185,129,0.12)"), borderRadius:11, padding:"12px 13px", display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:10 }}>
+                <div key={s.name} style={{ background: inStack ? "#FBF7EF" : "#FFFFFF", borderTop:si===0?"none":"1px solid #E6E4DF", padding:"12px 13px", display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:10 }}>
                   <div style={{ flex:1 }}>
                     <div style={{ display:"flex", alignItems:"center", gap:7, marginBottom:3, flexWrap:"wrap" }}>
-                      <span style={{ color:"#1A1D1B", fontSize:"0.85rem", fontWeight:600 }}>{s.name}</span>
-                      <span style={{ fontSize:"0.72rem", fontWeight:700, textTransform:"uppercase", letterSpacing:"0.08em", color:CATEGORY_COLORS[s.category]||"#047857", background:(CATEGORY_COLORS[s.category]||"#10B981")+"18", padding:"1px 7px", borderRadius:8 }}>{s.category}</span>
-                      {inStack && <span style={{ fontSize:"0.72rem", color:"#047857", fontWeight:700 }}>✓ In Stack</span>}
+                      <span style={{ color:"#141414", fontSize:"0.85rem", fontWeight:600 }}>{s.name}</span>
+                      <span style={{ fontSize:"0.64rem", fontFamily:HEAVY_FONT, fontWeight:700, textTransform:"uppercase", letterSpacing:"0.03em", color:"#141414", border:"1px solid #141414", padding:"1px 7px" }}>{s.category}</span>
+                      {inStack && <span style={{ fontSize:"0.72rem", color:"#141414", fontWeight:700 }}>✓ In Stack</span>}
                     </div>
-                    <div style={{ color:"#6B7280", fontSize:"0.81rem", marginBottom:3 }}>{s.dose} · {s.timing}</div>
-                    {s.notes && <div style={{ color:"#6B7280", fontSize:"0.81rem", lineHeight:1.5, marginBottom:5 }}>{s.notes}</div>}
+                    <div style={{ color:"#5B6572", fontSize:"0.81rem", marginBottom:3 }}>{s.dose} · {s.timing}</div>
+                    {s.notes && <div style={{ color:"#5B6572", fontSize:"0.81rem", lineHeight:1.5, marginBottom:5 }}>{s.notes}</div>}
                     <div style={{ display:"flex", flexWrap:"wrap", gap:5 }}>
-                      {s.pubmed && <a href={s.pubmed} target="_blank" rel="noopener noreferrer" style={{ fontSize:"0.75rem", color:"#0F766E", textDecoration:"none", background:"rgba(16,185,129,0.08)", padding:"2px 7px", borderRadius:6, border:"1px solid rgba(16,185,129,0.18)" }}>📄 NIH</a>}
-                      {s.articles && s.articles.map((a,ai) => <a key={ai} href={a.url} target="_blank" rel="noopener noreferrer" style={{fontSize:"0.75rem",color:"#92400E",textDecoration:"none",background:"rgba(245,158,11,0.08)",padding:"2px 7px",borderRadius:6,border:"1px solid rgba(245,158,11,0.2)"}}>{a.src}</a>)}
-                      {s.brandUrl && <a href={s.brandUrl} target="_blank" rel="noopener noreferrer" style={{fontSize:"0.75rem",color:"#92400E",textDecoration:"none",background:"rgba(245,158,11,0.08)",padding:"2px 7px",borderRadius:6,border:"1px solid rgba(245,158,11,0.2)",fontWeight:600}}>🛒 {s.brand}</a>}
-                      {s.brand2Url && <a href={s.brand2Url} target="_blank" rel="noopener noreferrer" style={{fontSize:"0.75rem",color:"#1D4ED8",textDecoration:"none",background:"rgba(59,130,246,0.08)",padding:"2px 7px",borderRadius:6,border:"1px solid rgba(59,130,246,0.2)",fontWeight:600}}>🛒 {s.brand2}</a>}
+                      {s.pubmed && <a href={s.pubmed} target="_blank" rel="noopener noreferrer" style={{ fontSize:"0.72rem", color:"#141414", textDecoration:"none", background:"#FFFFFF", padding:"2px 7px", border:"1px solid #141414" }}>📄 NIH</a>}
+                      {s.articles && s.articles.map((a,ai) => <a key={ai} href={a.url} target="_blank" rel="noopener noreferrer" style={{fontSize:"0.72rem",color:"#141414",textDecoration:"none",background:"#FFFFFF",padding:"2px 7px",border:"1px solid #141414"}}>{a.src}</a>)}
+                      {s.brandUrl && <a href={s.brandUrl} target="_blank" rel="noopener noreferrer" style={{fontSize:"0.72rem",color:"#141414",textDecoration:"none",background:"#F4B400",padding:"2px 7px",border:"1px solid #141414",fontWeight:600}}>🛒 {s.brand}</a>}
+                      {s.brand2Url && <a href={s.brand2Url} target="_blank" rel="noopener noreferrer" style={{fontSize:"0.72rem",color:"#141414",textDecoration:"none",background:"#F4B400",padding:"2px 7px",border:"1px solid #141414",fontWeight:600}}>🛒 {s.brand2}</a>}
                     </div>
                   </div>
                   <button onClick={() => inStack ? removeSupplement(s.name) : addSupplement(s)}
-                    style={{ background: inStack ? "transparent" : "#10B981", border: inStack ? "1px solid rgba(16,185,129,0.12)" : "none", color: inStack ? "#4B5563" : "white", padding:"6px 13px", borderRadius:8, cursor:"pointer", fontSize:"0.73rem", fontFamily:"'Inter',sans-serif", fontWeight:700, flexShrink:0, whiteSpace:"nowrap", transition:"all 0.15s" }}>
+                    style={{ background: inStack ? "#FFFFFF" : "#F4B400", border: "1px solid #141414", color: "#141414", padding:"6px 13px", cursor:"pointer", fontSize:"0.72rem", fontFamily:HEAVY_FONT, fontWeight:800, letterSpacing:"0.02em", textTransform:"uppercase", flexShrink:0, whiteSpace:"nowrap", transition:"all 0.15s" }}>
                     {inStack ? "Remove" : "+ Stack"}
                   </button>
                 </div>
@@ -6387,15 +6387,12 @@ function SupplementTracker({ profile }) {
       {/* ── Custom Supplement Add Modal ── */}
       {showCustomAdd && (
         <div onClick={e => { if (e.target === e.currentTarget) setShowCustomAdd(false); }}
-          style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.4)", backdropFilter:"blur(12px)", zIndex:500, display:"flex", alignItems:"flex-end", justifyContent:"center" }}>
+          style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.4)", backdropFilter:"blur(8px)", zIndex:500, display:"flex", alignItems:"flex-end", justifyContent:"center" }}>
           <div onClick={e => e.stopPropagation()}
-            style={{ background:"#EEF0ED", border:"1px solid rgba(16,185,129,0.3)", borderRadius:"20px 20px 0 0", padding:"24px 20px 44px", width:"100%", maxWidth:520, animation:"fadeUp 0.22s ease" }}>
+            style={{ width:"100%", maxWidth:520, background:"#FFFFFF", border:"1px solid #141414", borderRadius:0, padding:"22px 20px 30px", animation:"fadeUp 0.22s ease" }}>
 
-            {/* Handle */}
-            <div style={{ width:36, height:4, background:"rgba(0,0,0,0.15)", borderRadius:2, margin:"0 auto 18px" }} />
-
-            <div style={{ fontFamily:"'Playfair Display',serif", fontWeight:800, color:"#1A1D1B", fontSize:"1rem", marginBottom:4 }}>💊 Add Custom Supplement</div>
-            <div style={{ fontSize:"0.8rem", color:"#4B5563", marginBottom:18, lineHeight:1.5 }}>Track any supplement you're taking. We'll also suggest where to buy it.</div>
+            <div style={{ fontFamily:HEAVY_FONT, fontWeight:900, color:"#141414", fontSize:"1.05rem", letterSpacing:"-0.01em", textTransform:"uppercase", marginBottom:4 }}>💊 Add Custom Supplement</div>
+            <div style={{ fontSize:"0.8rem", color:"#5B6572", marginBottom:18, lineHeight:1.5 }}>Track any supplement you're taking. We'll also suggest where to buy it.</div>
 
             {/* Form fields */}
             {[
@@ -6405,23 +6402,23 @@ function SupplementTracker({ profile }) {
               { label:"Notes / Purpose", key:"notes", placeholder:"e.g. For sleep and muscle recovery", type:"text" },
             ].map(field => (
               <div key={field.key} style={{ marginBottom:12 }}>
-                <div style={{ fontSize:"0.75rem", fontWeight:700, color:"#4B5563", textTransform:"uppercase", letterSpacing:"0.08em", marginBottom:5 }}>{field.label}</div>
+                <div style={{ fontFamily:HEAVY_FONT, fontSize:"0.68rem", fontWeight:800, color:"#141414", textTransform:"uppercase", letterSpacing:"0.08em", marginBottom:6 }}>{field.label}</div>
                 <input
                   value={customForm[field.key]}
                   onChange={e => setCustomForm(f => ({ ...f, [field.key]: e.target.value }))}
                   placeholder={field.placeholder}
-                  style={{ width:"100%", background:"rgba(255,255,255,0.8)", border:"1px solid rgba(16,185,129,0.2)", borderRadius:10, padding:"10px 13px", color:"#1A1D1B", fontSize:"0.82rem", fontFamily:"'Inter',sans-serif", outline:"none", boxSizing:"border-box" }}
+                  style={{ width:"100%", background:"#FFFFFF", border:"1px solid #141414", borderRadius:4, padding:"9px 13px", color:"#141414", fontSize:"0.82rem", fontFamily:"'Inter',sans-serif", outline:"none", boxSizing:"border-box" }}
                 />
               </div>
             ))}
 
             {/* Timing selector */}
             <div style={{ marginBottom:16 }}>
-              <div style={{ fontSize:"0.75rem", fontWeight:700, color:"#4B5563", textTransform:"uppercase", letterSpacing:"0.08em", marginBottom:5 }}>When to Take</div>
-              <div style={{ display:"flex", flexWrap:"wrap", gap:6 }}>
+              <div style={{ fontFamily:HEAVY_FONT, fontSize:"0.68rem", fontWeight:800, color:"#141414", textTransform:"uppercase", letterSpacing:"0.08em", marginBottom:6 }}>When to Take</div>
+              <div style={{ display:"flex", flexWrap:"wrap", gap:5 }}>
                 {["Morning with food","Morning fasted","With lunch","Evening with food","Before bed","Pre-workout","Post-workout","With any meal"].map(t => (
                   <button key={t} onClick={() => setCustomForm(f => ({ ...f, timing: t }))}
-                    style={{ background: customForm.timing === t ? "rgba(16,185,129,0.2)" : "rgba(0,0,0,0.04)", border:`1px solid ${customForm.timing === t ? "rgba(16,185,129,0.5)" : "rgba(0,0,0,0.08)"}`, borderRadius:20, padding:"5px 12px", cursor:"pointer", fontSize:"0.78rem", color: customForm.timing === t ? "#0F766E" : "#4B5563", fontFamily:"'Inter',sans-serif", fontWeight: customForm.timing === t ? 700 : 400, transition:"all 0.12s" }}>
+                    style={{ background: customForm.timing === t ? "#141414" : "#FFFFFF", border:"1px solid #141414", borderRadius:4, padding:"4px 10px", cursor:"pointer", fontSize:"0.76rem", color: customForm.timing === t ? "#FFFFFF" : "#141414", fontFamily:"'Inter',sans-serif", fontWeight:600, transition:"all 0.12s" }}>
                     {t}
                   </button>
                 ))}
@@ -6430,21 +6427,21 @@ function SupplementTracker({ profile }) {
 
             {/* Buy links — shown when name is entered */}
             {customForm.name.length > 2 && (
-              <div style={{ background:"rgba(59,130,246,0.06)", border:"1px solid rgba(59,130,246,0.2)", borderRadius:12, padding:"12px 14px", marginBottom:16 }}>
-                <div style={{ fontSize:"0.75rem", fontWeight:700, color:"#1D4ED8", textTransform:"uppercase", letterSpacing:"0.08em", marginBottom:8 }}>🛒 Buy — Research-Backed Sources</div>
-                <div style={{ display:"flex", flexDirection:"column", gap:7 }}>
+              <div style={{ border:"1px solid #141414", padding:"12px 14px", marginBottom:16 }}>
+                <div style={{ fontFamily:HEAVY_FONT, fontSize:"0.68rem", fontWeight:800, color:"#141414", textTransform:"uppercase", letterSpacing:"0.08em", marginBottom:8 }}>🛒 Buy — Research-Backed Sources</div>
+                <div style={{ display:"flex", flexDirection:"column", gap:0, border:"1px solid #E6E4DF" }}>
                   {[
-                    { name:"BulkSupplements", color:"#92400E", url:`https://www.bulksupplements.com/search?q=${encodeURIComponent(customForm.name)}`, note:"Best value, pure powder/caps, lab-tested" },
-                    { name:"Naked Nutrition", color:"#047857", url:`https://www.nakednutrition.com/pages/search-results?q=${encodeURIComponent(customForm.name)}`, note:"Clean label, minimal ingredients" },
-                    { name:"Amazon",          color:"#C2410C", url:`https://www.amazon.com/s?k=${encodeURIComponent(customForm.name + " supplement")}`, note:"Wide selection, read labels carefully" },
-                  ].map(s => (
+                    { name:"BulkSupplements", url:`https://www.bulksupplements.com/search?q=${encodeURIComponent(customForm.name)}`, note:"Best value, pure powder/caps, lab-tested" },
+                    { name:"Naked Nutrition", url:`https://www.nakednutrition.com/pages/search-results?q=${encodeURIComponent(customForm.name)}`, note:"Clean label, minimal ingredients" },
+                    { name:"Amazon",          url:`https://www.amazon.com/s?k=${encodeURIComponent(customForm.name + " supplement")}`, note:"Wide selection, read labels carefully" },
+                  ].map((s,si) => (
                     <a key={s.name} href={s.url} target="_blank" rel="noopener noreferrer"
-                      style={{ display:"flex", alignItems:"center", justifyContent:"space-between", textDecoration:"none", padding:"8px 10px", background:"rgba(0,0,0,0.03)", border:`1px solid ${s.color}25`, borderRadius:9 }}>
+                      style={{ display:"flex", alignItems:"center", justifyContent:"space-between", textDecoration:"none", padding:"8px 10px", borderTop:si===0?"none":"1px solid #E6E4DF" }}>
                       <div>
-                        <div style={{ fontSize:"0.72rem", fontWeight:700, color:s.color }}>{s.name}</div>
-                        <div style={{ fontSize:"0.72rem", color:"#4B5563" }}>{s.note}</div>
+                        <div style={{ fontSize:"0.72rem", fontWeight:700, color:"#141414" }}>{s.name}</div>
+                        <div style={{ fontSize:"0.72rem", color:"#5B6572" }}>{s.note}</div>
                       </div>
-                      <span style={{ fontSize:"0.75rem", color:s.color }}>→ Search</span>
+                      <span style={{ fontSize:"0.72rem", color:"#141414" }}>→ Search</span>
                     </a>
                   ))}
                 </div>
@@ -6452,9 +6449,9 @@ function SupplementTracker({ profile }) {
             )}
 
             {/* Actions */}
-            <div style={{ display:"flex", gap:10 }}>
+            <div style={{ display:"flex", gap:9 }}>
               <button onClick={() => { setShowCustomAdd(false); setCustomForm({ name:"", brand:"", dose:"", timing:"Morning with food", notes:"" }); }}
-                style={{ flex:1, background:"transparent", border:"1px solid rgba(0,0,0,0.1)", borderRadius:12, padding:"12px", color:"#4B5563", cursor:"pointer", fontSize:"0.82rem", fontFamily:"'Inter',sans-serif" }}>
+                style={{ flex:1, background:"#FFFFFF", border:"1px solid #141414", borderRadius:4, padding:"11px", color:"#141414", cursor:"pointer", fontSize:"0.78rem", fontFamily:HEAVY_FONT, fontWeight:700, letterSpacing:"0.03em", textTransform:"uppercase" }}>
                 Cancel
               </button>
               <button
@@ -6476,7 +6473,7 @@ function SupplementTracker({ profile }) {
                   setCustomForm({ name:"", brand:"", dose:"", timing:"Morning with food", notes:"" });
                   setView("today");
                 }}
-                style={{ flex:2, background: customForm.name.trim() && customForm.dose.trim() ? "linear-gradient(135deg,#10B981,#059669)" : "rgba(16,185,129,0.1)", border:"none", borderRadius:12, padding:"12px", color: customForm.name.trim() && customForm.dose.trim() ? "white" : "#6B7280", cursor: customForm.name.trim() && customForm.dose.trim() ? "pointer" : "default", fontSize:"0.88rem", fontFamily:"'Inter',sans-serif", fontWeight:700, transition:"all 0.15s" }}>
+                style={{ flex:2, background: customForm.name.trim() && customForm.dose.trim() ? "#F4B400" : "#E6E4DF", border:"none", borderRadius:4, padding:"11px", color:"#141414", cursor: customForm.name.trim() && customForm.dose.trim() ? "pointer" : "default", fontSize:"0.82rem", fontFamily:HEAVY_FONT, fontWeight:800, letterSpacing:"0.03em", textTransform:"uppercase", transition:"all 0.15s" }}>
                 Add to My Stack ✓
               </button>
             </div>
@@ -6487,12 +6484,11 @@ function SupplementTracker({ profile }) {
       {/* ── Supplement Edit Drawer ── */}
       {editingSupp && (
         <div onClick={() => setEditingSupp(null)}
-          style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.4)", backdropFilter:"blur(10px)", zIndex:400, display:"flex", alignItems:"flex-end", justifyContent:"center" }}>
+          style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.4)", backdropFilter:"blur(8px)", zIndex:400, display:"flex", alignItems:"flex-end", justifyContent:"center" }}>
           <div onClick={e => e.stopPropagation()}
-            style={{ background:"#EEF0ED", border:"1px solid rgba(139,92,246,0.35)", borderRadius:"20px 20px 0 0", padding:"24px 20px 44px", width:"100%", maxWidth:520, animation:"fadeUp 0.2s ease" }}>
-            <div style={{ width:36, height:4, background:"rgba(0,0,0,0.15)", borderRadius:2, margin:"0 auto 16px" }} />
-            <div style={{ fontFamily:"'Playfair Display',serif", fontWeight:800, color:"#1A1D1B", fontSize:"1rem", marginBottom:4 }}>✏️ Edit {editingSupp.name}</div>
-            <div style={{ color:"#4B5563", fontSize:"0.72rem", marginBottom:18 }}>Your changes override the default — stored to your profile.</div>
+            style={{ width:"100%", maxWidth:520, background:"#FFFFFF", border:"1px solid #141414", borderRadius:0, padding:"22px 20px 30px", animation:"fadeUp 0.2s ease" }}>
+            <div style={{ fontFamily:HEAVY_FONT, fontWeight:900, color:"#141414", fontSize:"1.05rem", letterSpacing:"-0.01em", textTransform:"uppercase", marginBottom:4 }}>✏️ Edit {editingSupp.name}</div>
+            <div style={{ color:"#5B6572", fontSize:"0.72rem", marginBottom:18 }}>Your changes override the default — stored to your profile.</div>
 
             {[
               { label:"💊 Dosage", field:"dose",   placeholder:editingSupp.dose    || "e.g. 5g",              type:"text" },
@@ -6500,19 +6496,19 @@ function SupplementTracker({ profile }) {
               { label:"🏷️ Brand",   field:"brand",  placeholder:editingSupp.brand   || "e.g. Thorne, NOW Foods", type:"text" },
             ].map(f => (
               <div key={f.field} style={{ marginBottom:14 }}>
-                <div style={{ fontSize:"0.78rem", fontWeight:700, color:"#0F766E", marginBottom:6 }}>{f.label}</div>
+                <div style={{ fontFamily:HEAVY_FONT, fontSize:"0.68rem", fontWeight:800, textTransform:"uppercase", letterSpacing:"0.06em", color:"#141414", marginBottom:7 }}>{f.label}</div>
                 <input
                   value={editingSupp[f.field] || ""}
                   onChange={e => setEditingSupp(prev => ({ ...prev, [f.field]: e.target.value }))}
                   placeholder={f.placeholder}
-                  style={{ width:"100%", background:"rgba(255,255,255,0.9)", border:"1px solid rgba(16,185,129,0.25)", borderRadius:10, padding:"10px 13px", color:"#1A1D1B", fontSize:"0.82rem", fontFamily:"'Inter',sans-serif", outline:"none", boxSizing:"border-box" }}
+                  style={{ width:"100%", background:"#FFFFFF", border:"1px solid #141414", borderRadius:4, padding:"9px 13px", color:"#141414", fontSize:"0.82rem", fontFamily:"'Inter',sans-serif", outline:"none", boxSizing:"border-box" }}
                 />
               </div>
             ))}
 
             <div style={{ display:"flex", gap:9, marginTop:20 }}>
               <button onClick={() => setEditingSupp(null)}
-                style={{ flex:1, background:"transparent", border:"1px solid rgba(0,0,0,0.1)", borderRadius:11, padding:"12px", color:"#4B5563", cursor:"pointer", fontSize:"0.82rem", fontFamily:"'Inter',sans-serif" }}>
+                style={{ flex:1, background:"#FFFFFF", border:"1px solid #141414", borderRadius:4, padding:"11px", color:"#141414", cursor:"pointer", fontSize:"0.78rem", fontFamily:HEAVY_FONT, fontWeight:700, letterSpacing:"0.03em", textTransform:"uppercase" }}>
                 Cancel
               </button>
               <button onClick={() => {
@@ -6522,13 +6518,14 @@ function SupplementTracker({ profile }) {
                 suppStore.set("ailara:suppCustom", JSON.stringify(updated));
                 setEditingSupp(null);
               }}
-                style={{ flex:2, background:"linear-gradient(135deg,#7C3AED,#6D28D9)", border:"none", borderRadius:11, padding:"12px", color:"white", cursor:"pointer", fontSize:"0.88rem", fontFamily:"'Inter',sans-serif", fontWeight:700 }}>
+                style={{ flex:2, background:"#F4B400", border:"none", borderRadius:4, padding:"11px", color:"#141414", cursor:"pointer", fontSize:"0.82rem", fontFamily:HEAVY_FONT, fontWeight:800, letterSpacing:"0.03em", textTransform:"uppercase" }}>
                 Save Changes ✓
               </button>
             </div>
           </div>
         </div>
       )}
+    </div>
     </div>
   );
 }
@@ -7275,7 +7272,8 @@ function Chat({ profile, isPro, tier, plansUsed, aiQuestionsToday, setAiQuestion
             {featured ? (
               <a href={featured.url} target="_blank" rel="noopener noreferrer"
                 style={{ display: "block", position: "relative", border: `1px solid ${LS.ink}`, marginBottom: 28, textDecoration: "none", aspectRatio: "16 / 9", overflow: "hidden", background: LS.navy }}>
-                <img src={`https://img.youtube.com/vi/${featuredId}/hqdefault.jpg`} alt={featured.title}
+                <img src={`https://img.youtube.com/vi/${featuredId}/maxresdefault.jpg`} alt={featured.title}
+                  onError={e => { e.target.onerror = null; e.target.src = `https://img.youtube.com/vi/${featuredId}/hqdefault.jpg`; }}
                   style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
                 <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(11,27,43,0.92) 0%, rgba(11,27,43,0.15) 55%, transparent 100%)" }} />
                 {/* two-tone vertical accent bar on the left edge */}
@@ -9731,7 +9729,11 @@ const WORKOUT_LIBRARY = [
 // Flat array of every video in the library, with creator context attached.
 // Built once at load time. Used by the search_workouts tool in the AI coach.
 const VIDEO_INDEX = WORKOUT_LIBRARY.flatMap(creator =>
-  (creator.videos || []).map(v => ({
+  (creator.videos || []).map(v => {
+    // Real YouTube video ID lives in the stored URL — usually the `v=` param,
+    // occasionally the youtu.be/ or /embed/ short form. No lookbehind.
+    const ytm = (v.url || "").match(/(?:[?&]v=|youtu\.be\/|\/embed\/)([^?&/]+)/);
+    return {
     title:   v.title   || "",
     series:  v.series  || "",
     type:    v.type    || "",
@@ -9741,13 +9743,70 @@ const VIDEO_INDEX = WORKOUT_LIBRARY.flatMap(creator =>
     creator: creator.creator,
     tag:     creator.tag,
     url:     v.url || "",
+    youtubeId: ytm ? ytm[1] : null,
     // Search tokens — lowercased for fast matching
     _tokens: [
       v.title, v.series, v.type, v.level, v.bodyPart,
       creator.creator, creator.tag, creator.bio
     ].filter(Boolean).join(" ").toLowerCase(),
-  }))
+    };
+  })
 );
+
+// ─── INSTRUCTOR CHANNEL AVATARS ──────────────────────────────────────────────
+// Real YouTube channel photos, resolved ONCE via the Data API v3 channels.list
+// (part=snippet → snippet.thumbnails.medium.url) and baked in here so the app
+// makes zero API calls at runtime. Regenerate with:
+//   YOUTUBE_API_KEY=xxx node scripts/fetch-channel-avatars.mjs
+// then paste its output over this object literal. Keys are creator names exactly
+// as they appear in WORKOUT_LIBRARY. Creators with no resolvable channel
+// (playlist-only "creators", dead vanity URLs) are simply absent → the UI
+// falls back to a gold monogram tile.
+const CREATOR_AVATARS = {
+  // "Caroline Girvan": { channelId: "UC...", avatar: "https://yt3.ggpht.com/..." },
+};
+
+// Real avatar URL for a creator, or null when we couldn't resolve their channel.
+function creatorAvatar(name) {
+  const e = CREATOR_AVATARS[name];
+  return (e && e.avatar) || null;
+}
+
+// Two-character monogram from a creator name, with emoji / punctuation stripped.
+function creatorMonogram(name) {
+  const words = String(name || "")
+    .replace(/[^\p{L}\p{N}\s]/gu, " ")
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean);
+  if (!words.length) return "?";
+  if (words.length === 1) return words[0].slice(0, 2).toUpperCase();
+  return (words[0][0] + words[1][0]).toUpperCase();
+}
+
+// Square instructor photo: real channel avatar when known, else a gold monogram
+// block. Hard 1px border, no radius — matches the coach's-brief treatment.
+function InstructorAvatar({ name, size = 44 }) {
+  const src = creatorAvatar(name);
+  const [failed, setFailed] = useState(false);
+  if (src && !failed) {
+    return (
+      <img
+        src={src}
+        alt={name}
+        onError={() => setFailed(true)}
+        style={{ width: size, height: size, objectFit: "cover", border: "1px solid #141414", flexShrink: 0, display: "block" }}
+      />
+    );
+  }
+  return (
+    <div style={{ width: size, height: size, background: "#F4B400", border: "1px solid #141414", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+      <span style={{ fontFamily: HEAVY_FONT, fontWeight: 900, color: "#141414", fontSize: Math.round(size * 0.36), letterSpacing: "-0.02em" }}>
+        {creatorMonogram(name)}
+      </span>
+    </div>
+  );
+}
 
 // Search function — called by the search_workouts tool
 function searchVideoIndex(query = "", filters = {}) {
@@ -9901,7 +9960,7 @@ function Workouts({ profile, isPro, onUpgrade }) {
             ← Back to All
           </button>
           <div style={{ display:"flex", alignItems:"center", gap:14 }}>
-            <div style={{ width:52, height:52, border:"1px solid #141414", display:"flex", alignItems:"center", justifyContent:"center", fontSize:24, flexShrink:0 }}>{c.icon}</div>
+            <InstructorAvatar name={c.creator} size={52} />
             <div style={{ flex:1 }}>
               <div style={{ fontFamily:HEAVY_FONT, fontSize:"1.3rem", fontWeight:900, color:"#141414", letterSpacing:"-0.02em", textTransform:"uppercase", lineHeight:1.05 }}>{c.creator}</div>
               <div style={{ display:"flex", gap:6, marginTop:5, flexWrap:"wrap" }}>
@@ -9923,7 +9982,7 @@ function Workouts({ profile, isPro, onUpgrade }) {
           </div>
           {(() => {
             const getYouTubeId = (url) => {
-              const m = url.match(/[?&]v=([^&]+)/);
+              const m = (url || "").match(/(?:[?&]v=|youtu\.be\/|\/embed\/)([^?&/]+)/);
               return m ? m[1] : null;
             };
             const openVideo = (v) => {
@@ -10168,7 +10227,7 @@ function Workouts({ profile, isPro, onUpgrade }) {
                 {videoModal.youtubeId && (
                   <img
                     src={`https://img.youtube.com/vi/${videoModal.youtubeId}/maxresdefault.jpg`}
-                    onError={e => { e.target.src = `https://img.youtube.com/vi/${videoModal.youtubeId}/hqdefault.jpg`; }}
+                    onError={e => { e.target.onerror = null; e.target.src = `https://img.youtube.com/vi/${videoModal.youtubeId}/hqdefault.jpg`; }}
                     alt={videoModal.title}
                     style={{ position:"absolute", top:0, left:0, width:"100%", height:"100%", objectFit:"cover" }}
                   />
@@ -10453,7 +10512,7 @@ Return: {"programName":"...","split":"...","days":[{"day":"Monday","focus":"..."
                 <div key={i} onClick={()=>setVideoModal(v)} style={{flexShrink:0,width:155,background:"#FFFFFF",border:"1px solid #141414",overflow:"hidden",cursor:"pointer"}}>
                   <div style={{position:"relative",paddingBottom:"56.25%",background:"#0B1B2B"}}>
                     <div style={{position:"absolute",inset:0,backgroundImage:"radial-gradient(rgba(244,180,0,0.12) 1px, transparent 1px)",backgroundSize:"12px 12px"}}/>
-                    {v.youtubeId&&<img src={`https://img.youtube.com/vi/${v.youtubeId}/hqdefault.jpg`} alt={v.title} style={{position:"absolute",top:0,left:0,width:"100%",height:"100%",objectFit:"cover"}}/>}
+                    {v.youtubeId&&<img src={`https://img.youtube.com/vi/${v.youtubeId}/maxresdefault.jpg`} alt={v.title} onError={e=>{e.target.onerror=null;e.target.src=`https://img.youtube.com/vi/${v.youtubeId}/hqdefault.jpg`;}} style={{position:"absolute",top:0,left:0,width:"100%",height:"100%",objectFit:"cover"}}/>}
                     <div style={{position:"absolute",inset:0,display:"flex",alignItems:"center",justifyContent:"center"}}>
                       <div style={{width:32,height:32,background:"#F4B400",display:"flex",alignItems:"center",justifyContent:"center"}}><span style={{fontSize:12,marginLeft:2,color:"#141414"}}>▶</span></div>
                     </div>
@@ -10509,7 +10568,7 @@ Return: {"programName":"...","split":"...","days":[{"day":"Monday","focus":"..."
                     style={{ background:"#FFFFFF", borderTop: ci >= 2 ? "1px solid #E6E4DF" : "none", borderLeft: ci % 2 === 1 ? "1px solid #E6E4DF" : "none", padding:"14px 12px", cursor:"pointer", transition:"background 0.12s" }}
                     onMouseEnter={e => { e.currentTarget.style.background = "#FBF7EF"; }}
                     onMouseLeave={e => { e.currentTarget.style.background = "#FFFFFF"; }}>
-                    <div style={{ width:44, height:44, border:"1px solid #141414", display:"flex", alignItems:"center", justifyContent:"center", fontSize:22, margin:"0 auto 8px" }}>{c.icon}</div>
+                    <div style={{ display:"flex", justifyContent:"center", marginBottom:8 }}><InstructorAvatar name={c.creator} size={44} /></div>
                     <div style={{ fontFamily:HEAVY_FONT, fontWeight:900, color:"#141414", fontSize:"0.82rem", letterSpacing:"-0.01em", textTransform:"uppercase", lineHeight:1.15, textAlign:"center", marginBottom:6 }}>{c.creator}</div>
                     <div style={{ display:"flex", justifyContent:"center", gap:4, flexWrap:"wrap", marginBottom:8 }}>
                       <span style={{ fontSize:"0.68rem", fontFamily:HEAVY_FONT, fontWeight:700, letterSpacing:"0.03em", textTransform:"uppercase", color:"#141414", border:"1px solid #141414", padding:"2px 7px" }}>{c.tag}</span>
@@ -10792,7 +10851,7 @@ function NutritionHub({ profile }) {
                     {filtered.map((r, ri) => {
                       const warn = allergenWarn(r);
                       const isHighlight = highlightRecipe && r.name.toLowerCase().includes(highlightRecipe.toLowerCase());
-                      const [expanded, setExpanded] = React.useState(false);
+                      const [expanded, setExpanded] = useState(false);
                       return (
                         <div key={ri} ref={isHighlight ? highlightRef : null}
                           style={{ borderTop: ri === 0 ? "none" : "1px solid #E6E4DF", background: isHighlight ? "#FBF7EF" : "transparent" }}>
@@ -11448,7 +11507,6 @@ function ProgressTracker({ profile, isPro, onUpgrade }) {
 
   const todayDone   = activeHabits.filter(h=>checked[today]?.[h]).length;
   const todayPct    = activeHabits.length ? todayDone/activeHabits.length : 0;
-  const scoreColor  = todayPct>=0.8?"#10B981":todayPct>=0.5?"#D97706":"#DC2626";
 
   const streak = (() => {
     let s=0;
@@ -11475,8 +11533,6 @@ function ProgressTracker({ profile, isPro, onUpgrade }) {
   const deltaW      = (startW&&currentW) ? (currentW-startW).toFixed(1) : null;
 
   const habits = HABIT_PRESETS.filter(h=>activeHabits.includes(h.id));
-
-  const CARD = {background:"rgba(255,255,255,0.95)",border:`1px solid ${BORDER}`,borderRadius:14,padding:"14px 16px"};
 
   const feelLabel = {"1":"😩 Rough","2":"😕 Meh","3":"😐 Okay","4":"😊 Good","5":"🔥 Beast Mode"};
 
@@ -11509,110 +11565,109 @@ function ProgressTracker({ profile, isPro, onUpgrade }) {
       {/* Goal-Specific Primary Metric */}
       {(()=>{
         const g=(profile?.goals||[])[0];if(!g)return null;
+        const weekWorkouts=workouts.filter(w=>last7.some(d=>d.key===w.date));
         const cardio=weekWorkouts.filter(w=>w.type==="Cardio"||w.type==="HIIT").length;
+        const todayChecks=checked[today]||{};
         const done=habits.filter(h=>todayChecks[h.id]).length;
-        const wDelta=weightLog.length>=2?(weightLog[weightLog.length-1]?.w-weightLog[0]?.w).toFixed(1):null;
         const M={
-          "Lose Weight":{icon:"⚖️",color:"#C2410C",label:"Weight Trend",value:wDelta!==null?`${wDelta>0?"+":""}${wDelta} lbs since start`:weightLog.length===1?`${weightLog[0]?.w} lbs — keep logging`:"Log weight to track progress",tip:"Aim 0.5–1 lb/week. Weigh same time each morning."},
-          "Build Muscle":{icon:"💪",color:"#4338CA",label:"Weekly Volume",value:`${weekWorkouts.length} workout${weekWorkouts.length!==1?"s":""} this week`,tip:"Progressive overload: increase weight or reps each session."},
-          "More Energy":{icon:"⚡",color:"#92400E",label:"Daily Habits",value:`${done}/${habits.length||"—"} habits done today`,tip:"Sleep + supplements + hydration are the top energy levers."},
-          "Heart Health":{icon:"❤️",color:"#DC2626",label:"Cardio Sessions",value:`${cardio} cardio session${cardio!==1?"s":""} this week`,tip:"Target 150+ min moderate cardio/week. Zone 2 RPE 3–5."},
-          "Reduce Stress":{icon:"🧘",color:"#7C3AED",label:"Streak",value:`${streak} day streak`,tip:"Consistency matters more than intensity for stress reduction."},
-          "Run / Endurance":{icon:"🏃",color:"#047857",label:"Weekly Workouts",value:`${weekWorkouts.length} session${weekWorkouts.length!==1?"s":""} this week`,tip:"80/20 rule: 80% easy (Zone 2), 20% hard (Zone 4–5)."},
-          "Manage a Condition":{icon:"🩺",color:"#0E7490",label:"Daily Habits",value:`${done}/${habits.length||"—"} habits today`,tip:"Daily consistency drives the most meaningful health improvements."},
+          "Lose Weight":{icon:"⚖️",label:"Weight Trend",value:deltaW!==null?`${deltaW>0?"+":""}${deltaW} lbs since start`:weightVals.length===1?`${weightVals[0]?.val} lbs — keep logging`:"Log weight to track progress",tip:"Aim 0.5–1 lb/week. Weigh same time each morning."},
+          "Build Muscle":{icon:"💪",label:"Weekly Volume",value:`${weekWorkouts.length} workout${weekWorkouts.length!==1?"s":""} this week`,tip:"Progressive overload: increase weight or reps each session."},
+          "More Energy":{icon:"⚡",label:"Daily Habits",value:`${done}/${habits.length||"—"} habits done today`,tip:"Sleep + supplements + hydration are the top energy levers."},
+          "Heart Health":{icon:"❤️",label:"Cardio Sessions",value:`${cardio} cardio session${cardio!==1?"s":""} this week`,tip:"Target 150+ min moderate cardio/week. Zone 2 RPE 3–5."},
+          "Reduce Stress":{icon:"🧘",label:"Streak",value:`${streak} day streak`,tip:"Consistency matters more than intensity for stress reduction."},
+          "Run / Endurance":{icon:"🏃",label:"Weekly Workouts",value:`${weekWorkouts.length} session${weekWorkouts.length!==1?"s":""} this week`,tip:"80/20 rule: 80% easy (Zone 2), 20% hard (Zone 4–5)."},
+          "Manage a Condition":{icon:"🩺",label:"Daily Habits",value:`${done}/${habits.length||"—"} habits today`,tip:"Daily consistency drives the most meaningful health improvements."},
         };
         const m=M[g];if(!m)return null;
         return(
-          <div style={{background:`linear-gradient(135deg,${m.color}14,${m.color}05)`,border:`1px solid ${m.color}30`,borderRadius:14,padding:"12px 16px",display:"flex",alignItems:"center",gap:12}}>
+          <div style={{position:"relative",background:"#FFFFFF",border:"1px solid #141414",padding:"12px 16px 12px 20px",display:"flex",alignItems:"center",gap:12,overflow:"hidden"}}>
+            <div style={{position:"absolute",left:0,top:0,bottom:0,width:4,background:"#F4B400"}} />
             <span style={{fontSize:26,flexShrink:0}}>{m.icon}</span>
             <div style={{flex:1}}>
-              <div style={{fontSize:"0.72rem",fontWeight:800,textTransform:"uppercase",letterSpacing:"0.1em",color:m.color,marginBottom:2}}>{g} · {m.label}</div>
-              <div style={{fontSize:"0.95rem",fontWeight:800,color:"#1A1D1B",marginBottom:3}}>{m.value}</div>
-              <div style={{fontSize:"0.72rem",color:"#4B5563",lineHeight:1.4}}>{m.tip}</div>
+              <div style={{fontFamily:HEAVY_FONT,fontSize:"0.68rem",fontWeight:800,textTransform:"uppercase",letterSpacing:"0.08em",color:"#141414",marginBottom:2}}>{g} · {m.label}</div>
+              <div style={{fontSize:"0.95rem",fontWeight:800,color:"#141414",marginBottom:3}}>{m.value}</div>
+              <div style={{fontSize:"0.72rem",color:"#5B6572",lineHeight:1.4}}>{m.tip}</div>
             </div>
           </div>
         );
       })()}
 
       {/* Hero score card */}
-      <div style={{background:"linear-gradient(135deg,rgba(16,185,129,0.16),rgba(16,185,129,0.04))",border:"1px solid rgba(16,185,129,0.32)",borderRadius:16,padding:"16px",display:"flex",alignItems:"center",gap:16}}>
+      <div style={{border:"1px solid #141414",padding:"16px",display:"flex",alignItems:"center",gap:16}}>
         <div style={{position:"relative",width:60,height:60,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
-          <ProgressRing pct={todayPct} color={scoreColor} size={60}/>
+          <ProgressRing pct={todayPct} color={todayPct>=1?"#F4B400":"#141414"} size={60}/>
           <div style={{position:"absolute",textAlign:"center"}}>
-            <div style={{fontFamily:"'Playfair Display',serif",fontWeight:800,fontSize:"1rem",color:"#1A1D1B",lineHeight:1}}>{Math.round(todayPct*100)}</div>
-            <div style={{fontSize:"0.72rem",color:"#4B5563",textTransform:"uppercase",letterSpacing:"0.08em"}}>%</div>
+            <div style={{fontFamily:HEAVY_FONT,fontWeight:900,fontSize:"1rem",color:"#141414",lineHeight:1}}>{Math.round(todayPct*100)}</div>
+            <div style={{fontSize:"0.64rem",color:"#5B6572",textTransform:"uppercase",letterSpacing:"0.08em"}}>%</div>
           </div>
         </div>
         <div style={{flex:1,minWidth:0}}>
-          <div style={{fontFamily:"'Playfair Display',serif",fontSize:"1.05rem",fontWeight:800,color:"#1A1D1B",marginBottom:2,lineHeight:1.2}}>
+          <div style={{fontFamily:HEAVY_FONT,fontSize:"1.05rem",fontWeight:900,color:"#141414",letterSpacing:"-0.01em",textTransform:"uppercase",marginBottom:2,lineHeight:1.2}}>
             {todayPct===1?"🏆 Perfect Day!":todayPct>=0.8?"💪 Crushing it!":todayPct>=0.5?"👍 Good progress":todayPct>0?"🎯 Keep going!":"Let's get started"}
           </div>
-          <div style={{color:"#4B5563",fontSize:"0.72rem"}}>{todayDone} of {activeHabits.length} habits done</div>
+          <div style={{color:"#5B6572",fontSize:"0.72rem"}}>{todayDone} of {activeHabits.length} habits done</div>
         </div>
         <div style={{textAlign:"center",flexShrink:0}}>
-          <div style={{fontSize:streak>0?"1.6rem":"1.2rem",filter:streak>0?"drop-shadow(0 0 6px #C2410C)":"grayscale(1) opacity(0.3)"}}>{streak>0?"🔥":"🔥"}</div>
-          <div style={{fontFamily:"'Playfair Display',serif",fontWeight:800,fontSize:"1rem",color:streak>0?"#C2410C":"#6B7280",lineHeight:1}}>{streak}</div>
-          <div style={{fontSize:"0.72rem",color:"#4B5563",textTransform:"uppercase",letterSpacing:"0.06em"}}>day streak</div>
+          <div style={{fontSize:streak>0?"1.6rem":"1.2rem",opacity:streak>0?1:0.3,filter:streak>0?"none":"grayscale(1)"}}>🔥</div>
+          <div style={{fontFamily:HEAVY_FONT,fontWeight:900,fontSize:"1rem",color:"#141414",lineHeight:1}}>{streak}</div>
+          <div style={{fontSize:"0.64rem",color:"#5B6572",textTransform:"uppercase",letterSpacing:"0.06em"}}>day streak</div>
         </div>
       </div>
 
       {/* Log workout CTA */}
-      <button onClick={()=>setShowLogModal(true)} style={{display:"flex",alignItems:"center",justifyContent:"center",gap:8,background:"linear-gradient(135deg,#1D4ED8,#2563EB)",border:"none",borderRadius:12,padding:"13px",color:"white",cursor:"pointer",fontSize:"0.88rem",fontFamily:"'Inter',sans-serif",fontWeight:700,boxShadow:"0 4px 18px rgba(37,99,235,0.4)",transition:"all 0.2s"}}
-        onMouseEnter={e=>e.currentTarget.style.boxShadow="0 6px 24px rgba(37,99,235,0.55)"}
-        onMouseLeave={e=>e.currentTarget.style.boxShadow="0 4px 18px rgba(37,99,235,0.4)"}>
-        ➕ Log Today's Workout
+      <button onClick={()=>setShowLogModal(true)} style={{display:"flex",alignItems:"center",justifyContent:"center",gap:8,background:"#F4B400",border:"none",padding:"13px",color:"#141414",cursor:"pointer",fontSize:"0.85rem",fontFamily:HEAVY_FONT,fontWeight:800,letterSpacing:"0.03em",textTransform:"uppercase"}}>
+        + Log Today's Workout
       </button>
 
       {/* Habits checklist */}
-      <div style={CARD}>
+      <div style={{border:"1px solid #141414",padding:"14px 16px"}}>
         <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:10}}>
-          <div style={{fontFamily:"'Playfair Display',serif",fontWeight:800,color:"#1A1D1B",fontSize:"0.92rem"}}>Daily Habits</div>
-          <button onClick={()=>setShowHabitEdit(true)} style={{background:"rgba(16,185,129,0.1)",border:"1px solid rgba(16,185,129,0.28)",borderRadius:20,padding:"3px 11px",color:ACCENT2_TEXT,fontSize:"0.74rem",fontWeight:700,cursor:"pointer",fontFamily:"'Inter',sans-serif"}}>✏️ Edit</button>
+          <div style={{fontFamily:HEAVY_FONT,fontWeight:900,color:"#141414",fontSize:"0.78rem",letterSpacing:"0.04em",textTransform:"uppercase"}}>Daily Habits</div>
+          <button onClick={()=>setShowHabitEdit(true)} style={{background:"#FFFFFF",border:"1px solid #141414",padding:"3px 11px",color:"#141414",fontSize:"0.66rem",fontFamily:HEAVY_FONT,fontWeight:700,letterSpacing:"0.03em",textTransform:"uppercase",cursor:"pointer"}}>✏️ Edit</button>
         </div>
-        <div style={{display:"flex",flexDirection:"column",gap:7}}>
-          {habits.map(h => {
+        <div style={{border:"1px solid #141414"}}>
+          {habits.map((h,hi) => {
             const done = !!checked[today]?.[h.id];
             return (
-              <div key={h.id} style={{borderRadius:11,background:done?`${h.color}15`:"rgba(0,0,0,0.025)",border:`1px solid ${done?h.color+"45":BORDER}`,transition:"all 0.18s",overflow:"hidden"}}>
+              <div key={h.id} style={{borderTop: hi===0?"none":"1px solid #E6E4DF",background:done?"#FBF7EF":"#FFFFFF"}}>
                 <div style={{display:"flex",alignItems:"center",gap:12,padding:"10px 13px",cursor:"pointer",userSelect:"none"}}
                   onClick={()=>toggleCheck(today,h.id)}>
-                  <div style={{width:34,height:34,borderRadius:10,background:done?`linear-gradient(135deg,${h.color}cc,${h.color}88)`:"rgba(0,0,0,0.04)",border:`1.5px solid ${done?h.color:BORDER}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:done?16:17,transition:"all 0.18s",boxShadow:done?`0 2px 12px ${h.color}40`:"none",flexShrink:0,color:"white",fontWeight:900}}>
+                  <div style={{width:32,height:32,border:"1px solid #141414",background:done?"#F4B400":"#FFFFFF",display:"flex",alignItems:"center",justifyContent:"center",fontSize:done?15:16,flexShrink:0,color:"#141414",fontWeight:900}}>
                     {done ? "✓" : h.icon}
                   </div>
                   <div style={{flex:1,minWidth:0}}>
-                    <span style={{color:done?"#1A1D1B":"#6B7280",fontSize:"0.84rem",fontWeight:done?600:400,transition:"color 0.18s"}}>{h.label}</span>
+                    <span style={{color:"#141414",fontSize:"0.84rem",fontWeight:done?700:400}}>{h.label}</span>
                     {(() => {
                       const hv = (habitValues[today]||{})[h.id];
                       const cfg = HABIT_VALUE_CONFIG[h.id];
                       if (!hv || !cfg || cfg.type === "check") return null;
                       const pct = Math.min(100, Math.round((hv.value / cfg.target) * 100));
-                      const color = pct >= 100 ? h.color : pct >= 60 ? "#D97706" : "#DC2626";
-                      return <div style={{fontSize:"0.75rem",color,fontWeight:700,marginTop:1}}>{hv.value} {cfg.unit} {pct >= 100 ? "✓" : `(${pct}% of goal)`}</div>;
+                      return <div style={{fontSize:"0.72rem",color:"#5B6572",fontWeight:700,marginTop:1}}>{hv.value} {cfg.unit} {pct >= 100 ? "✓" : `(${pct}% of goal)`}</div>;
                     })()}
                   </div>
                   <button onClick={e=>{e.stopPropagation();setEditingHabit({...h,date:today,currentValue:(habitValues[today]||{})[h.id]?.value||"",currentNote:(habitValues[today]||{})[h.id]?.note||""});}}
-                    style={{background:"rgba(0,0,0,0.05)",border:`1px solid ${BORDER}`,borderRadius:7,padding:"4px 9px",color:"#4B5563",cursor:"pointer",fontSize:"0.75rem",fontFamily:"'Inter',sans-serif",flexShrink:0}}>
+                    style={{background:"#FFFFFF",border:"1px solid #141414",padding:"4px 9px",color:"#141414",cursor:"pointer",fontSize:"0.7rem",fontFamily:"'Inter',sans-serif",flexShrink:0}}>
                     {(habitValues[today]||{})[h.id] ? "✏️" : "+ log"}
                   </button>
                 </div>
               </div>
             );
           })}
-          {habits.length===0 && <div style={{textAlign:"center",padding:"18px 0",color:"#6B7280",fontSize:"0.78rem"}}>Tap ✏️ Edit to choose your daily habits</div>}
+          {habits.length===0 && <div style={{textAlign:"center",padding:"18px 0",color:"#5B6572",fontSize:"0.78rem"}}>Tap ✏️ Edit to choose your daily habits</div>}
         </div>
       </div>
 
       {/* Weight logger */}
-      <div style={CARD}>
-        <div style={{fontFamily:"'Playfair Display',serif",fontWeight:800,color:"#1A1D1B",fontSize:"0.92rem",marginBottom:10}}>⚖️ Log Weight</div>
+      <div style={{border:"1px solid #141414",padding:"14px 16px"}}>
+        <div style={{fontFamily:HEAVY_FONT,fontWeight:900,color:"#141414",fontSize:"0.78rem",letterSpacing:"0.04em",textTransform:"uppercase",marginBottom:10}}>⚖️ Log Weight</div>
         <div style={{display:"flex",gap:8}}>
           <input type="number" step="0.1" value={weightInput} onChange={e=>setWeightInput(e.target.value)}
             placeholder={currentW?`Last: ${currentW} lbs`:"Weight in lbs"}
-            style={{flex:1,background:"rgba(255,255,255,0.8)",border:`1px solid ${BORDER}`,borderRadius:8,padding:"9px 12px",color:"#1A1D1B",fontSize:"0.82rem",fontFamily:"'Inter',sans-serif",outline:"none"}}/>
-          <button onClick={submitWeight} style={{background:ACCENT,border:"none",borderRadius:8,padding:"9px 18px",color:"white",cursor:"pointer",fontSize:"0.82rem",fontWeight:700,fontFamily:"'Inter',sans-serif",whiteSpace:"nowrap"}}>Save</button>
+            style={{flex:1,background:"#FFFFFF",border:"1px solid #141414",borderRadius:4,padding:"9px 12px",color:"#141414",fontSize:"0.82rem",fontFamily:"'Inter',sans-serif",outline:"none"}}/>
+          <button onClick={submitWeight} style={{background:"#F4B400",border:"none",padding:"9px 18px",color:"#141414",cursor:"pointer",fontSize:"0.78rem",fontFamily:HEAVY_FONT,fontWeight:800,letterSpacing:"0.02em",textTransform:"uppercase",whiteSpace:"nowrap"}}>Save</button>
         </div>
         {deltaW!==null && (
-          <div style={{marginTop:7,fontSize:"0.72rem",fontWeight:600,color:parseFloat(deltaW)<0?"#047857":parseFloat(deltaW)>0?"#DC2626":"#4B5563"}}>
+          <div style={{marginTop:7,fontSize:"0.72rem",fontWeight:700,color:"#141414"}}>
             {parseFloat(deltaW)<0?`▼ ${Math.abs(deltaW)} lbs lost since start`:parseFloat(deltaW)>0?`▲ ${deltaW} lbs gained since start`:"Same as starting weight"}
           </div>
         )}
@@ -11620,18 +11675,18 @@ function ProgressTracker({ profile, isPro, onUpgrade }) {
 
       {/* Recent workouts preview */}
       {workouts.length>0 && (
-        <div style={CARD}>
+        <div style={{border:"1px solid #141414",padding:"14px 16px"}}>
           <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:10}}>
-            <div style={{fontFamily:"'Playfair Display',serif",fontWeight:800,color:"#1A1D1B",fontSize:"0.92rem"}}>Recent Workouts</div>
-            <button onClick={()=>setView("log")} style={{background:"none",border:"none",color:ACCENT_TEXT,cursor:"pointer",fontSize:"0.8rem",fontFamily:"'Inter',sans-serif"}}>See all →</button>
+            <div style={{fontFamily:HEAVY_FONT,fontWeight:900,color:"#141414",fontSize:"0.78rem",letterSpacing:"0.04em",textTransform:"uppercase"}}>Recent Workouts</div>
+            <button onClick={()=>setView("log")} style={{background:"none",border:"none",color:"#141414",cursor:"pointer",fontSize:"0.72rem",fontFamily:HEAVY_FONT,fontWeight:700,letterSpacing:"0.02em",textTransform:"uppercase"}}>See all →</button>
           </div>
           {workouts.slice(0,3).map((w,i)=>(
-            <div key={w.id||i} style={{display:"flex",alignItems:"center",gap:10,padding:"7px 0",borderBottom:i<Math.min(2,workouts.length-1)?`1px solid ${BORDER}`:"none"}}>
-              <div style={{width:34,height:34,borderRadius:9,background:"rgba(59,130,246,0.15)",border:"1px solid rgba(59,130,246,0.28)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,flexShrink:0}}>🏋️</div>
+            <div key={w.id||i} style={{display:"flex",alignItems:"center",gap:10,padding:"7px 0",borderTop:i===0?"none":"1px solid #E6E4DF"}}>
+              <div style={{width:32,height:32,border:"1px solid #141414",display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,flexShrink:0}}>🏋️</div>
               <div style={{flex:1,minWidth:0}}>
-                <div style={{color:"#1A1D1B",fontSize:"0.78rem",fontWeight:600}}>{w.type} · {w.duration} min</div>
-                {(w.creator||w.videoTitle) && <div style={{color:"#0F766E",fontSize:"0.72rem",fontWeight:600,marginTop:1}}>{w.creator}{w.videoTitle?` — ${w.videoTitle}`:""}</div>}
-                <div style={{color:"#6B7280",fontSize:"0.73rem"}}>{w.date===today?"Today":w.date} · {feelLabel[w.feel]}</div>
+                <div style={{color:"#141414",fontSize:"0.78rem",fontWeight:700}}>{w.type} · {w.duration} min</div>
+                {(w.creator||w.videoTitle) && <div style={{color:"#5B6572",fontSize:"0.72rem",fontWeight:600,marginTop:1}}>{w.creator}{w.videoTitle?` — ${w.videoTitle}`:""}</div>}
+                <div style={{color:"#5B6572",fontSize:"0.72rem"}}>{w.date===today?"Today":w.date} · {feelLabel[w.feel]}</div>
               </div>
             </div>
           ))}
@@ -11645,28 +11700,29 @@ function ProgressTracker({ profile, isPro, onUpgrade }) {
     <div style={{padding:"12px 14px 0",display:"flex",flexDirection:"column",gap:11}}>
 
       {/* Week heatmap */}
-      <div style={CARD}>
-        <div style={{fontFamily:"'Playfair Display',serif",fontWeight:800,color:"#1A1D1B",fontSize:"0.92rem",marginBottom:12}}>This Week</div>
+      <div style={{border:"1px solid #141414",padding:"14px 16px"}}>
+        <div style={{fontFamily:HEAVY_FONT,fontWeight:900,color:"#141414",fontSize:"0.78rem",letterSpacing:"0.04em",textTransform:"uppercase",marginBottom:12}}>This Week</div>
         <div style={{display:"grid",gridTemplateColumns:"repeat(7,1fr)",gap:5,marginBottom:12}}>
           {last7.map(({key,label,dayNum})=>{
             const pct=dayScore(key);
-            const col=pct>=0.8?"#10B981":pct>=0.5?"#D97706":pct>0?"#C2410C":"rgba(0,0,0,0.05)";
+            const col=pct>=0.8?"#141414":pct>=0.5?"rgba(20,20,20,0.55)":pct>0?"rgba(20,20,20,0.18)":"#FFFFFF";
+            const textColor=pct>=0.5?"#FFFFFF":"#141414";
             const sel=selectedDay===key;
             return (
               <div key={key} onClick={()=>setSelectedDay(key)} style={{cursor:"pointer",textAlign:"center"}}>
-                <div style={{fontSize:"0.72rem",color:"#4B5563",marginBottom:4,textTransform:"uppercase",letterSpacing:"0.05em"}}>{label.slice(0,3)}</div>
-                <div style={{width:"100%",aspectRatio:"1",borderRadius:9,background:col,border:`2px solid ${sel?"#1A1D1B":"transparent"}`,display:"flex",alignItems:"center",justifyContent:"center",transition:"all 0.2s",boxShadow:pct>0?`0 0 12px ${col}50`:"none"}}>
-                  {pct>0&&<span style={{fontSize:"0.72rem",fontWeight:800,color:"white"}}>{Math.round(pct*100)}</span>}
+                <div style={{fontSize:"0.64rem",color:"#5B6572",marginBottom:4,textTransform:"uppercase",letterSpacing:"0.05em"}}>{label.slice(0,3)}</div>
+                <div style={{width:"100%",aspectRatio:"1",background:col,border:sel?"2px solid #F4B400":"1px solid #141414",display:"flex",alignItems:"center",justifyContent:"center",transition:"all 0.2s"}}>
+                  {pct>0&&<span style={{fontSize:"0.72rem",fontWeight:800,color:textColor}}>{Math.round(pct*100)}</span>}
                 </div>
-                <div style={{fontSize:"0.72rem",color:"#6B7280",marginTop:3}}>{dayNum}</div>
+                <div style={{fontSize:"0.7rem",color:"#5B6572",marginTop:3}}>{dayNum}</div>
 
               </div>
             );
           })}
         </div>
         {/* Selected day habit pills */}
-        <div style={{background:"rgba(0,0,0,0.02)",border:`1px solid ${BORDER}`,borderRadius:10,padding:"10px 12px"}}>
-          <div style={{fontSize:"0.72rem",fontWeight:700,textTransform:"uppercase",letterSpacing:"0.08em",color:"#6B7280",marginBottom:8}}>
+        <div style={{border:"1px solid #E6E4DF",padding:"10px 12px"}}>
+          <div style={{fontSize:"0.68rem",fontFamily:HEAVY_FONT,fontWeight:800,textTransform:"uppercase",letterSpacing:"0.06em",color:"#5B6572",marginBottom:8}}>
             {selectedDay===today?"Today":selectedDay} — {Math.round(dayScore(selectedDay)*100)}% done
           </div>
           <div style={{display:"flex",flexWrap:"wrap",gap:6}}>
@@ -11674,8 +11730,8 @@ function ProgressTracker({ profile, isPro, onUpgrade }) {
               const done=!!checked[selectedDay]?.[h.id];
               return (
                 <div key={h.id} onClick={()=>toggleCheck(selectedDay,h.id)}
-                  style={{display:"flex",alignItems:"center",gap:5,padding:"4px 10px",borderRadius:20,background:done?`${h.color}20`:"rgba(0,0,0,0.03)",border:`1px solid ${done?h.color+"40":BORDER}`,cursor:"pointer",fontSize:"0.78rem",color:done?"#1A1D1B":"#4B5563",transition:"all 0.15s"}}>
-                  <span>{h.icon}</span><span>{h.label}</span>{done&&<span style={{color:h.color,fontWeight:700}}>✓</span>}
+                  style={{display:"flex",alignItems:"center",gap:5,padding:"4px 10px",borderRadius:4,background:done?"#141414":"#FFFFFF",border:"1px solid #141414",cursor:"pointer",fontSize:"0.76rem",color:done?"#FFFFFF":"#141414",transition:"all 0.15s"}}>
+                  <span>{h.icon}</span><span>{h.label}</span>{done&&<span style={{fontWeight:700}}>✓</span>}
                 </div>
               );
             })}
@@ -11684,23 +11740,23 @@ function ProgressTracker({ profile, isPro, onUpgrade }) {
       </div>
 
       {/* Stats row */}
-      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8}}>
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:0,border:"1px solid #141414"}}>
         {[
-          {label:"Streak",val:`${streak}d`,icon:"🔥",color:"#C2410C"},
-          {label:"Best",val:`${bestStreak}d`,icon:"🏆",color:"#92400E"},
-          {label:"Workouts",val:monthWorkouts,icon:"💪",color:"#1D4ED8"},
-        ].map(s=>(
-          <div key={s.label} style={{...CARD,padding:"12px 8px",textAlign:"center"}}>
+          {label:"Streak",val:`${streak}d`,icon:"🔥"},
+          {label:"Best",val:`${bestStreak}d`,icon:"🏆"},
+          {label:"Workouts",val:monthWorkouts,icon:"💪"},
+        ].map((s,si)=>(
+          <div key={s.label} style={{padding:"12px 8px",textAlign:"center",borderLeft:si===0?"none":"1px solid #E6E4DF"}}>
             <div style={{fontSize:"1.3rem",marginBottom:3}}>{s.icon}</div>
-            <div style={{fontFamily:"'Playfair Display',serif",fontWeight:800,fontSize:"1.1rem",color:s.color}}>{s.val}</div>
-            <div style={{fontSize:"0.72rem",color:"#6B7280",textTransform:"uppercase",letterSpacing:"0.06em",marginTop:2}}>{s.label}</div>
+            <div style={{fontFamily:HEAVY_FONT,fontWeight:900,fontSize:"1.1rem",color:"#141414"}}>{s.val}</div>
+            <div style={{fontSize:"0.64rem",color:"#5B6572",textTransform:"uppercase",letterSpacing:"0.06em",marginTop:2}}>{s.label}</div>
           </div>
         ))}
       </div>
 
       {/* 30-day habit progress bars */}
-      <div style={CARD}>
-        <div style={{fontFamily:"'Playfair Display',serif",fontWeight:800,color:"#1A1D1B",fontSize:"0.92rem",marginBottom:12}}>30-Day Habit Report</div>
+      <div style={{border:"1px solid #141414",padding:"14px 16px"}}>
+        <div style={{fontFamily:HEAVY_FONT,fontWeight:900,color:"#141414",fontSize:"0.78rem",letterSpacing:"0.04em",textTransform:"uppercase",marginBottom:12}}>30-Day Habit Report</div>
         {habits.map(h=>{
           const count=last30.filter(k=>checked[k]?.[h.id]).length;
           const pct=count/30;
@@ -11709,40 +11765,40 @@ function ProgressTracker({ profile, isPro, onUpgrade }) {
               <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:4}}>
                 <div style={{display:"flex",alignItems:"center",gap:6}}>
                   <span style={{fontSize:13}}>{h.icon}</span>
-                  <span style={{fontSize:"0.72rem",color:"#1A1D1B"}}>{h.label}</span>
+                  <span style={{fontSize:"0.72rem",color:"#141414"}}>{h.label}</span>
                 </div>
-                <span style={{fontSize:"0.75rem",color:h.color,fontWeight:700}}>{count}/30 days</span>
+                <span style={{fontSize:"0.72rem",color:"#5B6572",fontWeight:700}}>{count}/30 days</span>
               </div>
-              <div style={{height:5,background:"rgba(0,0,0,0.05)",borderRadius:3,overflow:"hidden"}}>
-                <div style={{height:"100%",width:`${pct*100}%`,background:`linear-gradient(90deg,${h.color}bb,${h.color})`,borderRadius:3,transition:"width 0.7s ease"}}/>
+              <div style={{height:5,background:"#E6E4DF"}}>
+                <div style={{height:"100%",width:`${pct*100}%`,background:"#141414",transition:"width 0.7s ease"}}/>
               </div>
             </div>
           );
         })}
-        {habits.length===0&&<div style={{color:"#6B7280",fontSize:"0.78rem",textAlign:"center",padding:"12px 0"}}>Add habits to see your 30-day report</div>}
+        {habits.length===0&&<div style={{color:"#5B6572",fontSize:"0.78rem",textAlign:"center",padding:"12px 0"}}>Add habits to see your 30-day report</div>}
       </div>
 
       {/* Week avg */}
-      <div style={{...CARD,display:"flex",alignItems:"center",gap:14}}>
+      <div style={{border:"1px solid #141414",padding:"14px 16px",display:"flex",alignItems:"center",gap:14}}>
         <div style={{position:"relative",width:60,height:60,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
-          <ProgressRing pct={weekAvg} color={weekAvg>=0.7?"#10B981":weekAvg>=0.5?"#D97706":"#DC2626"} size={60}/>
+          <ProgressRing pct={weekAvg} color={weekAvg>=0.7?"#F4B400":"#141414"} size={60}/>
           <div style={{position:"absolute",textAlign:"center"}}>
-            <div style={{fontFamily:"'Playfair Display',serif",fontWeight:800,fontSize:"0.95rem",color:"#1A1D1B",lineHeight:1}}>{Math.round(weekAvg*100)}</div>
-            <div style={{fontSize:"0.72rem",color:"#4B5563",textTransform:"uppercase"}}>%</div>
+            <div style={{fontFamily:HEAVY_FONT,fontWeight:900,fontSize:"0.95rem",color:"#141414",lineHeight:1}}>{Math.round(weekAvg*100)}</div>
+            <div style={{fontSize:"0.64rem",color:"#5B6572",textTransform:"uppercase"}}>%</div>
           </div>
         </div>
         <div>
-          <div style={{fontFamily:"'Playfair Display',serif",fontWeight:800,color:"#1A1D1B",fontSize:"0.9rem"}}>7-Day Average</div>
-          <div style={{color:"#4B5563",fontSize:"0.72rem",marginTop:2}}>
-            {weekAvg>=0.8?"Outstanding consistency 🏆":weekAvg>=0.6?"Great work — keep it up 👍":weekAvg>=0.4?"Building momentum 🌱":"Every day is a fresh start 💚"}
+          <div style={{fontFamily:HEAVY_FONT,fontWeight:900,color:"#141414",fontSize:"0.85rem",letterSpacing:"-0.01em",textTransform:"uppercase"}}>7-Day Average</div>
+          <div style={{color:"#5B6572",fontSize:"0.72rem",marginTop:2}}>
+            {weekAvg>=0.8?"Outstanding consistency 🏆":weekAvg>=0.6?"Great work — keep it up 👍":weekAvg>=0.4?"Building momentum 🌱":"Every day is a fresh start"}
           </div>
         </div>
       </div>
 
       {/* Weight chart */}
       {weightVals.length>1&&(
-        <div style={CARD}>
-          <div style={{fontFamily:"'Playfair Display',serif",fontWeight:800,color:"#1A1D1B",fontSize:"0.92rem",marginBottom:12}}>⚖️ Weight Trend</div>
+        <div style={{border:"1px solid #141414",padding:"14px 16px"}}>
+          <div style={{fontFamily:HEAVY_FONT,fontWeight:900,color:"#141414",fontSize:"0.78rem",letterSpacing:"0.04em",textTransform:"uppercase",marginBottom:12}}>⚖️ Weight Trend</div>
           <div style={{display:"flex",alignItems:"flex-end",gap:3,height:64,marginBottom:6}}>
             {weightVals.slice(-14).map((d,i,arr)=>{
               const vals=arr.map(x=>x.val);
@@ -11751,17 +11807,17 @@ function ProgressTracker({ profile, isPro, onUpgrade }) {
               const isLast=i===arr.length-1;
               return (
                 <div key={d.key} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:2}}>
-                  <div style={{width:"100%",height:`${h}px`,background:isLast?`linear-gradient(180deg,${ACCENT},${ACCENT}88)`:"rgba(16,185,129,0.22)",borderRadius:"3px 3px 0 0",transition:"height 0.5s ease"}}/>
+                  <div style={{width:"100%",height:`${h}px`,background:isLast?"#F4B400":"#E6E4DF",transition:"height 0.5s ease"}}/>
                 </div>
               );
             })}
           </div>
-          <div style={{display:"flex",justifyContent:"space-between",fontSize:"0.78rem"}}>
-            <span style={{color:"#4B5563"}}>Low: <span style={{color:ACCENT_TEXT}}>{Math.min(...weightVals.map(d=>d.val))} lbs</span></span>
-            {deltaW!==null&&<span style={{color:parseFloat(deltaW)<0?"#047857":parseFloat(deltaW)>0?"#DC2626":"#4B5563",fontWeight:700}}>
+          <div style={{display:"flex",justifyContent:"space-between",fontSize:"0.76rem"}}>
+            <span style={{color:"#5B6572"}}>Low: <span style={{color:"#141414",fontWeight:700}}>{Math.min(...weightVals.map(d=>d.val))} lbs</span></span>
+            {deltaW!==null&&<span style={{color:"#141414",fontWeight:700}}>
               {parseFloat(deltaW)<0?`▼ ${Math.abs(deltaW)} lbs`:`▲ ${Math.abs(deltaW)} lbs`} vs start
             </span>}
-            <span style={{color:"#4B5563"}}>Now: <span style={{color:ACCENT_TEXT,fontWeight:700}}>{currentW} lbs</span></span>
+            <span style={{color:"#5B6572"}}>Now: <span style={{color:"#141414",fontWeight:700}}>{currentW} lbs</span></span>
           </div>
         </div>
       )}
@@ -11771,49 +11827,53 @@ function ProgressTracker({ profile, isPro, onUpgrade }) {
   // ════════════════════ WORKOUT LOG ════════════════════
   const renderLog = () => (
     <div style={{padding:"12px 14px 0",display:"flex",flexDirection:"column",gap:11}}>
-      <button onClick={()=>setShowLogModal(true)} style={{background:"linear-gradient(135deg,#1D4ED8,#2563EB)",border:"none",borderRadius:12,padding:"13px",color:"white",cursor:"pointer",fontSize:"0.88rem",fontFamily:"'Inter',sans-serif",fontWeight:700,boxShadow:"0 4px 18px rgba(37,99,235,0.4)"}}>
-        ➕ Log a Workout
+      <button onClick={()=>setShowLogModal(true)} style={{background:"#F4B400",border:"none",padding:"13px",color:"#141414",cursor:"pointer",fontSize:"0.85rem",fontFamily:HEAVY_FONT,fontWeight:800,letterSpacing:"0.03em",textTransform:"uppercase"}}>
+        + Log a Workout
       </button>
       {workouts.length===0?(
-        <div style={{...CARD,textAlign:"center",padding:"44px 20px"}}>
+        <div style={{border:"1px solid #141414",textAlign:"center",padding:"44px 20px"}}>
           <div style={{fontSize:"2.8rem",marginBottom:12}}>🏋️</div>
-          <div style={{color:"#4B5563",fontSize:"0.85rem",marginBottom:4}}>No workouts logged yet</div>
-          <div style={{color:"#6B7280",fontSize:"0.72rem"}}>Tap above to start your training log</div>
+          <div style={{color:"#141414",fontSize:"0.85rem",marginBottom:4}}>No workouts logged yet</div>
+          <div style={{color:"#5B6572",fontSize:"0.72rem"}}>Tap above to start your training log</div>
         </div>
-      ):workouts.map((w,i)=>(
-        <div key={w.id||i} style={{...CARD,display:"flex",gap:12,alignItems:"flex-start"}}>
-          <div style={{width:44,height:44,borderRadius:12,background:"rgba(59,130,246,0.14)",border:"1px solid rgba(59,130,246,0.3)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:20,flexShrink:0}}>🏋️</div>
+      ):(
+        <div style={{border:"1px solid #141414"}}>
+        {workouts.map((w,i)=>(
+        <div key={w.id||i} style={{display:"flex",gap:12,alignItems:"flex-start",padding:"14px 16px",borderTop:i===0?"none":"1px solid #E6E4DF"}}>
+          <div style={{width:40,height:40,border:"1px solid #141414",display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,flexShrink:0}}>🏋️</div>
           <div style={{flex:1,minWidth:0}}>
             <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:5}}>
-              <div style={{color:"#1A1D1B",fontWeight:700,fontSize:"0.88rem"}}>{w.type}</div>
-              <div style={{fontSize:"0.73rem",color:"#6B7280"}}>{w.date===today?"Today":w.date}</div>
+              <div style={{color:"#141414",fontWeight:700,fontSize:"0.88rem"}}>{w.type}</div>
+              <div style={{fontSize:"0.72rem",color:"#5B6572"}}>{w.date===today?"Today":w.date}</div>
             </div>
             <div style={{display:"flex",gap:6,flexWrap:"wrap",marginBottom:w.notes?6:0}}>
-              <span style={{fontSize:"0.73rem",color:"#1D4ED8",background:"rgba(96,165,250,0.1)",border:"1px solid rgba(96,165,250,0.22)",padding:"2px 8px",borderRadius:10}}>⏱ {w.duration} min</span>
-              <span style={{fontSize:"0.73rem",color:"#92400E",background:"rgba(245,158,11,0.1)",border:"1px solid rgba(245,158,11,0.22)",padding:"2px 8px",borderRadius:10}}>{feelLabel[w.feel]}</span>
+              <span style={{fontSize:"0.68rem",fontFamily:HEAVY_FONT,fontWeight:700,letterSpacing:"0.03em",textTransform:"uppercase",color:"#141414",border:"1px solid #141414",padding:"2px 8px"}}>⏱ {w.duration} min</span>
+              <span style={{fontSize:"0.68rem",fontFamily:HEAVY_FONT,fontWeight:700,letterSpacing:"0.03em",textTransform:"uppercase",color:"#141414",border:"1px solid #141414",padding:"2px 8px"}}>{feelLabel[w.feel]}</span>
             </div>
-            {w.notes&&<div style={{fontSize:"0.72rem",color:"#4B5563",lineHeight:1.5,marginTop:4}}>{w.notes}</div>}
+            {w.notes&&<div style={{fontSize:"0.72rem",color:"#5B6572",lineHeight:1.5,marginTop:4}}>{w.notes}</div>}
           </div>
         </div>
-      ))}
+        ))}
+        </div>
+      )}
     </div>
   );
 
   // ════════════════════ HABIT EDIT MODAL ════════════════════
   const renderHabitModal = () => (
-    <div onClick={e=>{if(e.target===e.currentTarget)setShowHabitEdit(false)}} style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.4)",backdropFilter:"blur(10px)",zIndex:200,display:"flex",alignItems:"flex-end",justifyContent:"center"}}>
-      <div style={{background:"#EEF0ED",border:`1px solid ${BORDER}`,borderRadius:"20px 20px 0 0",padding:"22px 18px 44px",width:"100%",maxWidth:500}}>
-        <div style={{fontFamily:"'Playfair Display',serif",fontWeight:800,color:"#1A1D1B",fontSize:"1rem",marginBottom:5}}>Customize Daily Habits</div>
-        <div style={{color:"#4B5563",fontSize:"0.74rem",marginBottom:14}}>Tap to toggle. Active habits appear in your daily checklist.</div>
-        <div style={{display:"flex",flexDirection:"column",gap:7,maxHeight:"52vh",overflowY:"auto"}}>
-          {HABIT_PRESETS.map(h=>{
+    <div onClick={e=>{if(e.target===e.currentTarget)setShowHabitEdit(false)}} style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.4)",backdropFilter:"blur(8px)",zIndex:200,display:"flex",alignItems:"flex-end",justifyContent:"center"}}>
+      <div style={{width:"100%",maxWidth:500,background:"#FFFFFF",border:"1px solid #141414",borderRadius:0,padding:"22px 20px 30px",animation:"fadeUp 0.25s ease"}}>
+        <div style={{fontFamily:HEAVY_FONT,fontWeight:900,color:"#141414",fontSize:"1.05rem",letterSpacing:"-0.01em",textTransform:"uppercase",marginBottom:5}}>Customize Daily Habits</div>
+        <div style={{color:"#5B6572",fontSize:"0.74rem",marginBottom:14}}>Tap to toggle. Active habits appear in your daily checklist.</div>
+        <div style={{border:"1px solid #141414",maxHeight:"52vh",overflowY:"auto"}}>
+          {HABIT_PRESETS.map((h,hi)=>{
             const on=activeHabits.includes(h.id);
             return (
               <div key={h.id} onClick={()=>toggleHabitActive(h.id)}
-                style={{display:"flex",alignItems:"center",gap:12,padding:"11px 14px",borderRadius:12,background:on?`${h.color}12`:"rgba(0,0,0,0.025)",border:`1px solid ${on?h.color+"40":BORDER}`,cursor:"pointer",transition:"all 0.18s"}}>
+                style={{display:"flex",alignItems:"center",gap:12,padding:"11px 14px",borderTop:hi===0?"none":"1px solid #E6E4DF",background:on?"#FBF7EF":"#FFFFFF",cursor:"pointer"}}>
                 <span style={{fontSize:20}}>{h.icon}</span>
-                <span style={{flex:1,color:on?"#1A1D1B":"#6B7280",fontSize:"0.84rem",fontWeight:on?600:400}}>{h.label}</span>
-                <div style={{width:22,height:22,borderRadius:6,background:on?h.color:"rgba(0,0,0,0.04)",border:`1.5px solid ${on?h.color:BORDER}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:11,color:"white",fontWeight:900,flexShrink:0}}>
+                <span style={{flex:1,color:"#141414",fontSize:"0.84rem",fontWeight:on?700:400}}>{h.label}</span>
+                <div style={{width:20,height:20,border:"1px solid #141414",background:on?"#F4B400":"#FFFFFF",display:"flex",alignItems:"center",justifyContent:"center",fontSize:11,color:"#141414",fontWeight:900,flexShrink:0}}>
                   {on?"✓":""}
                 </div>
 
@@ -11821,7 +11881,7 @@ function ProgressTracker({ profile, isPro, onUpgrade }) {
             );
           })}
         </div>
-        <button onClick={()=>setShowHabitEdit(false)} style={{marginTop:14,width:"100%",background:"linear-gradient(135deg,#10B981,#059669)",border:"none",borderRadius:11,padding:"12px",color:"white",cursor:"pointer",fontSize:"0.88rem",fontFamily:"'Inter',sans-serif",fontWeight:700}}>
+        <button onClick={()=>setShowHabitEdit(false)} style={{marginTop:14,width:"100%",background:"#F4B400",border:"none",padding:"12px",color:"#141414",cursor:"pointer",fontSize:"0.82rem",fontFamily:HEAVY_FONT,fontWeight:800,letterSpacing:"0.03em",textTransform:"uppercase"}}>
           Save Habits ✓
         </button>
       </div>
@@ -11830,33 +11890,33 @@ function ProgressTracker({ profile, isPro, onUpgrade }) {
 
   // ════════════════════ LOG WORKOUT MODAL ════════════════════
   const renderLogModal = () => (
-    <div onClick={e=>{if(e.target===e.currentTarget)setShowLogModal(false)}} style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.4)",backdropFilter:"blur(10px)",zIndex:200,display:"flex",alignItems:"flex-end",justifyContent:"center"}}>
-      <div style={{background:"#EEF0ED",border:`1px solid ${BORDER}`,borderRadius:"20px 20px 0 0",padding:"22px 18px 44px",width:"100%",maxWidth:500}}>
-        <div style={{fontFamily:"'Playfair Display',serif",fontWeight:800,color:"#1A1D1B",fontSize:"1rem",marginBottom:16}}>Log Workout 💪</div>
+    <div onClick={e=>{if(e.target===e.currentTarget)setShowLogModal(false)}} style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.4)",backdropFilter:"blur(8px)",zIndex:200,display:"flex",alignItems:"flex-end",justifyContent:"center"}}>
+      <div style={{width:"100%",maxWidth:500,background:"#FFFFFF",border:"1px solid #141414",borderRadius:0,padding:"22px 20px 30px",animation:"fadeUp 0.25s ease"}}>
+        <div style={{fontFamily:HEAVY_FONT,fontWeight:900,color:"#141414",fontSize:"1.05rem",letterSpacing:"-0.01em",textTransform:"uppercase",marginBottom:16}}>Log Workout 💪</div>
         <div style={{display:"flex",flexDirection:"column",gap:13}}>
           {/* Type */}
           <div>
-            <div style={{fontSize:"0.72rem",fontWeight:700,textTransform:"uppercase",letterSpacing:"0.08em",color:"#6B7280",marginBottom:7}}>Workout Type</div>
-            <div style={{display:"flex",flexWrap:"wrap",gap:6}}>
+            <div style={{fontFamily:HEAVY_FONT,fontSize:"0.68rem",fontWeight:800,textTransform:"uppercase",letterSpacing:"0.08em",color:"#141414",marginBottom:7}}>Workout Type</div>
+            <div style={{display:"flex",flexWrap:"wrap",gap:5}}>
               {WORKOUT_TYPES.map(t=>(
                 <button key={t} onClick={()=>setWform({...wform,type:t})}
-                  style={{padding:"5px 12px",borderRadius:20,border:`1px solid ${wform.type===t?"#1D4ED8":BORDER}`,background:wform.type===t?"rgba(59,130,246,0.15)":"transparent",color:wform.type===t?"#1D4ED8":"#4B5563",cursor:"pointer",fontSize:"0.72rem",fontFamily:"'Inter',sans-serif",fontWeight:600,transition:"all 0.14s"}}>{t}</button>
+                  style={{padding:"4px 10px",borderRadius:4,border:"1px solid #141414",background:wform.type===t?"#141414":"#FFFFFF",color:wform.type===t?"#FFFFFF":"#141414",cursor:"pointer",fontSize:"0.72rem",fontFamily:"'Inter',sans-serif",fontWeight:600}}>{t}</button>
               ))}
             </div>
           </div>
           {/* Duration */}
           <div>
-            <div style={{fontSize:"0.72rem",fontWeight:700,textTransform:"uppercase",letterSpacing:"0.08em",color:"#6B7280",marginBottom:7}}>Duration (minutes)</div>
+            <div style={{fontFamily:HEAVY_FONT,fontSize:"0.68rem",fontWeight:800,textTransform:"uppercase",letterSpacing:"0.08em",color:"#141414",marginBottom:7}}>Duration (minutes)</div>
             <input type="number" value={wform.duration} onChange={e=>setWform({...wform,duration:e.target.value})} placeholder="e.g. 45"
-              style={{width:"100%",background:"rgba(255,255,255,0.8)",border:`1px solid ${BORDER}`,borderRadius:9,padding:"9px 13px",color:"#1A1D1B",fontSize:"0.82rem",fontFamily:"'Inter',sans-serif",outline:"none"}}/>
+              style={{width:"100%",background:"#FFFFFF",border:"1px solid #141414",borderRadius:4,padding:"9px 13px",color:"#141414",fontSize:"0.82rem",fontFamily:"'Inter',sans-serif",outline:"none"}}/>
           </div>
           {/* Feel */}
           <div>
-            <div style={{fontSize:"0.72rem",fontWeight:700,textTransform:"uppercase",letterSpacing:"0.08em",color:"#6B7280",marginBottom:7}}>How did it feel?</div>
+            <div style={{fontFamily:HEAVY_FONT,fontSize:"0.68rem",fontWeight:800,textTransform:"uppercase",letterSpacing:"0.08em",color:"#141414",marginBottom:7}}>How did it feel?</div>
             <div style={{display:"flex",gap:6}}>
               {["1","2","3","4","5"].map(n=>(
                 <button key={n} onClick={()=>setWform({...wform,feel:n})}
-                  style={{flex:1,padding:"9px 4px",borderRadius:10,border:`1px solid ${wform.feel===n?"#D97706":BORDER}`,background:wform.feel===n?"rgba(245,158,11,0.16)":"transparent",cursor:"pointer",fontSize:"1.1rem",transition:"all 0.14s",transform:wform.feel===n?"scale(1.12)":"scale(1)"}}>
+                  style={{flex:1,padding:"8px 4px",borderRadius:4,border:"1px solid #141414",background:wform.feel===n?"#F4B400":"#FFFFFF",cursor:"pointer",fontSize:"1.1rem"}}>
                   {["😩","😕","😐","😊","🔥"][parseInt(n)-1]}
                 </button>
               ))}
@@ -11864,9 +11924,9 @@ function ProgressTracker({ profile, isPro, onUpgrade }) {
           </div>
           {/* Creator */}
           <div>
-            <div style={{fontSize:"0.72rem",fontWeight:700,textTransform:"uppercase",letterSpacing:"0.08em",color:"#6B7280",marginBottom:7}}>Content Creator (optional)</div>
+            <div style={{fontFamily:HEAVY_FONT,fontSize:"0.68rem",fontWeight:800,textTransform:"uppercase",letterSpacing:"0.08em",color:"#141414",marginBottom:7}}>Content Creator (optional)</div>
             <select value={wform.creator||""} onChange={e=>setWform({...wform,creator:e.target.value})}
-              style={{width:"100%",background:"rgba(255,255,255,0.9)",border:`1px solid ${BORDER}`,borderRadius:9,padding:"9px 13px",color:wform.creator?"#1A1D1B":"#4B5563",fontSize:"0.8rem",fontFamily:"'Inter',sans-serif",outline:"none"}}>
+              style={{width:"100%",background:"#FFFFFF",border:"1px solid #141414",borderRadius:4,padding:"9px 13px",color:wform.creator?"#141414":"#5B6572",fontSize:"0.8rem",fontFamily:"'Inter',sans-serif",outline:"none"}}>
               <option value="">— Select a creator (if you did a video) —</option>
               <optgroup label="Strength & Muscle">
                 {["Caroline Girvan","Jeff Nippard","AthleanX","Brandon Campbell Diamond","Alan Thrall – Untamed Strength","Michelle Lewin","Obi Vincent","MrandMrsMuscle"].map(c=><option key={c} value={c}>{c}</option>)}
@@ -11894,42 +11954,42 @@ function ProgressTracker({ profile, isPro, onUpgrade }) {
           </div>
           {/* Video Title */}
           <div>
-            <div style={{fontSize:"0.72rem",fontWeight:700,textTransform:"uppercase",letterSpacing:"0.08em",color:"#6B7280",marginBottom:7}}>Video / Workout Name (optional)</div>
+            <div style={{fontFamily:HEAVY_FONT,fontSize:"0.68rem",fontWeight:800,textTransform:"uppercase",letterSpacing:"0.08em",color:"#141414",marginBottom:7}}>Video / Workout Name (optional)</div>
             <input value={wform.videoTitle||""} onChange={e=>setWform({...wform,videoTitle:e.target.value})} placeholder="e.g. Iron Series Day 1, or your own workout name…"
-              style={{width:"100%",background:"rgba(255,255,255,0.8)",border:`1px solid ${BORDER}`,borderRadius:9,padding:"9px 13px",color:"#1A1D1B",fontSize:"0.8rem",fontFamily:"'Inter',sans-serif",outline:"none"}}/>
+              style={{width:"100%",background:"#FFFFFF",border:"1px solid #141414",borderRadius:4,padding:"9px 13px",color:"#141414",fontSize:"0.8rem",fontFamily:"'Inter',sans-serif",outline:"none"}}/>
           </div>
           {/* Notes */}
           <div>
-            <div style={{fontSize:"0.72rem",fontWeight:700,textTransform:"uppercase",letterSpacing:"0.08em",color:"#6B7280",marginBottom:7}}>Notes (optional)</div>
+            <div style={{fontFamily:HEAVY_FONT,fontSize:"0.68rem",fontWeight:800,textTransform:"uppercase",letterSpacing:"0.08em",color:"#141414",marginBottom:7}}>Notes (optional)</div>
             <textarea value={wform.notes} onChange={e=>setWform({...wform,notes:e.target.value})} rows={2} placeholder="PRs, exercises, how you felt…"
-              style={{width:"100%",background:"rgba(255,255,255,0.8)",border:`1px solid ${BORDER}`,borderRadius:9,padding:"9px 13px",color:"#1A1D1B",fontSize:"0.8rem",fontFamily:"'Inter',sans-serif",outline:"none",resize:"none"}}/>
+              style={{width:"100%",background:"#FFFFFF",border:"1px solid #141414",borderRadius:4,padding:"9px 13px",color:"#141414",fontSize:"0.8rem",fontFamily:"'Inter',sans-serif",outline:"none",resize:"none"}}/>
           </div>
         </div>
         <div style={{display:"flex",gap:9,marginTop:16}}>
-          <button onClick={()=>setShowLogModal(false)} style={{flex:1,background:"transparent",border:`1px solid ${BORDER}`,borderRadius:10,padding:"11px",color:"#4B5563",cursor:"pointer",fontSize:"0.82rem",fontFamily:"'Inter',sans-serif"}}>Cancel</button>
-          <button onClick={submitWorkout} style={{flex:2,background:"linear-gradient(135deg,#10B981,#059669)",border:"none",borderRadius:10,padding:"11px",color:"white",cursor:"pointer",fontSize:"0.88rem",fontFamily:"'Inter',sans-serif",fontWeight:700}}>Save Workout ✓</button>
+          <button onClick={()=>setShowLogModal(false)} style={{flex:1,background:"#FFFFFF",border:"1px solid #141414",borderRadius:4,padding:"11px",color:"#141414",cursor:"pointer",fontSize:"0.78rem",fontFamily:HEAVY_FONT,fontWeight:700,letterSpacing:"0.03em",textTransform:"uppercase"}}>Cancel</button>
+          <button onClick={submitWorkout} style={{flex:2,background:"#F4B400",border:"none",borderRadius:4,padding:"11px",color:"#141414",cursor:"pointer",fontSize:"0.82rem",fontFamily:HEAVY_FONT,fontWeight:800,letterSpacing:"0.03em",textTransform:"uppercase"}}>Save Workout ✓</button>
         </div>
       </div>
     </div>
   );
 
   return (
-    <div style={{flex:1,overflowY:"auto",paddingBottom:90,background:"#F7F8F6",minHeight:"100%"}}>
+    <div style={{flex:1,overflowY:"auto",paddingBottom:90,background:"#FFFFFF",minHeight:"100%"}}>
       {/* Toast */}
       {toast&&(
-        <div style={{position:"fixed",top:66,left:"50%",transform:"translateX(-50%)",background:ACCENT,color:"white",padding:"8px 22px",borderRadius:22,fontSize:"0.82rem",fontWeight:700,zIndex:300,boxShadow:"0 4px 22px rgba(16,185,129,0.55)",whiteSpace:"nowrap",animation:"fadeUp 0.3s ease"}}>
+        <div style={{position:"fixed",top:66,left:"50%",transform:"translateX(-50%)",background:"#141414",color:"#FFFFFF",padding:"9px 22px",fontSize:"0.78rem",fontFamily:HEAVY_FONT,fontWeight:700,letterSpacing:"0.02em",zIndex:300,whiteSpace:"nowrap",animation:"fadeUp 0.3s ease"}}>
           {toast}
         </div>
       )}
 
       {/* Sub-nav tabs */}
-      <div style={{position:"sticky",top:0,background:"rgba(255,255,255,0.97)",backdropFilter:"blur(16px)",zIndex:30,borderBottom:`1px solid ${BORDER}`,padding:"10px 14px"}}>
-        <div style={{display:"flex",gap:7}}>
-          {[{id:"today",icon:"🎯",label:"Today"},{id:"history",icon:"📊",label:"History"},{id:"log",icon:"🏋️",label:"Workouts"},{id:"analytics",icon:"📈",label:isPro?"Analytics":"Analytics 👑"}].map(v=>{
+      <div style={{position:"sticky",top:0,background:"#FFFFFF",zIndex:30,borderBottom:"1px solid #141414",padding:"10px 14px"}}>
+        <div style={{display:"flex",border:"1px solid #141414"}}>
+          {[{id:"today",icon:"🎯",label:"Today"},{id:"history",icon:"📊",label:"History"},{id:"log",icon:"🏋️",label:"Workouts"},{id:"analytics",icon:"📈",label:isPro?"Analytics":"Analytics 👑"}].map((v,vi)=>{
             const on=view===v.id;
             return (
               <button key={v.id} onClick={()=>setView(v.id)}
-                style={{flex:1,background:on?"rgba(16,185,129,0.14)":"rgba(0,0,0,0.025)",border:`1px solid ${on?"rgba(16,185,129,0.38)":BORDER}`,borderRadius:10,padding:"8px 4px",color:on?ACCENT2_TEXT:"#4B5563",cursor:"pointer",fontSize:"0.72rem",fontFamily:"'Inter',sans-serif",fontWeight:on?700:400,transition:"all 0.16s"}}>
+                style={{flex:1,background:on?"#141414":"#FFFFFF",border:"none",borderLeft:vi===0?"none":"1px solid #141414",padding:"8px 4px",color:on?"#FFFFFF":"#141414",cursor:"pointer",fontSize:"0.68rem",fontFamily:HEAVY_FONT,fontWeight:700,letterSpacing:"0.02em",textTransform:"uppercase",transition:"all 0.12s"}}>
                 <div style={{fontSize:"1rem"}}>{v.icon}</div>
                 <div style={{marginTop:2}}>{v.label}</div>
               </button>
@@ -11941,17 +12001,17 @@ function ProgressTracker({ profile, isPro, onUpgrade }) {
       {/* Page header */}
       <div style={{padding:"12px 16px 0",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
         <div>
-          <div style={{fontFamily:"'Playfair Display',serif",fontWeight:800,color:"#1A1D1B",fontSize:"1.05rem"}}>
+          <div style={{fontFamily:HEAVY_FONT,fontWeight:900,color:"#141414",fontSize:"1.1rem",letterSpacing:"-0.01em",textTransform:"uppercase"}}>
             {view==="today"?new Date().toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"}):view==="history"?"Your Progress":view==="analytics"?"Advanced Analytics":"Workout Log"}
           </div>
-          {view==="today"&&<div style={{fontSize:"0.78rem",color:"#4B5563",marginTop:2}}>
+          {view==="today"&&<div style={{fontSize:"0.78rem",color:"#5B6572",marginTop:2}}>
             {streak>0?`🔥 ${streak}-day streak — keep it alive!`:"Start your streak today 💪"}
           </div>}
         </div>
         {view==="today"&&weekAvg>0&&(
           <div style={{textAlign:"right"}}>
-            <div style={{fontSize:"0.72rem",color:"#6B7280"}}>7-day avg</div>
-            <div style={{fontFamily:"'Playfair Display',serif",fontWeight:800,color:ACCENT_TEXT,fontSize:"1.1rem"}}>{Math.round(weekAvg*100)}%</div>
+            <div style={{fontSize:"0.64rem",color:"#5B6572",textTransform:"uppercase",letterSpacing:"0.06em"}}>7-day avg</div>
+            <div style={{fontFamily:HEAVY_FONT,fontWeight:900,color:"#141414",fontSize:"1.1rem"}}>{Math.round(weekAvg*100)}%</div>
           </div>
         )}
       </div>
@@ -11962,25 +12022,24 @@ function ProgressTracker({ profile, isPro, onUpgrade }) {
       {view==="analytics" && (
         <div style={{padding:"14px 14px 80px"}}>
           {!isPro ? (
-            <div style={{background:"rgba(139,92,246,0.06)",border:"1px solid rgba(139,92,246,0.25)",borderRadius:16,padding:"28px 20px",textAlign:"center",margin:"8px 0"}}>
+            <div style={{border:"1px solid #141414",padding:"28px 20px",textAlign:"center",margin:"8px 0"}}>
               <div style={{fontSize:40,marginBottom:12}}>📈</div>
-              <div style={{fontFamily:"'Playfair Display',serif",fontWeight:800,color:"#1A1D1B",fontSize:"1.1rem",marginBottom:8}}>Advanced Progress Analytics</div>
-              <div style={{color:"#4B5563",fontSize:"0.8rem",lineHeight:1.7,marginBottom:20}}>
+              <div style={{fontFamily:HEAVY_FONT,fontWeight:900,color:"#141414",fontSize:"1.1rem",letterSpacing:"-0.01em",textTransform:"uppercase",marginBottom:8}}>Advanced Progress Analytics</div>
+              <div style={{color:"#5B6572",fontSize:"0.8rem",lineHeight:1.7,marginBottom:20}}>
                 Unlock deep insights into your progress — workout volume trends, habit scores over time, AI-generated coaching insights, and personal records. Pro exclusive.
               </div>
-              <div style={{display:"flex",flexDirection:"column",gap:8,marginBottom:20,textAlign:"left"}}>
-                {["📊 30-day habit score chart","🏋️ Workout volume & frequency tracking","⚡ AI-generated coaching insights","🏆 Personal record detection","⚖️ Body weight trend analysis","🔥 Streak history & milestones"].map(f=>(
-                  <div key={f} style={{background:"rgba(0,0,0,0.03)",border:`1px solid ${BORDER}`,borderRadius:10,padding:"9px 14px",fontSize:"0.78rem",color:"#1A1D1B"}}>{f}</div>
+              <div style={{display:"flex",flexDirection:"column",gap:0,marginBottom:20,border:"1px solid #141414"}}>
+                {["📊 30-day habit score chart","🏋️ Workout volume & frequency tracking","⚡ AI-generated coaching insights","🏆 Personal record detection","⚖️ Body weight trend analysis","🔥 Streak history & milestones"].map((f,fi)=>(
+                  <div key={f} style={{borderTop:fi===0?"none":"1px solid #E6E4DF",padding:"9px 14px",fontSize:"0.78rem",color:"#141414",textAlign:"left"}}>{f}</div>
                 ))}
               </div>
               <button onClick={()=>onUpgrade("Advanced analytics require Pro")}
-                style={{background:"linear-gradient(135deg,#7C3AED,#7C3AED)",border:"none",borderRadius:13,padding:"14px 32px",color:"white",cursor:"pointer",fontSize:"0.92rem",fontFamily:"'Inter',sans-serif",fontWeight:800,boxShadow:"0 0 24px rgba(139,92,246,0.4)"}}>
-                👑 Upgrade to Pro — $4.99/mo
+                style={{background:"#F4B400",border:"none",borderRadius:4,padding:"14px 32px",color:"#141414",cursor:"pointer",fontSize:"0.85rem",fontFamily:HEAVY_FONT,fontWeight:800,letterSpacing:"0.03em",textTransform:"uppercase"}}>
+                Upgrade to Pro — $4.99/mo
               </button>
             </div>
           ) : (() => {
             // ── ADVANCED ANALYTICS (PRO) ──
-            const CARD = {background:SURFACE,border:`1px solid ${BORDER}`,borderRadius:14,padding:"14px 16px",marginBottom:10};
             const workoutsByType = workouts.reduce((acc,w)=>{acc[w.type]=(acc[w.type]||0)+1;return acc;},{});
             const totalVolume = workouts.reduce((s,w)=>s+parseInt(w.duration||0),0);
             const avgDuration = workouts.length ? Math.round(totalVolume/workouts.length) : 0;
@@ -11994,51 +12053,50 @@ function ProgressTracker({ profile, isPro, onUpgrade }) {
             return (
               <div>
                 {/* Stat cards row */}
-                <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:10}}>
+                <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",border:"1px solid #141414",marginBottom:10}}>
                   {[
-                    {label:"Total Workouts",val:workouts.length,icon:"🏋️",color:"#1D4ED8"},
-                    {label:"Total Volume",val:`${totalVolume} min`,icon:"⏱",color:"#047857"},
-                    {label:"Avg Session",val:`${avgDuration} min`,icon:"📊",color:"#92400E"},
-                    {label:"Habit Avg (30d)",val:`${avgHabit30}%`,icon:"🎯",color:"#7C3AED"},
-                  ].map(s=>(
-                    <div key={s.label} style={{background:`${s.color}10`,border:`1px solid ${s.color}30`,borderRadius:12,padding:"13px 14px"}}>
+                    {label:"Total Workouts",val:workouts.length,icon:"🏋️"},
+                    {label:"Total Volume",val:`${totalVolume} min`,icon:"⏱"},
+                    {label:"Avg Session",val:`${avgDuration} min`,icon:"📊"},
+                    {label:"Habit Avg (30d)",val:`${avgHabit30}%`,icon:"🎯"},
+                  ].map((s,si)=>(
+                    <div key={s.label} style={{padding:"13px 14px",borderTop:si<2?"none":"1px solid #E6E4DF",borderLeft:si%2===1?"1px solid #E6E4DF":"none"}}>
                       <div style={{fontSize:22,marginBottom:4}}>{s.icon}</div>
-                      <div style={{fontFamily:"'Playfair Display',serif",fontWeight:800,color:s.color,fontSize:"1.3rem",lineHeight:1}}>{s.val}</div>
-                      <div style={{color:"#4B5563",fontSize:"0.75rem",marginTop:3}}>{s.label}</div>
+                      <div style={{fontFamily:HEAVY_FONT,fontWeight:900,color:"#141414",fontSize:"1.3rem",lineHeight:1}}>{s.val}</div>
+                      <div style={{color:"#5B6572",fontSize:"0.75rem",marginTop:3}}>{s.label}</div>
                     </div>
                   ))}
                 </div>
 
                 {/* 30-day habit score bar chart */}
-                <div style={CARD}>
-                  <div style={{fontFamily:"'Playfair Display',serif",fontWeight:800,color:"#1A1D1B",fontSize:"0.9rem",marginBottom:12}}>📊 30-Day Habit Score</div>
+                <div style={{border:"1px solid #141414",padding:"14px 16px",marginBottom:10}}>
+                  <div style={{fontFamily:HEAVY_FONT,fontWeight:900,color:"#141414",fontSize:"0.78rem",letterSpacing:"0.04em",textTransform:"uppercase",marginBottom:12}}>📊 30-Day Habit Score</div>
                   <div style={{display:"flex",alignItems:"flex-end",gap:2,height:60,marginBottom:6}}>
                     {last30Scores.map((d,i)=>{
                       const h=Math.max((d.score/100)*52,2);
-                      const col=d.score>=80?"#10B981":d.score>=50?"#D97706":"#DC2626";
-                      return <div key={d.k} style={{flex:1,height:`${h}px`,background:i===last30Scores.length-1?col:`${col}70`,borderRadius:"2px 2px 0 0",transition:"height 0.4s ease"}} title={`${d.k}: ${d.score}%`}/>;
+                      return <div key={d.k} style={{flex:1,height:`${h}px`,background:i===last30Scores.length-1?"#F4B400":"#E6E4DF",transition:"height 0.4s ease"}} title={`${d.k}: ${d.score}%`}/>;
                     })}
                   </div>
-                  <div style={{display:"flex",justifyContent:"space-between",fontSize:"0.72rem",color:"#6B7280"}}>
-                    <span>30 days ago</span><span style={{color:ACCENT_TEXT,fontWeight:700}}>{avgHabit30}% avg</span><span>Today</span>
+                  <div style={{display:"flex",justifyContent:"space-between",fontSize:"0.72rem",color:"#5B6572"}}>
+                    <span>30 days ago</span><span style={{color:"#141414",fontWeight:700}}>{avgHabit30}% avg</span><span>Today</span>
                   </div>
                 </div>
 
                 {/* Workout frequency by type */}
                 {Object.keys(workoutsByType).length>0&&(
-                  <div style={CARD}>
-                    <div style={{fontFamily:"'Playfair Display',serif",fontWeight:800,color:"#1A1D1B",fontSize:"0.9rem",marginBottom:12}}>🏋️ Workouts by Type</div>
+                  <div style={{border:"1px solid #141414",padding:"14px 16px",marginBottom:10}}>
+                    <div style={{fontFamily:HEAVY_FONT,fontWeight:900,color:"#141414",fontSize:"0.78rem",letterSpacing:"0.04em",textTransform:"uppercase",marginBottom:12}}>🏋️ Workouts by Type</div>
                     {Object.entries(workoutsByType).sort(([,a],[,b])=>b-a).map(([type,count])=>{
                       const max=Math.max(...Object.values(workoutsByType));
                       const pct=(count/max)*100;
                       return (
                         <div key={type} style={{marginBottom:8}}>
                           <div style={{display:"flex",justifyContent:"space-between",marginBottom:3}}>
-                            <span style={{fontSize:"0.75rem",color:"#1A1D1B",fontWeight:600}}>{type}</span>
-                            <span style={{fontSize:"0.75rem",color:ACCENT_TEXT,fontWeight:700}}>{count} session{count!==1?"s":""}</span>
+                            <span style={{fontSize:"0.75rem",color:"#141414",fontWeight:600}}>{type}</span>
+                            <span style={{fontSize:"0.75rem",color:"#5B6572",fontWeight:700}}>{count} session{count!==1?"s":""}</span>
                           </div>
-                          <div style={{height:7,background:"rgba(0,0,0,0.06)",borderRadius:4}}>
-                            <div style={{height:"100%",width:`${pct}%`,background:`linear-gradient(90deg,${ACCENT},${ACCENT2})`,borderRadius:4,transition:"width 0.6s ease"}}/>
+                          <div style={{height:6,background:"#E6E4DF"}}>
+                            <div style={{height:"100%",width:`${pct}%`,background:"#141414",transition:"width 0.6s ease"}}/>
                           </div>
                         </div>
                       );
@@ -12048,26 +12106,26 @@ function ProgressTracker({ profile, isPro, onUpgrade }) {
 
                 {/* Weight trend extended */}
                 {weightEntries.length>1&&(
-                  <div style={CARD}>
-                    <div style={{fontFamily:"'Playfair Display',serif",fontWeight:800,color:"#1A1D1B",fontSize:"0.9rem",marginBottom:12}}>⚖️ Weight History ({weightEntries.length} entries)</div>
+                  <div style={{border:"1px solid #141414",padding:"14px 16px",marginBottom:10}}>
+                    <div style={{fontFamily:HEAVY_FONT,fontWeight:900,color:"#141414",fontSize:"0.78rem",letterSpacing:"0.04em",textTransform:"uppercase",marginBottom:12}}>⚖️ Weight History ({weightEntries.length} entries)</div>
                     <div style={{display:"flex",alignItems:"flex-end",gap:3,height:64,marginBottom:8}}>
                       {weightEntries.map(([k,v],i,arr)=>{
                         const vals=arr.map(([,val])=>val);
                         const mn=Math.min(...vals),mx=Math.max(...vals),rng=mx-mn||1;
                         const h=((v-mn)/rng)*50+10;
                         const isLast=i===arr.length-1;
-                        return <div key={k} style={{flex:1,height:`${h}px`,background:isLast?`linear-gradient(180deg,${ACCENT},${ACCENT}88)`:"rgba(16,185,129,0.22)",borderRadius:"3px 3px 0 0"}} title={`${k}: ${v} lbs`}/>;
+                        return <div key={k} style={{flex:1,height:`${h}px`,background:isLast?"#F4B400":"#E6E4DF"}} title={`${k}: ${v} lbs`}/>;
                       })}
                     </div>
                     <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8}}>
                       {[
-                        {l:"Start",v:`${weightEntries[0][1]} lbs`,c:"#4B5563"},
-                        {l:"Current",v:`${weightEntries[weightEntries.length-1][1]} lbs`,c:ACCENT},
-                        {l:"Change",v:`${weightEntries[weightEntries.length-1][1]-weightEntries[0][1]>0?"+":""}${(weightEntries[weightEntries.length-1][1]-weightEntries[0][1]).toFixed(1)} lbs`,c:weightEntries[weightEntries.length-1][1]<weightEntries[0][1]?"#10B981":"#DC2626"},
+                        {l:"Start",v:`${weightEntries[0][1]} lbs`},
+                        {l:"Current",v:`${weightEntries[weightEntries.length-1][1]} lbs`},
+                        {l:"Change",v:`${weightEntries[weightEntries.length-1][1]-weightEntries[0][1]>0?"+":""}${(weightEntries[weightEntries.length-1][1]-weightEntries[0][1]).toFixed(1)} lbs`},
                       ].map(s=>(
                         <div key={s.l} style={{textAlign:"center"}}>
-                          <div style={{fontSize:"0.72rem",color:"#6B7280",marginBottom:2}}>{s.l}</div>
-                          <div style={{fontWeight:700,color:s.c,fontSize:"0.82rem"}}>{s.v}</div>
+                          <div style={{fontSize:"0.72rem",color:"#5B6572",marginBottom:2}}>{s.l}</div>
+                          <div style={{fontWeight:700,color:"#141414",fontSize:"0.82rem"}}>{s.v}</div>
                         </div>
                       ))}
                     </div>
@@ -12076,17 +12134,18 @@ function ProgressTracker({ profile, isPro, onUpgrade }) {
 
                 {/* PR card */}
                 {prWorkout&&(
-                  <div style={{background:"rgba(245,158,11,0.07)",border:"1px solid rgba(245,158,11,0.28)",borderRadius:14,padding:"14px 16px",marginBottom:10}}>
-                    <div style={{fontFamily:"'Playfair Display',serif",fontWeight:800,color:"#92400E",fontSize:"0.9rem",marginBottom:6}}>🏆 Longest Session PR</div>
-                    <div style={{color:"#1A1D1B",fontSize:"0.82rem",fontWeight:600}}>{prWorkout.type} · {prWorkout.duration} min</div>
-                    <div style={{color:"#4B5563",fontSize:"0.8rem",marginTop:3}}>{prWorkout.date} {prWorkout.notes&&`· "${prWorkout.notes}"`}</div>
+                  <div style={{position:"relative",border:"1px solid #141414",padding:"14px 16px 14px 20px",marginBottom:10,overflow:"hidden"}}>
+                    <div style={{position:"absolute",left:0,top:0,bottom:0,width:4,background:"#F4B400"}} />
+                    <div style={{fontFamily:HEAVY_FONT,fontWeight:900,color:"#141414",fontSize:"0.78rem",letterSpacing:"0.04em",textTransform:"uppercase",marginBottom:6}}>🏆 Longest Session PR</div>
+                    <div style={{color:"#141414",fontSize:"0.82rem",fontWeight:600}}>{prWorkout.type} · {prWorkout.duration} min</div>
+                    <div style={{color:"#5B6572",fontSize:"0.8rem",marginTop:3}}>{prWorkout.date} {prWorkout.notes&&`· "${prWorkout.notes}"`}</div>
                   </div>
                 )}
 
                 {/* AI insight */}
-                <div style={{background:"rgba(16,185,129,0.06)",border:"1px solid rgba(16,185,129,0.22)",borderRadius:14,padding:"14px 16px"}}>
-                  <div style={{fontFamily:"'Playfair Display',serif",fontWeight:800,color:ACCENT2_TEXT,fontSize:"0.88rem",marginBottom:6}}>💡 Ailara Insight</div>
-                  <div style={{color:"#4B5563",fontSize:"0.78rem",lineHeight:1.7}}>
+                <div style={{border:"1px solid #141414",padding:"14px 16px"}}>
+                  <div style={{fontFamily:HEAVY_FONT,fontWeight:900,color:"#141414",fontSize:"0.78rem",letterSpacing:"0.04em",textTransform:"uppercase",marginBottom:6}}>💡 Ailara Insight</div>
+                  <div style={{color:"#5B6572",fontSize:"0.78rem",lineHeight:1.7}}>
                     {avgHabit30>=75 ? "Outstanding 30-day consistency. You're in the top tier — focus on progressive overload in your workouts to keep growing." :
                      avgHabit30>=50 ? "Solid foundation. Push your habit score above 75% and you'll see compounding results. Try habit stacking — attach new habits to ones you already nail." :
                      workouts.length===0 ? "Log your first workout to start tracking volume. Even one session a week creates a measurable trend within a month." :
@@ -12107,46 +12166,47 @@ function ProgressTracker({ profile, isPro, onUpgrade }) {
         const isCheck = !cfg || cfg.type === "check";
         return (
           <div onClick={() => setEditingHabit(null)}
-            style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.4)",backdropFilter:"blur(10px)",zIndex:500,display:"flex",alignItems:"flex-end",justifyContent:"center"}}>
+            style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.4)",backdropFilter:"blur(8px)",zIndex:500,display:"flex",alignItems:"flex-end",justifyContent:"center"}}>
             <div onClick={e=>e.stopPropagation()}
-              style={{background:"#EEF0ED",border:`1px solid ${editingHabit.color}40`,borderRadius:"20px 20px 0 0",padding:"24px 20px 44px",width:"100%",maxWidth:520,animation:"fadeUp 0.2s ease"}}>
-              <div style={{width:36,height:4,background:"rgba(0,0,0,0.15)",borderRadius:2,margin:"0 auto 16px"}}/>
+              style={{width:"100%",maxWidth:520,background:"#FFFFFF",border:"1px solid #141414",borderRadius:0,padding:"22px 20px 30px",animation:"fadeUp 0.2s ease"}}>
               <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:6}}>
                 <span style={{fontSize:22}}>{editingHabit.icon}</span>
-                <div style={{fontFamily:"'Playfair Display',serif",fontWeight:800,color:"#1A1D1B",fontSize:"1rem"}}>{editingHabit.label}</div>
+                <div style={{fontFamily:HEAVY_FONT,fontWeight:900,color:"#141414",fontSize:"1rem",letterSpacing:"-0.01em",textTransform:"uppercase"}}>{editingHabit.label}</div>
               </div>
-              <div style={{color:"#4B5563",fontSize:"0.72rem",marginBottom:18}}>
+              <div style={{color:"#5B6572",fontSize:"0.72rem",marginBottom:18}}>
                 Log your actual value — the AI coach uses this to detect trends and give better advice.
               </div>
 
               {isCheck ? (
-                <div style={{display:"flex",gap:10,marginBottom:16}}>
-                  {["Done","Skipped"].map(opt => (
+                <div style={{display:"flex",gap:8,marginBottom:16}}>
+                  {["Done","Skipped"].map(opt => {
+                    const active = editingHabit.currentValue==="1"&&opt==="Done";
+                    return (
                     <button key={opt} onClick={()=>setEditingHabit(p=>({...p,currentValue:opt==="Done"?"1":""}))}
-                      style={{flex:1,padding:"12px",borderRadius:11,border:`1px solid ${editingHabit.currentValue==="1"&&opt==="Done"?editingHabit.color:"rgba(0,0,0,0.1)"}`,background:editingHabit.currentValue==="1"&&opt==="Done"?`${editingHabit.color}22`:"transparent",color:editingHabit.currentValue==="1"&&opt==="Done"?editingHabit.color:"#4B5563",cursor:"pointer",fontWeight:700,fontSize:"0.82rem",fontFamily:"'Inter',sans-serif"}}>
+                      style={{flex:1,padding:"12px",borderRadius:4,border:"1px solid #141414",background:active?"#F4B400":"#FFFFFF",color:"#141414",cursor:"pointer",fontWeight:700,fontSize:"0.82rem",fontFamily:HEAVY_FONT,letterSpacing:"0.02em",textTransform:"uppercase"}}>
                       {opt==="Done"?"✓ Yes":"✗ No"}
                     </button>
-                  ))}
+                    );
+                  })}
                 </div>
               ) : (
                 <div style={{marginBottom:16}}>
                   <div style={{display:"flex",justifyContent:"space-between",marginBottom:8}}>
-                    <span style={{fontSize:"0.78rem",color:"#0F766E",fontWeight:700}}>{cfg.label}</span>
-                    <span style={{fontSize:"0.78rem",color:"#4B5563"}}>Target: {cfg.target} {cfg.unit}</span>
+                    <span style={{fontSize:"0.68rem",fontFamily:HEAVY_FONT,fontWeight:800,textTransform:"uppercase",letterSpacing:"0.06em",color:"#141414"}}>{cfg.label}</span>
+                    <span style={{fontSize:"0.76rem",color:"#5B6572"}}>Target: {cfg.target} {cfg.unit}</span>
                   </div>
                   <input
                     type="number" min="0" max={cfg.max}
                     value={editingHabit.currentValue}
                     onChange={e=>setEditingHabit(p=>({...p,currentValue:e.target.value}))}
                     placeholder={`e.g. ${cfg.target}`}
-                    style={{width:"100%",background:"rgba(255,255,255,0.9)",border:`1px solid ${editingHabit.color}40`,borderRadius:10,padding:"12px 14px",color:"#1A1D1B",fontSize:"1.1rem",fontFamily:"'Inter',sans-serif",outline:"none",boxSizing:"border-box",textAlign:"center",fontWeight:700}}
+                    style={{width:"100%",background:"#FFFFFF",border:"1px solid #141414",borderRadius:4,padding:"12px 14px",color:"#141414",fontSize:"1.1rem",fontFamily:HEAVY_FONT,outline:"none",boxSizing:"border-box",textAlign:"center",fontWeight:800}}
                   />
                   {editingHabit.currentValue && cfg && (
                     <div style={{textAlign:"center",marginTop:8,fontSize:"0.72rem"}}>
                       {(() => {
                         const pct = Math.round((parseFloat(editingHabit.currentValue)/cfg.target)*100);
-                        const color = pct>=100?editingHabit.color:pct>=60?"#92400E":"#DC2626";
-                        return <span style={{color,fontWeight:700}}>{pct}% of daily goal</span>;
+                        return <span style={{color:"#141414",fontWeight:700}}>{pct}% of daily goal</span>;
                       })()}
                     </div>
                   )}
@@ -12154,18 +12214,18 @@ function ProgressTracker({ profile, isPro, onUpgrade }) {
               )}
 
               <div style={{marginBottom:16}}>
-                <div style={{fontSize:"0.78rem",color:"#0F766E",fontWeight:700,marginBottom:6}}>📝 Note (optional)</div>
+                <div style={{fontSize:"0.68rem",fontFamily:HEAVY_FONT,fontWeight:800,textTransform:"uppercase",letterSpacing:"0.06em",color:"#141414",marginBottom:7}}>📝 Note (optional)</div>
                 <input
                   value={editingHabit.currentNote||""}
                   onChange={e=>setEditingHabit(p=>({...p,currentNote:e.target.value}))}
                   placeholder="How did it go? Any context for your coach..."
-                  style={{width:"100%",background:"rgba(255,255,255,0.9)",border:"1px solid rgba(16,185,129,0.2)",borderRadius:10,padding:"10px 13px",color:"#1A1D1B",fontSize:"0.82rem",fontFamily:"'Inter',sans-serif",outline:"none",boxSizing:"border-box"}}
+                  style={{width:"100%",background:"#FFFFFF",border:"1px solid #141414",borderRadius:4,padding:"9px 13px",color:"#141414",fontSize:"0.8rem",fontFamily:"'Inter',sans-serif",outline:"none",boxSizing:"border-box"}}
                 />
               </div>
 
               <div style={{display:"flex",gap:9}}>
                 <button onClick={()=>setEditingHabit(null)}
-                  style={{flex:1,background:"transparent",border:"1px solid rgba(0,0,0,0.1)",borderRadius:11,padding:"12px",color:"#4B5563",cursor:"pointer",fontSize:"0.82rem",fontFamily:"'Inter',sans-serif"}}>
+                  style={{flex:1,background:"#FFFFFF",border:"1px solid #141414",borderRadius:4,padding:"11px",color:"#141414",cursor:"pointer",fontSize:"0.78rem",fontFamily:HEAVY_FONT,fontWeight:700,letterSpacing:"0.03em",textTransform:"uppercase"}}>
                   Cancel
                 </button>
                 <button onClick={()=>{
@@ -12192,7 +12252,7 @@ function ProgressTracker({ profile, isPro, onUpgrade }) {
                   }
                   setEditingHabit(null);
                 }}
-                  style={{flex:2,background:`linear-gradient(135deg,${editingHabit.color},${editingHabit.color}bb)`,border:"none",borderRadius:11,padding:"12px",color:"white",cursor:"pointer",fontSize:"0.88rem",fontFamily:"'Inter',sans-serif",fontWeight:700}}>
+                  style={{flex:2,background:"#F4B400",border:"none",borderRadius:4,padding:"11px",color:"#141414",cursor:"pointer",fontSize:"0.82rem",fontFamily:HEAVY_FONT,fontWeight:800,letterSpacing:"0.03em",textTransform:"uppercase"}}>
                   Save Log ✓
                 </button>
               </div>
@@ -13065,7 +13125,7 @@ export default function AilaraApp() {
       )}
 
       {/* CONTENT */}
-      <div style={{ flex:1,overflowY:"auto",position:"relative",zIndex:1,display:"flex",flexDirection:"column",background: (tab==="chat"||tab==="onboarding") ? LS.paper : (["workouts","nutrition","meals","profile"].includes(tab) ? W.sand : undefined) }}>
+      <div style={{ flex:1,overflowY:"auto",position:"relative",zIndex:1,display:"flex",flexDirection:"column",background: (tab==="chat"||tab==="onboarding"||tab==="profile") ? LS.paper : (["workouts","nutrition","meals"].includes(tab) ? W.sand : undefined) }}>
         {tab === "onboarding" && (
           <div style={{ flex:1,overflowY:"auto",background:LS.paper }}>
             {/* Compact hero — heavy wordmark + tagline */}
@@ -13089,115 +13149,108 @@ export default function AilaraApp() {
         {tab === "progress" && <div style={{ flex:1,overflowY:"auto" }}><ProgressTracker profile={profile} isPro={isPro} onUpgrade={openUpgrade} /></div>}
         {tab === "profile" && (
           <div style={{ maxWidth:520,margin:"0 auto",padding:"24px 20px" }}>
-            <div style={{ fontFamily:"'Playfair Display',serif",fontSize:"1.2rem",fontWeight:800,color:"#1A1D1B",marginBottom:6 }}>Your Profile</div>
-            <div style={{ color:"#4B5563",fontSize:"0.8rem",marginBottom:20 }}>Ailara uses this to personalize every recommendation across all tabs.</div>
+            <div style={{ fontFamily:HEAVY_FONT,fontSize:"1.5rem",fontWeight:900,color:"#141414",letterSpacing:"-0.02em",textTransform:"uppercase",lineHeight:1.05,marginBottom:6 }}>Your Profile</div>
+            <div style={{ color:"#5B6572",fontSize:"0.8rem",marginBottom:20 }}>Ailara uses this to personalize every recommendation across all tabs.</div>
             {profile ? (
               <div style={{ display:"grid",gap:10 }}>
                 {/* Generated Plan Summary — shown if available */}
                 {profile.generatedPlan && (() => {
                   const gp = profile.generatedPlan;
                   return (
-                    <div style={{ background:W.cream,border:`1px solid ${W.haze}`,borderRadius:16,padding:"14px 16px",marginBottom:4,boxShadow:W.shadowRest }}>
-                      <div style={{ fontFamily:"'Playfair Display',serif",fontWeight:800,color:"#1A1D1B",fontSize:"0.95rem",marginBottom:6 }}>✨ Your Personalized Plan</div>
-                      {gp.greeting && <div style={{ color:"#3C5A4A",fontSize:"0.8rem",lineHeight:1.5,marginBottom:8 }}>{gp.greeting}</div>}
+                    <div style={{ position:"relative",background:"#FFFFFF",border:"1px solid #141414",padding:"16px 16px 16px 20px",marginBottom:4,overflow:"hidden" }}>
+                      <div style={{ position:"absolute",left:0,top:0,bottom:0,width:4,background:"#F4B400" }} />
+                      <div style={{ fontFamily:HEAVY_FONT,fontWeight:900,color:"#141414",fontSize:"0.95rem",letterSpacing:"-0.01em",textTransform:"uppercase",marginBottom:6 }}>✨ Your Personalized Plan</div>
+                      {gp.greeting && <div style={{ color:"#5B6572",fontSize:"0.8rem",lineHeight:1.5,marginBottom:8 }}>{gp.greeting}</div>}
                       <div style={{ display:"flex",gap:8,flexWrap:"wrap",marginBottom:10 }}>
-                        {gp.dietPlan?.name && <span style={{ fontSize:"0.8rem",color:"#3C5A4A",background:W.tileSage,padding:"3px 10px",borderRadius:999,fontWeight:700 }}>🥗 {gp.dietPlan.name}</span>}
-                        {gp.exercisePlan?.name && <span style={{ fontSize:"0.8rem",color:"#3C5A4A",background:W.tileSage,padding:"3px 10px",borderRadius:999,fontWeight:700 }}>🏋️ {gp.exercisePlan.name}</span>}
+                        {gp.dietPlan?.name && <span style={{ fontSize:"0.68rem",fontFamily:HEAVY_FONT,fontWeight:700,letterSpacing:"0.03em",textTransform:"uppercase",color:"#141414",border:"1px solid #141414",padding:"3px 10px" }}>🥗 {gp.dietPlan.name}</span>}
+                        {gp.exercisePlan?.name && <span style={{ fontSize:"0.68rem",fontFamily:HEAVY_FONT,fontWeight:700,letterSpacing:"0.03em",textTransform:"uppercase",color:"#141414",border:"1px solid #141414",padding:"3px 10px" }}>🏋️ {gp.exercisePlan.name}</span>}
                       </div>
                       {gp.dietPlan?.macroTarget && (
-                        <div style={{ display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:5,marginBottom:8 }}>
+                        <div style={{ display:"grid",gridTemplateColumns:"repeat(4,1fr)",marginBottom:8,border:"1px solid #141414" }}>
                           {[
-                            {label:"Cal",val:gp.dietPlan.macroTarget.calories,color:"#C79245"},
-                            {label:"Protein",val:gp.dietPlan.macroTarget.protein,color:"#3C5A4A"},
-                            {label:"Carbs",val:gp.dietPlan.macroTarget.carbs,color:"#7FA891"},
-                            {label:"Fat",val:gp.dietPlan.macroTarget.fat,color:"#E8836B"},
-                          ].map(({label,val,color})=>(
-                            <div key={label} style={{background:`${color}14`,border:`1px solid ${color}30`,borderRadius:10,padding:"6px 4px",textAlign:"center"}}>
-                              <div style={{color,fontWeight:800,fontSize:"0.78rem"}}>{val}</div>
-                              <div style={{color:"#6B7280",fontSize:"0.72rem",textTransform:"uppercase",letterSpacing:"0.06em"}}>{label}</div>
+                            {label:"Cal",val:gp.dietPlan.macroTarget.calories},
+                            {label:"Protein",val:gp.dietPlan.macroTarget.protein},
+                            {label:"Carbs",val:gp.dietPlan.macroTarget.carbs},
+                            {label:"Fat",val:gp.dietPlan.macroTarget.fat},
+                          ].map(({label,val},mi)=>(
+                            <div key={label} style={{borderLeft:mi===0?"none":"1px solid #E6E4DF",padding:"6px 4px",textAlign:"center"}}>
+                              <div style={{color:"#141414",fontWeight:800,fontSize:"0.78rem"}}>{val}</div>
+                              <div style={{color:"#5B6572",fontSize:"0.64rem",textTransform:"uppercase",letterSpacing:"0.06em"}}>{label}</div>
                             </div>
                           ))}
                         </div>
                       )}
-                      {gp.exercisePlan?.weeklySchedule?.slice(0,7).map((d,i) => {
-                        const dc = d.focus?.toLowerCase() || "";
-                        const c = dc.includes("rest")||dc.includes("recovery")?"#94897A":dc.includes("upper")||dc.includes("push")?"#3C5A4A":dc.includes("lower")||dc.includes("leg")?"#7FA891":dc.includes("pull")||dc.includes("back")?"#C79245":dc.includes("hiit")||dc.includes("cardio")?"#E8836B":dc.includes("full")?"#EE9C5B":dc.includes("core")?"#E8836B":"#3C5A4A";
-                        return (
-                          <div key={i} style={{display:"flex",gap:8,alignItems:"center",padding:"5px 8px",borderRadius:9,background:W.sand,border:`1px solid ${W.haze}`,marginBottom:4}}>
-                            <span style={{fontSize:"0.72rem",fontWeight:800,color:c,width:24,flexShrink:0}}>{(d.day||"").slice(0,3).toUpperCase()}</span>
-                            <span style={{fontSize:"0.72rem",color:"#1A1D1B",flex:1}}>{d.focus}</span>
-                            {d.duration && <span style={{fontSize:"0.72rem",color:"#6B7280"}}>⏱{d.duration}</span>}
-                          </div>
-                        );
-                      })}
+                      {gp.exercisePlan?.weeklySchedule?.slice(0,7).map((d,i) => (
+                        <div key={i} style={{display:"flex",gap:8,alignItems:"center",padding:"6px 8px",borderTop: i===0?"none":"1px solid #E6E4DF"}}>
+                          <span style={{fontSize:"0.68rem",fontFamily:HEAVY_FONT,fontWeight:800,color:"#141414",width:28,flexShrink:0}}>{(d.day||"").slice(0,3).toUpperCase()}</span>
+                          <span style={{fontSize:"0.75rem",color:"#141414",flex:1}}>{d.focus}</span>
+                          {d.duration && <span style={{fontSize:"0.72rem",color:"#5B6572"}}>⏱{d.duration}</span>}
+                        </div>
+                      ))}
                     </div>
                   );
                 })()}
 
                 {/* Profile data */}
-                {[
-                  ["Name", profile.name || "—"],
-                  ["Age Range", profile.age],
-                  ["Sex", profile.sex],
-                  ["Weight", profile.weight ? `${profile.weight} lbs` : "—"],
-                  ["Height", profile.height || "—"],
-                  ["Activity Level", profile.activityLevel],
-                  ["Health Conditions", profile.conditions?.join(", ") || "None"],
-                  ["Goals", profile.goals?.join(", ") || "—"],
-                  ["Diet Preference", profile.diet],
-                  ["Workout Days", profile.workoutDays ? `${profile.workoutDays} days/week` : "—"],
-                  ["Session Length", profile.workoutDuration || "—"],
-                  ["Fitness Level", profile.fitnessExp || "—"],
-                  ["Equipment", profile.equipment || "—"],
-                  ["Sleep", profile.sleepHours || "—"],
-                  ["Stress Level", profile.stressLevel || "—"],
-                  ["Notes", profile.notes || "—"],
-                ].map(([label, val]) => (
-                  <div key={label} style={{ background:W.cream,border:`1px solid ${W.haze}`,borderRadius:12,padding:"10px 14px",display:"flex",justifyContent:"space-between",alignItems:"flex-start",gap:12,boxShadow:W.shadowRest }}>
-                    <span style={{ fontSize:"0.78rem",fontWeight:700,textTransform:"uppercase",letterSpacing:"0.08em",color:W.taupe,flexShrink:0 }}>{label}</span>
-                    <span style={{ fontSize:"0.8rem",color:"#3C5A4A",textAlign:"right" }}>{val}</span>
-                  </div>
-                ))}
+                <div style={{ border:"1px solid #141414" }}>
+                  {[
+                    ["Name", profile.name || "—"],
+                    ["Age Range", profile.age],
+                    ["Sex", profile.sex],
+                    ["Weight", profile.weight ? `${profile.weight} lbs` : "—"],
+                    ["Height", profile.height || "—"],
+                    ["Activity Level", profile.activityLevel],
+                    ["Health Conditions", profile.conditions?.join(", ") || "None"],
+                    ["Goals", profile.goals?.join(", ") || "—"],
+                    ["Diet Preference", profile.diet],
+                    ["Workout Days", profile.workoutDays ? `${profile.workoutDays} days/week` : "—"],
+                    ["Session Length", profile.workoutDuration || "—"],
+                    ["Fitness Level", profile.fitnessExp || "—"],
+                    ["Equipment", profile.equipment || "—"],
+                    ["Sleep", profile.sleepHours || "—"],
+                    ["Stress Level", profile.stressLevel || "—"],
+                    ["Notes", profile.notes || "—"],
+                  ].map(([label, val], pi) => (
+                    <div key={label} style={{ borderTop: pi===0?"none":"1px solid #E6E4DF",padding:"10px 14px",display:"flex",justifyContent:"space-between",alignItems:"flex-start",gap:12 }}>
+                      <span style={{ fontSize:"0.68rem",fontFamily:HEAVY_FONT,fontWeight:800,textTransform:"uppercase",letterSpacing:"0.06em",color:"#5B6572",flexShrink:0 }}>{label}</span>
+                      <span style={{ fontSize:"0.8rem",color:"#141414",textAlign:"right" }}>{val}</span>
+                    </div>
+                  ))}
+                </div>
                 {/* Nav shortcuts */}
-                <div style={{ marginTop: 4, background: W.cream, border: `1px solid ${W.haze}`, borderRadius: 16, padding: "12px 14px", boxShadow: W.shadowRest }}>
-                  <div style={{ fontSize: "0.75rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: W.taupe, marginBottom: 10 }}>Quick Navigate</div>
-                  <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                <div style={{ marginTop: 4, border: "1px solid #141414", padding: "12px 14px" }}>
+                  <div style={{ fontSize: "0.68rem", fontFamily:HEAVY_FONT, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.08em", color: "#5B6572", marginBottom: 10 }}>Quick Navigate</div>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
                     {TABS.filter(t => t.id !== "profile").map(t => (
-                      <button key={t.id} onClick={() => setTab(t.id)} style={{ display:"flex", alignItems:"center", gap:6, background: W.sand, border: `1px solid ${W.haze}`, color: "#3C5A4A", padding: "7px 14px", borderRadius: 999, cursor: "pointer", fontSize: "0.75rem", fontFamily: "'Inter',sans-serif", fontWeight: 600 }}><NavIcon id={t.id} size={14}/> {t.label}</button>
+                      <button key={t.id} onClick={() => setTab(t.id)} style={{ display:"flex", alignItems:"center", gap:6, background: "#FFFFFF", border: "1px solid #141414", color: "#141414", padding: "6px 12px", cursor: "pointer", fontSize: "0.72rem", fontFamily: HEAVY_FONT, fontWeight: 700, letterSpacing:"0.02em", textTransform:"uppercase" }}><NavIcon id={t.id} size={14}/> {t.label}</button>
                     ))}
                   </div>
                 </div>
-                <button onClick={() => setTab("onboarding")} style={{ background:"#3C5A4A",border:"none",color:"white",padding:"11px",borderRadius:12,cursor:"pointer",fontSize:"0.82rem",fontFamily:"'Inter',sans-serif",fontWeight:600,boxShadow:W.shadowRest }}>✏️ Edit Profile & Regenerate Plan</button>
-              <button onClick={() => { if(window.confirm("Clear your saved profile?")) { setProfile(null); setTab("onboarding"); try { window.storage.set("ailara:profile", JSON.stringify(null)); window.storage.set("ailara:chatHistory", JSON.stringify([])); } catch {} }}} style={{ background:"rgba(232,131,107,0.10)",border:"1px solid rgba(232,131,107,0.3)",color:"#C2410C",padding:"8px 14px",borderRadius:999,cursor:"pointer",fontSize:"0.72rem",fontFamily:"'Inter',sans-serif",fontWeight:600,marginTop:4 }}>🗑 Reset Profile & Clear Data</button>
+                <button onClick={() => setTab("onboarding")} style={{ background:"#F4B400",border:"none",color:"#141414",padding:"13px",cursor:"pointer",fontSize:"0.82rem",fontFamily:HEAVY_FONT,fontWeight:800,letterSpacing:"0.03em",textTransform:"uppercase" }}>✏️ Edit Profile & Regenerate Plan</button>
+              <button onClick={() => { if(window.confirm("Clear your saved profile?")) { setProfile(null); setTab("onboarding"); try { window.storage.set("ailara:profile", JSON.stringify(null)); window.storage.set("ailara:chatHistory", JSON.stringify([])); } catch {} }}} style={{ background:"#FFFFFF",border:"1px solid #C2410C",color:"#C2410C",padding:"9px 14px",cursor:"pointer",fontSize:"0.68rem",fontFamily:HEAVY_FONT,fontWeight:700,letterSpacing:"0.04em",textTransform:"uppercase",marginTop:4 }}>🗑 Reset Profile & Clear Data</button>
 
               {/* ── Goal Alignment ── */}
               {(()=>{
                 const goals=profile?.goals||[];if(!goals.length)return null;
                 return(
-                  <div style={{marginTop:16,background:W.cream,border:`1px solid ${W.haze}`,borderRadius:16,padding:"14px 16px",boxShadow:W.shadowRest}}>
-                    <div style={{fontWeight:800,color:"#1A1D1B",fontSize:"0.82rem",marginBottom:10}}>🎯 Your Goals</div>
-                    <div style={{display:"flex",flexWrap:"wrap",gap:8}}>
-                      {goals.map(g=>{
-                        const gc={"Lose Weight":"#EE9C5B","Build Muscle":"#3C5A4A","More Energy":"#C79245","Heart Health":"#E8836B","Reduce Stress":"#7FA891","Run / Endurance":"#7FA891","Manage a Condition":"#94897A"}[g]||"#3C5A4A";
-                        return(
-                          <div key={g} style={{display:"flex",alignItems:"center",gap:8,background:`${gc}14`,border:`1px solid ${gc}33`,borderRadius:12,padding:"7px 12px"}}>
-                            <div style={{width:8,height:8,borderRadius:"50%",background:gc,flexShrink:0}}/>
-                            <div>
-                              <div style={{fontSize:"0.8rem",fontWeight:700,color:gc}}>{g}</div>
-                              <div style={{fontSize:"0.72rem",color:"#4B5563",marginTop:1}}>Driving your personalization</div>
-                            </div>
-                          </div>
-                        );
-                      })}
+                  <div style={{marginTop:16,border:"1px solid #141414",padding:"14px 16px"}}>
+                    <div style={{fontFamily:HEAVY_FONT,fontWeight:900,color:"#141414",fontSize:"0.78rem",letterSpacing:"0.04em",textTransform:"uppercase",marginBottom:10}}>🎯 Your Goals</div>
+                    <div style={{display:"flex",flexWrap:"wrap",gap:6}}>
+                      {goals.map(g=>(
+                        <div key={g} style={{border:"1px solid #141414",padding:"7px 12px"}}>
+                          <div style={{fontSize:"0.78rem",fontWeight:700,color:"#141414"}}>{g}</div>
+                          <div style={{fontSize:"0.68rem",color:"#5B6572",marginTop:1}}>Driving your personalization</div>
+                        </div>
+                      ))}
                     </div>
-                    <div style={{marginTop:10,fontSize:"0.72rem",color:"#6B7280",lineHeight:1.5}}>💡 Your workouts, meal plans, supplements, AI coaching, and TCM guidance are all personalized to these goals.</div>
+                    <div style={{marginTop:10,fontSize:"0.72rem",color:"#5B6572",lineHeight:1.5}}>💡 Your workouts, meal plans, supplements, AI coaching, and TCM guidance are all personalized to these goals.</div>
                   </div>
                 );
               })()}
 
               {/* ── Subscription & Elite Wearables Section ── */}
-              <div style={{ marginTop:16, background:W.cream, border:`1px solid ${W.haze}`, borderRadius:16, padding:"16px", boxShadow:W.shadowRest }}>
-                <div style={{ fontWeight:800, color:"#1A1D1B", fontSize:"0.85rem", marginBottom:12 }}>
+              <div style={{ marginTop:16, border:"1px solid #141414", padding:"16px" }}>
+                <div style={{ fontFamily:HEAVY_FONT, fontWeight:900, color:"#141414", fontSize:"0.78rem", letterSpacing:"0.04em", textTransform:"uppercase", marginBottom:12 }}>
                   Subscription
                 </div>
                 {/* Current tier badge */}
@@ -13205,34 +13258,34 @@ export default function AilaraApp() {
                   <div style={{ display:"flex", alignItems:"center", gap:8 }}>
                     <span style={{ fontSize:18 }}>{tier==="elite" ? "⚡" : tier==="pro" ? "👑" : "🆓"}</span>
                     <div>
-                      <div style={{ fontWeight:700, color: tier==="elite" ? "#7FA891" : tier==="pro" ? "#92400E" : W.taupe, fontSize:"0.82rem" }}>
+                      <div style={{ fontFamily:HEAVY_FONT, fontWeight:800, color:"#141414", fontSize:"0.82rem", textTransform:"uppercase", letterSpacing:"0.01em" }}>
                         {tier==="elite" ? "Elite" : tier==="pro" ? "Pro" : "Free"} Plan
                       </div>
-                      <div style={{ fontSize:"0.72rem", color:"#6B7280" }}>
+                      <div style={{ fontSize:"0.72rem", color:"#5B6572" }}>
                         {tier==="elite" ? "$12.99/mo" : tier==="pro" ? "$4.99/mo" : "5 AI questions/day"}
                       </div>
                     </div>
                   </div>
                   {tier === "free" && (
                     <button onClick={() => openUpgrade("Upgrade from Profile", "pro")}
-                      style={{ background:"#EE9C5B", border:"none", borderRadius:999, padding:"6px 14px", color:"white", cursor:"pointer", fontSize:"0.8rem", fontWeight:800, fontFamily:"'Inter',sans-serif" }}>
+                      style={{ background:"#F4B400", border:"none", padding:"7px 14px", color:"#141414", cursor:"pointer", fontSize:"0.72rem", fontFamily:HEAVY_FONT, fontWeight:800, letterSpacing:"0.03em", textTransform:"uppercase" }}>
                       Upgrade 👑
                     </button>
                   )}
                   {tier === "pro" && (
                     <button onClick={() => openUpgrade("Upgrade to Elite", "elite")}
-                      style={{ background:"rgba(127,168,145,0.15)", border:"1px solid rgba(127,168,145,0.4)", borderRadius:999, padding:"6px 14px", color:"#3C5A4A", cursor:"pointer", fontSize:"0.8rem", fontWeight:700, fontFamily:"'Inter',sans-serif" }}>
+                      style={{ background:"#FFFFFF", border:"1px solid #141414", padding:"7px 14px", color:"#141414", cursor:"pointer", fontSize:"0.72rem", fontFamily:HEAVY_FONT, fontWeight:800, letterSpacing:"0.03em", textTransform:"uppercase" }}>
                       → Elite ⚡
                     </button>
                   )}
                 </div>
 
                 {/* Elite wearables — coming soon */}
-                <div style={{ borderTop:`1px solid ${W.haze}`, paddingTop:12 }}>
+                <div style={{ borderTop:"1px solid #E6E4DF", paddingTop:12 }}>
                   <div style={{ display:"flex", alignItems:"center", gap:6, marginBottom:10 }}>
                     <span style={{ fontSize:13 }}>⚡</span>
-                    <div style={{ fontSize:"0.72rem", fontWeight:700, color:"#7FA891" }}>Elite Features</div>
-                    <span style={{ fontSize:"0.72rem", color:"#3C5A4A", background:"rgba(127,168,145,0.15)", border:"1px solid rgba(127,168,145,0.3)", borderRadius:999, padding:"1px 8px" }}>Coming Soon</span>
+                    <div style={{ fontFamily:HEAVY_FONT, fontSize:"0.68rem", fontWeight:800, letterSpacing:"0.04em", textTransform:"uppercase", color:"#141414" }}>Elite Features</div>
+                    <span style={{ fontSize:"0.64rem", fontFamily:HEAVY_FONT, fontWeight:800, color:"#141414", background:"#F4B400", padding:"1px 8px" }}>Coming Soon</span>
                   </div>
                   {[
                     { icon:"⌚", name:"Oura Ring Sync",       sub:"Sleep, HRV, readiness scores" },
@@ -13240,19 +13293,19 @@ export default function AilaraApp() {
                     { icon:"🤖", name:"Google Fit Sync",      sub:"Steps, workouts, heart data" },
                     { icon:"🔔", name:"Proactive AI Check-ins", sub:"Ailara messages you based on your data" },
                     { icon:"🧠", name:"AI Recovery Coaching",  sub:"Adapts your plan to last night's sleep" },
-                  ].map(w => (
-                    <div key={w.name} style={{ display:"flex", alignItems:"center", gap:10, padding:"8px 0", borderBottom:`1px solid ${W.haze}` }}>
+                  ].map((w,wi) => (
+                    <div key={w.name} style={{ display:"flex", alignItems:"center", gap:10, padding:"8px 0", borderTop: wi===0?"none":"1px solid #E6E4DF" }}>
                       <span style={{ fontSize:16, opacity:0.5 }}>{w.icon}</span>
                       <div style={{ flex:1 }}>
-                        <div style={{ fontSize:"0.74rem", color:W.cocoa, fontWeight:600 }}>{w.name}</div>
-                        <div style={{ fontSize:"0.72rem", color:"#6B7280" }}>{w.sub}</div>
+                        <div style={{ fontSize:"0.74rem", color:"#141414", fontWeight:600 }}>{w.name}</div>
+                        <div style={{ fontSize:"0.72rem", color:"#5B6572" }}>{w.sub}</div>
                       </div>
-                      <span style={{ fontSize:"0.72rem", color:"#3C5A4A", background:"rgba(127,168,145,0.12)", border:"1px solid rgba(127,168,145,0.25)", borderRadius:999, padding:"2px 8px", whiteSpace:"nowrap" }}>Soon</span>
+                      <span style={{ fontSize:"0.64rem", fontFamily:HEAVY_FONT, fontWeight:700, letterSpacing:"0.03em", textTransform:"uppercase", color:"#5B6572", border:"1px solid #E6E4DF", padding:"2px 8px", whiteSpace:"nowrap" }}>Soon</span>
                     </div>
                   ))}
                   {tier !== "elite" && (
                     <button onClick={() => openUpgrade("Unlock wearables + proactive AI", "elite")}
-                      style={{ width:"100%", background:"rgba(127,168,145,0.14)", border:"1px solid rgba(127,168,145,0.3)", borderRadius:12, padding:"9px", color:"#3C5A4A", cursor:"pointer", fontSize:"0.73rem", fontWeight:700, fontFamily:"'Inter',sans-serif", marginTop:10 }}>
+                      style={{ width:"100%", background:"#FFFFFF", border:"1px solid #141414", padding:"10px", color:"#141414", cursor:"pointer", fontSize:"0.7rem", fontFamily:HEAVY_FONT, fontWeight:700, letterSpacing:"0.03em", textTransform:"uppercase", marginTop:10 }}>
                       ⚡ Unlock with Elite — $12.99/mo
                     </button>
                   )}
@@ -13261,8 +13314,8 @@ export default function AilaraApp() {
               </div>
             ) : (
               <div style={{ textAlign:"center",padding:"40px 0" }}>
-                <div style={{ color:"#4B5563",marginBottom:16,fontSize:"0.85rem" }}>No profile set up yet.</div>
-                <button onClick={() => setTab("onboarding")} style={{ background:"#3C5A4A",border:"none",color:"white",padding:"11px 24px",borderRadius:12,cursor:"pointer",fontSize:"0.85rem",fontFamily:"'Inter',sans-serif",fontWeight:600,boxShadow:W.shadowRest }}>Set Up Profile</button>
+                <div style={{ color:"#5B6572",marginBottom:16,fontSize:"0.85rem" }}>No profile set up yet.</div>
+                <button onClick={() => setTab("onboarding")} style={{ background:"#F4B400",border:"none",color:"#141414",padding:"12px 24px",cursor:"pointer",fontSize:"0.82rem",fontFamily:HEAVY_FONT,fontWeight:800,letterSpacing:"0.03em",textTransform:"uppercase" }}>Set Up Profile</button>
               </div>
             )}
           </div>
@@ -13271,9 +13324,9 @@ export default function AilaraApp() {
 
       {/* ── Legal Footer ── */}
       {tab === "profile" && (
-        <div style={{ padding:"16px 18px 8px", borderTop:`1px solid ${W.haze}`, background:W.sand }}>
-          <div style={{ fontSize:"0.72rem", color:"#6B7280", lineHeight:1.7, textAlign:"center" }}>
-            <strong style={{ color:"#6B7280" }}>Ailara Coach AI</strong> — Educational purposes only. Not medical advice.{" "}
+        <div style={{ padding:"16px 18px 8px", borderTop:"1px solid #141414", background:"#FBF7EF" }}>
+          <div style={{ fontSize:"0.72rem", color:"#5B6572", lineHeight:1.7, textAlign:"center" }}>
+            <strong style={{ color:"#141414" }}>Ailara Coach AI</strong> — Educational purposes only. Not medical advice.{" "}
             Citations sourced from JISSN, NIH ODS, ACSM, Cochrane, and NASM.{" "}
             Consult your physician before acting on supplement or exercise recommendations.
           </div>
@@ -13284,7 +13337,7 @@ export default function AilaraApp() {
               { label:"NASM", url:"https://blog.nasm.org/" },
             ].map(l => (
               <a key={l.label} href={l.url} target="_blank" rel="noopener noreferrer"
-                style={{ fontSize:"0.72rem", color:"#4B5563", textDecoration:"none", borderBottom:"1px solid rgba(127,168,145,0.4)" }}>
+                style={{ fontSize:"0.68rem", fontFamily:HEAVY_FONT, fontWeight:700, letterSpacing:"0.02em", textTransform:"uppercase", color:"#141414", textDecoration:"none", borderBottom:"1px solid #141414" }}>
                 {l.label}
               </a>
             ))}
