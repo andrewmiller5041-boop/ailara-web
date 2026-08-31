@@ -7295,7 +7295,7 @@ function Chat({ profile, isPro, tier, plansUsed, aiQuestionsToday, setAiQuestion
         {!started && (() => {
           const hour = new Date().getHours();
           const partOfDay = hour < 12 ? "MORNING" : hour < 18 ? "AFTERNOON" : "EVENING";
-          const name = profile?.name || "there";
+          const name = profile?.name || null;
           let deck;
           if (weekDays == null) deck = "Let's get to work.";
           else if (weekDays === 0) deck = "Fresh week. Put one on the board.";
@@ -7316,12 +7316,20 @@ function Chat({ profile, isPro, tier, plansUsed, aiQuestionsToday, setAiQuestion
 
             {/* ── GREETING BLOCK ── */}
             <div style={{ border: `1px solid ${LS.ink}`, borderRadius: 8, background: LS.paper, padding: "26px 24px 24px", marginBottom: 28 }}>
-              <div style={{ fontFamily: HEAVY_FONT, fontSize: "0.72rem", fontWeight: 800, letterSpacing: "0.1em", color: LS.accent, marginBottom: 6 }}>
-                GOOD {partOfDay}
-              </div>
-              <h2 style={{ fontFamily: HEAVY_FONT, fontSize: "2.15rem", fontWeight: 900, color: LS.ink, letterSpacing: "-0.02em", lineHeight: 1, margin: "0 0 10px" }}>
-                {name}.
-              </h2>
+              {name ? (
+                <>
+                  <div style={{ fontFamily: HEAVY_FONT, fontSize: "0.72rem", fontWeight: 800, letterSpacing: "0.1em", color: LS.accent, marginBottom: 6 }}>
+                    GOOD {partOfDay}
+                  </div>
+                  <h2 style={{ fontFamily: HEAVY_FONT, fontSize: "2.15rem", fontWeight: 900, color: LS.ink, letterSpacing: "-0.02em", lineHeight: 1, margin: "0 0 10px" }}>
+                    {name}.
+                  </h2>
+                </>
+              ) : (
+                <h2 style={{ fontFamily: HEAVY_FONT, fontSize: "2.15rem", fontWeight: 900, color: LS.ink, letterSpacing: "-0.02em", lineHeight: 1, margin: "0 0 10px" }}>
+                  Ready when you are.
+                </h2>
+              )}
               <div style={{ fontFamily: HEAVY_FONT, fontStyle: "italic", fontWeight: 400, fontSize: "0.95rem", color: LS.slate, marginBottom: 18 }}>
                 {deck}
               </div>
