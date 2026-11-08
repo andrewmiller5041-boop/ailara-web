@@ -1,8 +1,8 @@
 # AILARA — AI Health & Fitness Coaching Platform
 
-> **Live App:** [ailara-web.vercel.app](https://ailara-web.vercel.app)
+> **Live App:** [ailara.app](https://ailara.app)
 
-A production-grade AI health coaching web app built solo from concept to deployed product. AILARA provides personalized, evidence-based guidance across fitness, nutrition, supplementation, and wellness — powered by Claude Sonnet and Haiku with intelligent cost routing.
+An AI health coaching web app built solo from concept to deployed product. AILARA provides personalized guidance across fitness, nutrition, supplementation, and wellness, powered by Claude.
 
 ![AILARA Screenshot](Screenshots/hero_2.png)![AILARA Screenshot](./Screenshots/hero_3.png)
 ---
@@ -11,74 +11,75 @@ A production-grade AI health coaching web app built solo from concept to deploye
 
 Users get a personal AI health coach that:
 
-- **Answers fitness and nutrition questions** with PubMed/NIH citations inline
-- **Builds custom workout programs** tailored to their goals, equipment, and schedule — with YouTube-linked exercise guides
-- **Generates personalized meal plans** with allergy-aware ingredient swaps and grocery lists
+- **Answers fitness and nutrition questions**, with source citations (Pro)
+- **Builds custom workout programs** tailored to their goals, equipment, and schedule, linked to a library of 1,800+ workout videos
+- **Generates personalized meal plans** from a library of 500+ recipes, with dietary-restriction filters
 - **Tracks supplements, habits, and progress** with trend analytics and weight logging
-- **Recommends in-app resources** (videos, recipes, research articles) based on each response
+- **Logs actions from chat**: the coach can log workouts, weight, and habits through tool calls
 
 ---
 
 ## Technical Architecture
 
 ### Frontend
-- **React 18** — single-file component architecture (~13,000 lines)
-- **Vite** — compiled for production (no runtime transpilation)
-- **PWA** — installable on iPhone/Android via "Add to Home Screen", offline-capable via Service Worker
-- Fully responsive, mobile-first design
+- **React 18**: single-file component architecture (`src/App.jsx`, ~13,500 lines)
+- **Vite**: compiled for production
+- **PWA**: installable via "Add to Home Screen", offline-capable via a service worker
+- Mobile-first responsive design
+- **No accounts and no database.** All user data (profile, chat history, logs, meal plans) lives in the browser's `localStorage` through `src/storagePolyfill.js`. Data is per-device.
 
-### AI & Cost Engineering
-- **Claude Sonnet 4** for complex coaching: program design, meal plans, evidence-based analysis
-- **Claude Haiku** for simple conversational replies — 12× cheaper output cost
-- **Intelligent model routing** — `classifyMessage()` dynamically selects the model based on question complexity, reducing API costs by ~60%
-- **Prompt caching** (`cache_control: ephemeral`) — 90% cheaper on repeated system prompt reads within a session
-- **4,111-token system prompt** — compact enough that cache write costs $0.018/session
+### AI
+- **Model:** every AI call uses `claude-sonnet-5` (coach chat with tool calling, profile plan, meal plans, workout programs).
+- **System prompt:** the coach prompt is large (~220 KB, on the order of 55k tokens) and is sent with every coach message. The proxy forwards the prompt-caching beta header, but the app does not currently mark any content with `cache_control`, so prompt caching is **not** active. Adding it is the biggest available cost reduction.
+- **No model routing.** There is no cheap-model/expensive-model classifier.
 
 ### Security
-- **Server-side API proxy** (Vercel serverless) — Anthropic key never exposed to browser
-- **Prompt injection defense** — input sanitization + system-level security constraints
-- **Tool call allowlist** — AI can only invoke explicitly permitted tool names
-- **Output sanitization** — strips `<script>`, `javascript:`, and event handlers from AI responses
-- **Profile field allowlist** — `update_profile` tool restricted to 14 permitted fields
+What exists:
+- **Server-side API proxy** (`api/chat.js`): the Anthropic key never reaches the browser.
+- **Proxy hardening** (anonymous app, so this is abuse-resistance, not user authentication):
+  - requests must carry an `Origin` header matching this site (browsers always send it on POST); anything else gets `403` and never reaches Anthropic. Note a script can forge this header, so it raises the bar but is not a guarantee;
+  - model allowlist (`claude-sonnet-5`, `claude-haiku-4-5-20251001`);
+  - `max_tokens` capped at 4000, message count, system-prompt size, and tool names validated;
+  - best-effort per-IP rate limit (30/min, 300/hour per server instance);
+  - generic error responses; token usage and approximate cost logged per request.
+- AI output is rendered through React (no `dangerouslySetInnerHTML` anywhere in the app).
+
+Known limitations (not yet addressed):
+- No user authentication, because there are no accounts. A determined attacker who forges headers and rotates IPs can still use the proxy; the Anthropic console spend limit and a platform-level rate limit/bot rule are the backstops.
+- The client sends the system prompt, so a forged request can supply its own prompt (bounded by the caps above). Moving prompts server-side would close this.
+- No prompt-injection filtering and no output sanitization beyond React's escaping.
+- The `update_profile` tool will write any profile field the model names; there is no field allowlist.
+- Tool calls execute in the browser.
 
 ### Backend / Deployment
-- **Vercel** — serverless deployment with automatic GitHub CI/CD
-- **Vercel Serverless Function** (`/api/chat`) — validates requests, enforces model allowlist, logs token usage and cost per request
-- **CORS origin restriction** — proxy only accepts requests from the deployed domain
+- **Vercel**: static hosting plus one serverless function (`/api/chat`), automatic deploys from GitHub.
+- Set `ANTHROPIC_API_KEY` in the Vercel project's environment variables.
 
 ### Payments
-- **Stripe Payment Links** — no backend required, redirects back with `?upgraded=true` to unlock tier
-- Tiered subscription model with annual/monthly toggle
+**Not implemented.** The upgrade screen shows Pro ($4.99/mo) and Elite ($12.99/mo), but tapping "Upgrade" only sets a flag in `localStorage`; no payment is taken and nothing is enforced server-side. Anyone can set the flag themselves. Real billing needs accounts plus a payment provider (for example Stripe) with server-side verification.
 
 ---
 
-## Features
+## Tiers (as currently coded in the app)
 
-| Feature | Free | Pro | Elite |
-|---------|------|-----|-------|
-| AI messages/day | 3 | 15 | 30 |
-| Meal plan generations | 1 | Unlimited | Unlimited |
-| Custom workout programs | ✗ | ✓ | ✓ |
-| PubMed/NIH citations | ✗ | ✓ | ✓ |
-| Image analysis | ✗ | ✓ | ✓ |
-| Progress analytics | ✓ | ✓ | ✓ |
-| Supplement tracker | ✓ | ✓ | ✓ |
-| Nutrition hub (500+ recipes) | ✓ | ✓ | ✓ |
+| Feature | Free | Pro / Elite* |
+|---------|------|-----|
+| AI coach messages | 5 per day | Unlimited |
+| Meal plan generations | 1 | Unlimited |
+| Custom AI workout programs | No | Yes |
+| Source citations on answers | No | Yes |
+| Image analysis | No | Yes |
+| Progress tracker, supplements, nutrition hub, workout library | Yes | Yes |
+
+\*Elite's extra features (wearable sync, proactive check-ins, recovery coaching) are listed as "coming soon" and are not built.
+
+These limits are enforced in the browser only.
 
 ---
 
-## Cost Model
+## Cost
 
-With prompt caching and model routing:
-
-| Usage | Monthly API cost |
-|-------|-----------------|
-| Light (3 msg/day) | ~$1.50 |
-| Average (8 msg/day) | ~$3.99 |
-| Pro max (15 msg/day) | ~$7.48 |
-| Elite max (30 msg/day) | ~$14.97 |
-
-At average usage, **Pro ($7.99/mo) returns ~$4.00 margin** and **Elite ($14.99/mo) returns ~$11.00 margin**.
+There is no verified cost model. Rough guidance from the code: each coach message sends the ~55k-token system prompt uncached, and a message that triggers a tool call makes two API calls. At the rate the proxy assumes for its logging ($3 per million input tokens), the system prompt alone is about $0.16 per call. Use the per-request cost lines in the Vercel function logs for real numbers.
 
 ---
 
@@ -87,13 +88,18 @@ At average usage, **Pro ($7.99/mo) returns ~$4.00 margin** and **Elite ($14.99/m
 ```
 ailara-web/
 ├── api/
-│   └── chat.js          # Vercel serverless proxy — holds API key server-side
-├── assets/
-│   └── index-[hash].js  # Vite-compiled app bundle
-├── icons/               # PWA icons (72px → 512px)
+│   └── chat.js          # Vercel serverless proxy — holds the API key server-side
+├── src/
+│   ├── App.jsx          # The whole app
+│   ├── main.jsx         # React entry
+│   └── storagePolyfill.js  # window.storage backed by localStorage
+├── tests/
+│   └── chat.test.mjs    # Proxy hardening tests (npm test)
+├── assets/ icons/ Screenshots/
 ├── index.html           # App shell
 ├── manifest.json        # PWA manifest
-├── sw.js                # Service worker (offline + installable)
+├── sw.js                # Service worker
+├── privacy.html terms.html
 └── vercel.json          # Routing + security headers
 ```
 
@@ -102,48 +108,37 @@ ailara-web/
 ## Key Engineering Decisions
 
 **Why a single-file React component?**
-Started as a Claude.ai artifact for rapid prototyping. The architecture proved stable enough to ship directly — Vite compiles it to an optimized bundle regardless of source structure.
+It started as a Claude.ai artifact for rapid prototyping and was shipped as is. It works, but the file is very large; splitting it is future work.
 
-**Why Claude over OpenAI?**
-Prompt caching support is a significant cost advantage for long system prompts. Sonnet's instruction-following for structured JSON tool use is also more reliable for the agentic features (workout logging, profile updates, recipe search).
-
-**Why Vercel serverless over a traditional backend?**
-Zero infrastructure management. The proxy function adds security without requiring a persistent server. Cold starts are acceptable since the AI response latency dominates anyway.
+**Why a serverless proxy?**
+It keeps the API key off the client with no server to manage.
 
 **Why PWA over native app?**
-Faster to market, no App Store review process, works on iOS and Android, Stripe handles payments directly (vs Apple's 30% cut on in-app purchases).
+Faster to market, no App Store review, works on iOS and Android.
 
 ---
 
 ## Running Locally
 
 ```bash
-# 1. Clone the repo
-git clone https://github.com/yourusername/ailara-web.git
+git clone https://github.com/andrewmiller5041-boop/ailara-web.git
 cd ailara-web
+npm install
 
-# 2. Set your Anthropic API key
-echo "ANTHROPIC_API_KEY=sk-ant-..." > .env
+# Set your Anthropic API key (see .env.example)
+cp .env.example .env   # then fill in ANTHROPIC_API_KEY
 
-# 3. Install Vercel CLI
-npm install -g vercel
-
-# 4. Run locally (serves both the app and the /api/chat proxy)
-vercel dev
+# Serves both the app and the /api/chat proxy
+npx vercel dev
 ```
 
-Open `http://localhost:3000`
+Open `http://localhost:3000`. Run the proxy tests with `npm test`.
 
 ---
 
 ## Deployment
 
-```bash
-# Deploy to production
-vercel --prod
-```
-
-Set `ANTHROPIC_API_KEY` in Vercel dashboard → Settings → Environment Variables.
+Pushing to `main` deploys to production through the Vercel GitHub integration. Set `ANTHROPIC_API_KEY` in Vercel → Settings → Environment Variables.
 
 ---
 
