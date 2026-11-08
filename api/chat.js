@@ -1,21 +1,13 @@
 // ── AILARA API Proxy — Vercel Serverless Function ─────────────────────────
-// Anonymous consumer app: there are no user accounts, so this is abuse
-// hardening (origin enforcement, strict request shape, hard caps, per-IP rate
-// limit), not true authentication. Cannot stop a determined attacker who
-// spoofs headers and rotates IPs — the Anthropic spend limit and a platform
-// rate-limit/bot rule are the backstops.
+// Anonymous consumer app: no user accounts, so this is abuse hardening, not
+// user authentication. The browser sends only a task name + small validated
+// variables; the model, system prompts, token limits and tool definitions all
+// live on the server (see server/tasks.js), so a caller cannot supply their
+// own system prompt or pick a model. Layers: Origin check, task validation,
+// per-IP rate limit (here + a Vercel Firewall rule), Anthropic spend limit.
+import { buildRequest } from '../server/tasks.js';
+
 const ANTHROPIC_URL = 'https://api.anthropic.com/v1/messages';
-
-const ALLOWED_MODELS = new Set([
-  'claude-sonnet-5',
-  'claude-haiku-4-5-20251001',
-]);
-
-const ALLOWED_TOOLS = new Set([
-  'log_workout', 'log_weight', 'log_habit', 'check_supplement', 'analyze_image',
-  'update_profile', 'suggest_workout', 'search_workouts', 'search_recipes',
-  'get_workout_creators',
-]);
 
 const PROD_ORIGINS = [
   'https://ailara.app',
@@ -24,13 +16,9 @@ const PROD_ORIGINS = [
 ];
 const DEV_ORIGINS = ['http://localhost:3000', 'http://localhost:5173'];
 
-const MAX_TOKENS_CAP   = 4000;      // app uses at most 3000
-const MAX_MESSAGES     = 200;
-const MAX_TOOLS        = 15;
-const MAX_SYSTEM_CHARS = 300_000;   // coach system prompt is ~220k chars
-const MAX_BODY_CHARS   = 3_500_000; // Vercel's own limit is 4.5 MB
-const RATE_PER_MIN     = 30;
-const RATE_PER_HOUR    = 300;
+const MAX_BODY_CHARS = 3_500_000; // Vercel's own limit is 4.5 MB
+const RATE_PER_MIN   = 30;
+const RATE_PER_HOUR  = 300;
 
 function allowedOrigins() {
   const list = new Set(PROD_ORIGINS);
@@ -64,33 +52,6 @@ function clientIp(req) {
   return (h['x-real-ip'] || (h['x-forwarded-for'] || '').split(',')[0] || 'unknown').trim();
 }
 
-function validate(body) {
-  const { model, messages, max_tokens, system, tools } = body || {};
-  if (!model || !Array.isArray(messages) || messages.length === 0) {
-    return 'Missing required fields: model, messages';
-  }
-  if (!ALLOWED_MODELS.has(model)) return 'Model not permitted';
-  if (messages.length > MAX_MESSAGES) return 'Too many messages';
-  if (!messages.every(m => m && (m.role === 'user' || m.role === 'assistant')
-      && (typeof m.content === 'string' || Array.isArray(m.content)))) {
-    return 'Invalid message format';
-  }
-  if (max_tokens !== undefined &&
-      !(Number.isInteger(max_tokens) && max_tokens > 0 && max_tokens <= MAX_TOKENS_CAP)) {
-    return `max_tokens must be an integer between 1 and ${MAX_TOKENS_CAP}`;
-  }
-  if (system !== undefined && (typeof system !== 'string' || system.length > MAX_SYSTEM_CHARS)) {
-    return 'Invalid system prompt';
-  }
-  if (tools !== undefined) {
-    if (!Array.isArray(tools) || tools.length > MAX_TOOLS ||
-        !tools.every(t => t && ALLOWED_TOOLS.has(t.name))) {
-      return 'Invalid tools';
-    }
-  }
-  return null;
-}
-
 export default async function handler(req, res) {
   const origin = req.headers.origin || '';
   const allowed = allowedOrigins().has(origin);
@@ -121,25 +82,18 @@ export default async function handler(req, res) {
   try { size = JSON.stringify(req.body || {}).length; } catch { size = Infinity; }
   if (size > MAX_BODY_CHARS) return res.status(413).json({ error: 'Request too large' });
 
-  const problem = validate(req.body);
-  if (problem) return res.status(400).json({ error: problem });
-
-  const { model, messages, max_tokens, system, tools } = req.body;
+  const built = buildRequest(req.body);
+  if (built.error) return res.status(400).json({ error: built.error });
 
   try {
-    const body = { model, messages, max_tokens: max_tokens || 1000 };
-    if (system) body.system = system;
-    if (tools)  body.tools  = tools;
-
     const response = await fetch(ANTHROPIC_URL, {
       method: 'POST',
       headers: {
         'Content-Type':      'application/json',
         'x-api-key':         apiKey,
         'anthropic-version': '2023-06-01',
-        'anthropic-beta':    'prompt-caching-2024-07-31',
       },
-      body: JSON.stringify(body),
+      body: JSON.stringify(built.payload),
     });
 
     const data = await response.json();
@@ -149,7 +103,7 @@ export default async function handler(req, res) {
               cache_read_input_tokens: cr=0,
               cache_creation_input_tokens: cw=0 } = data.usage;
       const cost = (i*3 + o*15 + cr*0.3 + cw*3.75) / 1_000_000;
-      console.log(`[AILARA] ${model} | in:${i} out:${o} cr:${cr} | ~$${cost.toFixed(5)}`);
+      console.log(`[AILARA] ${req.body.task} ${built.payload.model} | in:${i} out:${o} cr:${cr} | ~$${cost.toFixed(5)}`);
     }
 
     if (!response.ok) {

@@ -30,7 +30,9 @@ Users get a personal AI health coach that:
 
 ### AI
 - **Model:** every AI call uses `claude-sonnet-5` (coach chat with tool calling, profile plan, meal plans, workout programs).
-- **System prompt:** the coach prompt is large (~220 KB, on the order of 55k tokens) and is sent with every coach message. The proxy forwards the prompt-caching beta header, but the app does not currently mark any content with `cache_control`, so prompt caching is **not** active. Adding it is the biggest available cost reduction.
+- **Prompts live on the server** (`server/prompts.js`, `server/tools.js`, `server/tasks.js`). The browser sends only a task name (`coach`, `meal_day`, `plan`, `workout_program`) and small variables; the server supplies the model, system prompt, token limit and tool definitions.
+- **System prompt:** the coach prompt is large (~207 KB, measured at about 97k input tokens per call) and is sent with every coach message. The app does not mark any content with `cache_control`, so prompt caching is **not** active. Adding it is the biggest available cost reduction.
+- **Thinking:** Sonnet 5 can emit a `thinking` block before its answer, and thinking tokens count against `max_tokens`. The JSON-only tasks (meal day, plan, workout program) disable thinking so their JSON is not truncated; client code reads the `text` block rather than `content[0]`.
 - **No model routing.** There is no cheap-model/expensive-model classifier.
 
 ### Security
@@ -38,15 +40,14 @@ What exists:
 - **Server-side API proxy** (`api/chat.js`): the Anthropic key never reaches the browser.
 - **Proxy hardening** (anonymous app, so this is abuse-resistance, not user authentication):
   - requests must carry an `Origin` header matching this site (browsers always send it on POST); anything else gets `403` and never reaches Anthropic. Note a script can forge this header, so it raises the bar but is not a guarantee;
-  - model allowlist (`claude-sonnet-5`, `claude-haiku-4-5-20251001`);
-  - `max_tokens` capped at 4000, message count, system-prompt size, and tool names validated;
-  - best-effort per-IP rate limit (30/min, 300/hour per server instance);
+  - **task-based requests only:** callers cannot choose the model, system prompt, `max_tokens` or tools, and requests in the old free-form format are rejected; every variable and message is validated for type, size and shape; user text is inserted into prompt templates literally (no placeholder or `$`-pattern expansion);
+  - best-effort per-IP rate limit in the function (30/min, 300/hour per server instance), plus a Vercel Firewall rate-limit rule on `/api/chat` (30 requests/60 s per IP) that is enforced platform-wide;
   - generic error responses; token usage and approximate cost logged per request.
 - AI output is rendered through React (no `dangerouslySetInnerHTML` anywhere in the app).
 
 Known limitations (not yet addressed):
 - No user authentication, because there are no accounts. A determined attacker who forges headers and rotates IPs can still use the proxy; the Anthropic console spend limit and a platform-level rate limit/bot rule are the backstops.
-- The client sends the system prompt, so a forged request can supply its own prompt (bounded by the caps above). Moving prompts server-side would close this.
+- A forged request can still send ordinary chat messages to the coach (that is what the chat box does), within the validation, size and rate limits. It cannot supply its own system prompt, model or tools.
 - No prompt-injection filtering and no output sanitization beyond React's escaping.
 - The `update_profile` tool will write any profile field the model names; there is no field allowlist.
 - Tool calls execute in the browser.
@@ -79,7 +80,7 @@ These limits are enforced in the browser only.
 
 ## Cost
 
-There is no verified cost model. Rough guidance from the code: each coach message sends the ~55k-token system prompt uncached, and a message that triggers a tool call makes two API calls. At the rate the proxy assumes for its logging ($3 per million input tokens), the system prompt alone is about $0.16 per call. Use the per-request cost lines in the Vercel function logs for real numbers.
+There is no verified cost model. Measured: a coach call sends about 97k input tokens (the system prompt), uncached, and a message that triggers a tool call makes two API calls. At the rate the proxy assumes for its logging ($3 per million input tokens) that is roughly $0.29 per call. Use the per-request cost lines in the Vercel function logs for real numbers.
 
 ---
 
@@ -93,6 +94,10 @@ ailara-web/
 │   ├── App.jsx          # The whole app
 │   ├── main.jsx         # React entry
 │   └── storagePolyfill.js  # window.storage backed by localStorage
+├── server/              # Server-only: never imported by src/
+│   ├── prompts.js       # System prompts
+│   ├── tools.js         # Coach tool definitions
+│   └── tasks.js         # Task → Anthropic request builder + validation
 ├── tests/
 │   └── chat.test.mjs    # Proxy hardening tests (npm test)
 ├── assets/ icons/ Screenshots/
